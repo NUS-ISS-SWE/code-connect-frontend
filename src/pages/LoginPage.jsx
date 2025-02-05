@@ -50,7 +50,11 @@ const LoginPage = () => {
     else if (!/\S+@\S+\.\S+/.test(formInputs.email))
       newErrors.email = "Invalid email format";
 
-    if (!formInputs.password) newErrors.password = "Please enter password!";
+    if (!formInputs.password) {
+      newErrors.password = "Password is required";
+    } else if (formInputs.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
 
     setErrors(newErrors);
 
@@ -107,7 +111,7 @@ const LoginPage = () => {
       className="bg-white flex h-[100vh] items-center justify-center w-[100vw]"
       component="div"
     >
-      <Stack className="bg-white !border !border-gray-300 !border-solid flex justify-start px-6 py-8 rounded-md space-y-8 w-[400px]">
+      <Stack className="bg-white !border !border-gray-300 !border-solid flex justify-start px-6 py-8 rounded-md space-y-8 w-[98%] lg:w-[400px]">
         <Stack className="flex justify-start space-y-2">
           <Typography className="!font-semibold !text-4xl !text-gray-900">
             Login
@@ -119,7 +123,7 @@ const LoginPage = () => {
             </Typography>
 
             <Link
-              className={`!font-normal !text-sm !text-accent hover:underline`}
+              className={`!font-normal !text-sm !text-primary hover:underline`}
               to={PATHS.get("SIGNUP").PATH}
             >
               Create an account
@@ -127,7 +131,7 @@ const LoginPage = () => {
           </Box>
         </Stack>
 
-        <Stack className="flex justify-start space-y-4">
+        <Stack className="flex justify-start space-y-5">
           <TextField
             className="mb-0"
             color="primary"
