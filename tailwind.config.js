@@ -4,6 +4,9 @@ export default {
   theme: {
     extend: {
       colors: {
+        accent: {
+          DEFAULT: "#0078C2",
+        },
         success: {
           DEFAULT: "#5BBF7A",
         },

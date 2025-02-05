@@ -1,15 +1,19 @@
+/* eslint-disable no-unused-vars */
 import {
   Box,
   Button,
   CircularProgress,
+  IconButton,
+  InputAdornment,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { loginUser } from "../api/UserApi";
+import Icon from "../constants/Icon.jsx";
 import { LOGIN_TOKEN_KEY } from "../contexts/AuthContext.jsx";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
@@ -25,17 +29,28 @@ const LoginPage = () => {
     password: useRef(null),
   };
 
-  const [email, setEmail] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [password, setPassword] = useState("");
+  const [formInputs, setFormInputs] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleChangeInput = (key) => (evt) => {
+    setErrors((prevState) => {
+      const { [key]: _, ...rest } = prevState;
+      return rest;
+    });
+
+    setFormInputs({ ...formInputs, [key]: evt.target.value });
+  };
 
   const validate = () => {
     const newErrors = {};
 
-    if (!email) newErrors.email = "This field is required";
+    if (!formInputs.email) newErrors.email = "Please enter email address!";
+    else if (!/\S+@\S+\.\S+/.test(formInputs.email))
+      newErrors.email = "Invalid email format";
 
-    if (!password) newErrors.password = "This field is required";
+    if (!formInputs.password) newErrors.password = "Please enter password!";
 
     setErrors(newErrors);
 
@@ -50,10 +65,7 @@ const LoginPage = () => {
     const firstErrorField = validate();
 
     if (!firstErrorField) {
-      const { data, message, status } = await loginUser(
-        { email, password },
-        dispatch
-      );
+      const { data, message, status } = await loginUser(formInputs, dispatch);
 
       if (status === 200) {
         login(LOGIN_TOKEN_KEY, data);
@@ -91,42 +103,84 @@ const LoginPage = () => {
   };
 
   return (
-    <Box component="div">
-      <Stack className="bg-gray-100 flex justify-start space-y-8 w-[400px]">
-        <Typography>Login</Typography>
+    <Box
+      className="bg-white flex h-[100vh] items-center justify-center w-[100vw]"
+      component="div"
+    >
+      <Stack className="bg-white !border !border-gray-300 !border-solid flex justify-start px-6 py-8 rounded-md space-y-8 w-[400px]">
+        <Stack className="flex justify-start space-y-2">
+          <Typography className="!font-semibold !text-4xl !text-gray-900">
+            Login
+          </Typography>
 
-        <TextField
-          className="mb-0"
-          color="primary"
-          disabled={loading}
-          error={!!errors.email}
-          fullWidth
-          helperText={errors.email}
-          inputRef={fieldRefs.email}
-          label=""
-          onChange={(e) => setEmail(e.target.value)}
-          size="small"
-          value={email}
-          variant="outlined"
-        />
+          <Box className="flex justify-start space-x-1">
+            <Typography className="!font-normal !text-sm !text-gray-700">
+              New user?
+            </Typography>
 
-        <TextField
-          className="mb-0"
-          color="primary"
-          disabled={loading}
-          error={!!errors.password}
-          fullWidth
-          helperText={errors.password}
-          inputRef={fieldRefs.password}
-          label=""
-          onChange={(e) => setPassword(e.target.value)}
-          size="small"
-          value={password}
-          variant="outlined"
-        />
+            <Link
+              className={`!font-normal !text-sm !text-accent hover:underline`}
+              to={PATHS.get("SIGNUP").PATH}
+            >
+              Create an account
+            </Link>
+          </Box>
+        </Stack>
+
+        <Stack className="flex justify-start space-y-4">
+          <TextField
+            className="mb-0"
+            color="primary"
+            disabled={loading}
+            error={!!errors.email}
+            fullWidth
+            helperText={errors.email}
+            inputRef={fieldRefs.email}
+            label="Email Address*"
+            onChange={handleChangeInput("email")}
+            size="small"
+            value={formInputs.email}
+            variant="outlined"
+          />
+
+          <TextField
+            className="mb-0"
+            color="primary"
+            disabled={loading}
+            error={!!errors.password}
+            fullWidth
+            helperText={errors.password}
+            inputRef={fieldRefs.password}
+            label="Password*"
+            onChange={handleChangeInput("password")}
+            type={showPassword ? "text" : "password"}
+            size="small"
+            value={formInputs.password}
+            variant="outlined"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment className="!ml-0" position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    className="!text-gray-400"
+                    disabled={loading}
+                    edge="end"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? (
+                      <Icon name={"EyeOff"} />
+                    ) : (
+                      <Icon name={"Eye"} />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Stack>
 
         <Button
-          className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !shadow-none !text-sm !text-white !tracking-normal !transition-all w-32 hover:!bg-primary-100"
+          className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !shadow-none !text-sm !text-white !tracking-normal !transition-all w-full hover:!bg-primary-100"
           disabled={loading}
           onClick={handleClickLogin}
           variant="contained"
