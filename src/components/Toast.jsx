@@ -32,7 +32,7 @@ const Toast = () => {
         </IconButton>
       }
       anchorOrigin={{
-        vertical: "bottom",
+        vertical: "top",
         horizontal: "right",
       }}
       autoHideDuration={5000}

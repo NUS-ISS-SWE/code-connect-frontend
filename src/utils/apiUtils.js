@@ -9,7 +9,6 @@ const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const apiWrapper = async ({
   altError,
-  baseUrl,
   body,
   dispatch,
   endpoint,
@@ -20,7 +19,7 @@ const apiWrapper = async ({
   dispatch({ type: "SET_LOADING", payload: { isOpen: true } });
 
   try {
-    const response = await fetch(`${baseUrl}${endpoint}`, {
+    const response = await fetch(`${endpoint}`, {
       method,
       headers: headers || {
         Authorization: `Bearer ${fetchToken(LOGIN_TOKEN_KEY)}`,
@@ -35,20 +34,17 @@ const apiWrapper = async ({
       throw jsonData;
     }
 
-    return jsonData;
+    return { data: jsonData, error: "", status: response.status };
   } catch (err) {
-    console.error(`ERROR ${err.message || err.msg}`);
+    console.error(`ERROR ${err.message || err.statusText}`);
 
-    if (
-      err?.message?.includes("Token is expired") ||
-      err?.message?.includes("token contains an invalid number of segments")
-    ) {
+    if (err?.message?.includes("Token is expired")) {
       removeToken(LOGIN_TOKEN_KEY);
     }
 
     const errorMessage = `${
       err?.message ||
-      err.msg ||
+      err.statusText ||
       altError ||
       "Unable to complete request. Please try again."
     }`;
@@ -62,7 +58,7 @@ const apiWrapper = async ({
       },
     });
 
-    return err;
+    return { data: err, error: errorMessage, status: err.status };
   } finally {
     dispatch({ type: "SET_LOADING", payload: { isOpen: false } });
   }

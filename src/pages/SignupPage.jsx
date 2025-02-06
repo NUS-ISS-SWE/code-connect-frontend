@@ -12,7 +12,8 @@ import {
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { loginUser } from "../api/UserApi";
+import { loginUser, registerUser } from "../api/UserApi";
+import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon.jsx";
 import { LOGIN_TOKEN_KEY } from "../contexts/AuthContext.jsx";
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -25,7 +26,8 @@ const SignupPage = () => {
 
   const navigate = useNavigate();
   const fieldRefs = {
-    email: useRef(null),
+    username: useRef(null),
+    // email: useRef(null),
     password: useRef(null),
     confirmPassword: useRef(null),
   };
@@ -51,9 +53,12 @@ const SignupPage = () => {
   const validate = () => {
     const newErrors = {};
 
-    if (!formInputs.email) newErrors.email = "Please enter email address!";
-    else if (!/\S+@\S+\.\S+/.test(formInputs.email))
-      newErrors.email = "Invalid email format";
+    if (!formInputs.username)
+      newErrors.username = "Please enter your username!";
+
+    // if (!formInputs.email) newErrors.email = "Please enter email address!";
+    // else if (!/\S+@\S+\.\S+/.test(formInputs.email))
+    //   newErrors.email = "Invalid email format";
 
     if (!formInputs.password) {
       newErrors.password = "Password is required";
@@ -80,10 +85,14 @@ const SignupPage = () => {
     const firstErrorField = validate();
 
     if (!firstErrorField) {
-      // TODO: Integrate sign up api
+      const { data, status } = await registerUser(formInputs, dispatch);
+
+      if (status === 200) {
+        handleLoginUser();
+      }
     } else {
       if (fieldRefs[firstErrorField]) {
-        fieldRefs[firstErrorField].current.scrollIntoView({
+        fieldRefs[firstErrorField]?.current.scrollIntoView({
           behavior: "smooth",
           block: "center",
         });
@@ -93,11 +102,50 @@ const SignupPage = () => {
     setLoading(false);
   };
 
+  const handleLoginUser = async () => {
+    const { data, message, status } = await loginUser(formInputs, dispatch);
+
+    if (status === 200) {
+      login(LOGIN_TOKEN_KEY, data);
+
+      dispatch({
+        type: "SHOW_TOAST",
+        payload: {
+          message: "You have been logged in",
+          isOpen: true,
+          variant: "",
+        },
+      });
+
+      navigate(PATHS.get("HOME").PATH);
+    } else {
+      dispatch({
+        type: "SHOW_TOAST",
+        payload: {
+          message: String(message),
+          isOpen: true,
+          variant: "error",
+        },
+      });
+    }
+  };
+
   return (
     <Box
-      className="bg-white flex h-[100vh] items-center justify-center w-[100vw]"
+      className="bg-white flex h-[100vh] items-center justify-center relative w-[100vw]"
       component="div"
     >
+      {/* Logo */}
+      <Box className="flex items-center">
+        <Link to="/">
+          <img
+            src={logo}
+            alt="code connect logo"
+            className="absolute h-10 lg:h-11 left-10 top-8 w-auto"
+          />
+        </Link>
+      </Box>
+
       <Stack className="bg-white !border !border-gray-300 !border-solid flex justify-start px-6 py-8 rounded-md space-y-8 w-[98%] lg:w-[400px]">
         <Stack className="flex justify-start space-y-2">
           <Typography className="!font-semibold !text-4xl !text-gray-900">
@@ -123,6 +171,21 @@ const SignupPage = () => {
             className="mb-0"
             color="primary"
             disabled={loading}
+            error={!!errors.username}
+            fullWidth
+            helperText={errors.username}
+            inputRef={fieldRefs.username}
+            label="Username*"
+            onChange={handleChangeInput("username")}
+            size="small"
+            value={formInputs.username}
+            variant="outlined"
+          />
+
+          {/* <TextField
+            className="mb-0"
+            color="primary"
+            disabled={loading}
             error={!!errors.email}
             fullWidth
             helperText={errors.email}
@@ -132,7 +195,7 @@ const SignupPage = () => {
             size="small"
             value={formInputs.email}
             variant="outlined"
-          />
+          /> */}
 
           <TextField
             className="mb-0"

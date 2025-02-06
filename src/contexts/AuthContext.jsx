@@ -2,8 +2,6 @@
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { PATHS } from "../paths";
-
 export const AuthContext = createContext();
 export const LOGIN_TOKEN_KEY = "tti-t2";
 
