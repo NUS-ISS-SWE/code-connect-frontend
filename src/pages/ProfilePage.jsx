@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { intervalToDuration } from "date-fns";
 
 import Icon from "../constants/Icon.jsx";
-import Tabs from "../components/Tabs";
+import Tabs from "../components/Tabs.jsx";
 
 import { useAuthContext } from "../hooks/useAuthContext.js";
 import { PATHS } from "../paths.js";
