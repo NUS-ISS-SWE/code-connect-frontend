@@ -68,21 +68,37 @@ const ProfilePage = () => {
           <Typography variant="h6">{formData.fullName}</Typography>
         </Stack>
 
-        <Box className="flex items-start justify-start gap-x-4 pt-4">
-          <Box className="!bg-gray-100 flex h-24 items-start justify-center overflow-hidden rounded-full !text-gray-300 w-24">
-            <Icon name={"User"} size={"117%"} />
-          </Box>
-
-          <Stack className="flex items-start justify-start gap-y-2">
-            <Stack className="flex gap-y-0">
-              <Typography className="!text-sm">{user?.email}</Typography>
-              <Typography className="!text-sm">{user?.account_type}</Typography>
-            </Stack>
-
-            <Stack className="flex gap-y-0">
-              <Typography className="!text-2xl">Member for</Typography>
-              <Typography className="!text-sm">
-                {renderMemberDuration(user?.create_at)}
+          // View Mode
+          <Stack spacing={2}>
+            <Typography>
+              <strong>Job Title:</strong> {formData.jobTitle}
+            </Typography>
+            <Typography>
+              <strong>Company:</strong> {formData.company}
+            </Typography>
+            <Typography>
+              <strong>Location:</strong> {formData.location}
+            </Typography>
+            <Typography>
+              <strong>Contact:</strong> {formData.contact}
+            </Typography>
+            <Typography>
+              <strong>About Me:</strong> {formData.aboutMe}
+            </Typography>
+            <Typography>
+              <strong>Certifications:</strong> {formData.certifications}
+            </Typography>
+            <Typography>
+              <strong>Education:</strong> {formData.education}
+            </Typography>
+            <Typography>
+              <strong>Work Experience:</strong> {formData.workExperience}
+            </Typography>
+            <Typography>
+              <strong>Skillset:</strong> {formData.skillset}
+            </Typography>
+            <Typography>
+              <strong>Programming Languages:</strong> {formData.programmingLanguages}
               </Typography>
             </Stack>
           </Stack>
