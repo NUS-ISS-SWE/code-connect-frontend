@@ -16,15 +16,14 @@ const ProfilePage = () => {
   const [formData, setFormData] = useState({
     fullName: "Test User",
     jobTitle: "Software Engineer",
-    company: "Tech Corp",
+    currentCompany: "Tech Corp",
     location: "Singapore",
-    contact: "testuser@example.com",
+    email: "testuser@example.com",
+    phone: "12345678",
     aboutMe: "Passionate developer currently doing their masters in SWE at NUS-ISS.",
-    certifications: "Azure Developer",
+    programmingLanguages: "React.JS, SpringBoot",
     education: "NUS ISS SWE",
-    workExperience: "work experience",
-    skillset: "React.JS, SpringBoot",
-    programmingLanguages: "JavaScript, TypeScript, Python, C#",
+    experience: "work experience"
   });
   
 
@@ -75,31 +74,28 @@ const ProfilePage = () => {
               <strong>Job Title:</strong> {formData.jobTitle}
             </Typography>
             <Typography>
-              <strong>Company:</strong> {formData.company}
+              <strong>Company:</strong> {formData.currentCompany}
             </Typography>
             <Typography>
               <strong>Location:</strong> {formData.location}
             </Typography>
             <Typography>
-              <strong>Contact:</strong> {formData.contact}
+              <strong>Email:</strong> {formData.email}
+            </Typography>
+            <Typography>
+              <strong>Phone Number:</strong> {formData.phone}
             </Typography>
             <Typography>
               <strong>About Me:</strong> {formData.aboutMe}
             </Typography>
             <Typography>
-              <strong>Certifications:</strong> {formData.certifications}
+              <strong>Programming Languages:</strong> {formData.programmingLanguages}
             </Typography>
             <Typography>
               <strong>Education:</strong> {formData.education}
             </Typography>
             <Typography>
-              <strong>Work Experience:</strong> {formData.workExperience}
-            </Typography>
-            <Typography>
-              <strong>Skillset:</strong> {formData.skillset}
-            </Typography>
-            <Typography>
-              <strong>Programming Languages:</strong> {formData.programmingLanguages}
+              <strong>Work Experience:</strong> {formData.experience}
             </Typography>
           </Stack>
         ) : (
@@ -123,7 +119,7 @@ const ProfilePage = () => {
               fullWidth
               label="Current Company"
               name="company"
-              value={formData.company}
+              value={formData.currentCompany}
               onChange={handleChange}
             />
             <TextField
@@ -135,9 +131,16 @@ const ProfilePage = () => {
             />
             <TextField
               fullWidth
-              label="Contact Information"
-              name="contact"
-              value={formData.contact}
+              label="Email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+            <TextField
+              fullWidth
+              label="Phone Number"
+              name="phone"
+              value={formData.phone}
               onChange={handleChange}
             />
             <TextField
@@ -151,9 +154,9 @@ const ProfilePage = () => {
             />
             <TextField
               fullWidth
-              label="Certifications"
-              name="certifications"
-              value={formData.certifications}
+              label="Programming Languages"
+              name="programmingLanguages"
+              value={formData.programmingLanguages}
               onChange={handleChange}
             />
             <TextField
@@ -167,21 +170,7 @@ const ProfilePage = () => {
               fullWidth
               label="Work Experience"
               name="workExperience"
-              value={formData.workExperience}
-              onChange={handleChange}
-            />
-            <TextField
-              fullWidth
-              label="Skillset"
-              name="skillset"
-              value={formData.skillset}
-              onChange={handleChange}
-            />
-            <TextField
-              fullWidth
-              label="Programming Languages"
-              name="programmingLanguages"
-              value={formData.programmingLanguages}
+              value={formData.experience}
               onChange={handleChange}
             />
 
