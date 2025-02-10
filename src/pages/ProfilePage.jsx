@@ -55,6 +55,9 @@ const ProfilePage = () => {
         <Tab label="View" />
         <Tab label="Edit" />
       </Tabs>
+
+      {/* Profile Section */}
+      <Stack spacing={3} sx={{ mt: 3 }}>
         </Stack>
 
         <Box className="flex items-start justify-start gap-x-4 pt-4">
@@ -75,7 +78,7 @@ const ProfilePage = () => {
               </Typography>
             </Stack>
           </Stack>
-        </Box>
+        )}
       </Stack>
     </Box>
   );
