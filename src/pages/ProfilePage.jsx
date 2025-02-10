@@ -58,6 +58,14 @@ const ProfilePage = () => {
 
       {/* Profile Section */}
       <Stack spacing={3} sx={{ mt: 3 }}>
+        {/* Profile Picture */}
+        <Stack direction="row" alignItems="center" spacing={2}>
+          <Avatar
+            sx={{ width: 100, height: 100 }}
+            src="https://via.placeholder.com/100"
+            alt="Profile Picture"
+          />
+          <Typography variant="h6">{formData.fullName}</Typography>
         </Stack>
 
         <Box className="flex items-start justify-start gap-x-4 pt-4">
