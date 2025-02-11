@@ -1,5 +1,3 @@
-import { Outlet, Navigate } from "react-router-dom";
-
 import { useAuthContext } from "../hooks/useAuthContext";
 import { PATHS } from "../paths";
 

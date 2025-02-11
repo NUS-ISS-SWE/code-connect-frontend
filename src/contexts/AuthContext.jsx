@@ -1,9 +1,7 @@
 /* eslint-disable react/prop-types */
-import { createContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
-export const LOGIN_TOKEN_KEY = "tti-t2";
+export const LOGIN_TOKEN_KEY = "cc-token";
 
 export const fetchToken = (key) => {
   return localStorage.getItem(key);

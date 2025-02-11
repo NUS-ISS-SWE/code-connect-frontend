@@ -1,16 +1,4 @@
 /* eslint-disable no-unused-vars */
-import {
-  Box,
-  Button,
-  CircularProgress,
-  IconButton,
-  InputAdornment,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 
 import { loginUser, registerUser } from "../api/UserApi";
 import logo from "../assets/logo/logo.png";

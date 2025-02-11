@@ -1,7 +1,3 @@
-import { Box, Stack, Typography } from "@mui/material";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
 import { useGlobalContext } from "../hooks/useGlobalContext";
 
 const HomePage = () => {

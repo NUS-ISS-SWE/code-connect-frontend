@@ -1,5 +1,3 @@
-import { Box, Stack, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
 import { intervalToDuration } from "date-fns";
 
 import Icon from "../constants/Icon.jsx";
