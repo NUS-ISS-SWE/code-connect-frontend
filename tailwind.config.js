@@ -4,6 +4,9 @@ export default {
   theme: {
     extend: {
       colors: {
+        primary: {
+          DEFAULT: "#1976D2",
+        },
         success: {
           DEFAULT: "#5BBF7A",
         },

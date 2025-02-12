@@ -1,0 +1,288 @@
+/* eslint-disable no-unused-vars */
+import {
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+import { loginUser, registerUser } from "../api/UserApi";
+import logo from "../assets/logo/logo.png";
+import Icon from "../constants/Icon.jsx";
+import { LOGIN_TOKEN_KEY } from "../contexts/AuthContext.jsx";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { useGlobalContext } from "../hooks/useGlobalContext";
+import { PATHS } from "../paths";
+
+const SignupPage = () => {
+  const { login } = useAuthContext();
+  const { state, dispatch } = useGlobalContext();
+
+  const navigate = useNavigate();
+  const fieldRefs = {
+    username: useRef(null),
+    // email: useRef(null),
+    password: useRef(null),
+    confirmPassword: useRef(null),
+  };
+
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [formInputs, setFormInputs] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleChangeInput = (key) => (evt) => {
+    setErrors((prevState) => {
+      const { [key]: _, ...rest } = prevState;
+      return rest;
+    });
+
+    setFormInputs({ ...formInputs, [key]: evt.target.value });
+  };
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (!formInputs.username)
+      newErrors.username = "Please enter your username!";
+
+    // if (!formInputs.email) newErrors.email = "Please enter email address!";
+    // else if (!/\S+@\S+\.\S+/.test(formInputs.email))
+    //   newErrors.email = "Invalid email format";
+
+    if (!formInputs.password) {
+      newErrors.password = "Password is required";
+    } else if (formInputs.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    if (!formInputs.confirmPassword) {
+      newErrors.confirmPassword = "Confirm Password is required";
+    } else if (formInputs.password !== formInputs.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    setErrors(newErrors);
+
+    // Return first key in error object
+    return Object.keys(newErrors)[0];
+  };
+
+  const handleClickLogin = async (e) => {
+    setLoading(true);
+    e.preventDefault();
+
+    const firstErrorField = validate();
+
+    if (!firstErrorField) {
+      const { data, status } = await registerUser(formInputs, dispatch);
+
+      if (status === 200) {
+        handleLoginUser();
+      }
+    } else {
+      if (fieldRefs[firstErrorField]) {
+        fieldRefs[firstErrorField]?.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    }
+
+    setLoading(false);
+  };
+
+  const handleLoginUser = async () => {
+    const { data, message, status } = await loginUser(formInputs, dispatch);
+
+    if (status === 200) {
+      login(LOGIN_TOKEN_KEY, data);
+
+      dispatch({
+        type: "SHOW_TOAST",
+        payload: {
+          message: "You have been logged in",
+          isOpen: true,
+          variant: "",
+        },
+      });
+
+      navigate(PATHS.get("HOME").PATH);
+    } else {
+      dispatch({
+        type: "SHOW_TOAST",
+        payload: {
+          message: String(message),
+          isOpen: true,
+          variant: "error",
+        },
+      });
+    }
+  };
+
+  return (
+    <Box
+      className="bg-white flex h-[100vh] items-center justify-center relative w-[100vw]"
+      component="div"
+    >
+      {/* Logo */}
+      <Box className="flex items-center">
+        <Link to="/">
+          <img
+            src={logo}
+            alt="code connect logo"
+            className="absolute h-10 lg:h-11 left-10 top-8 w-auto"
+          />
+        </Link>
+      </Box>
+
+      <Stack className="bg-white !border !border-gray-300 !border-solid flex justify-start px-6 py-8 rounded-md space-y-8 w-[98%] lg:w-[400px]">
+        <Stack className="flex justify-start space-y-2">
+          <Typography className="!font-semibold !text-4xl !text-gray-900">
+            Sign Up
+          </Typography>
+
+          <Box className="flex justify-start space-x-1">
+            <Typography className="!font-normal !text-sm !text-gray-700">
+              Already have an account?
+            </Typography>
+
+            <Link
+              className={`!font-normal !text-sm !text-primary hover:underline`}
+              to={PATHS.get("LOGIN").PATH}
+            >
+              Login
+            </Link>
+          </Box>
+        </Stack>
+
+        <Stack className="flex justify-start space-y-5">
+          <TextField
+            className="mb-0"
+            color="primary"
+            disabled={loading}
+            error={!!errors.username}
+            fullWidth
+            helperText={errors.username}
+            inputRef={fieldRefs.username}
+            label="Username*"
+            onChange={handleChangeInput("username")}
+            size="small"
+            value={formInputs.username}
+            variant="outlined"
+          />
+
+          {/* <TextField
+            className="mb-0"
+            color="primary"
+            disabled={loading}
+            error={!!errors.email}
+            fullWidth
+            helperText={errors.email}
+            inputRef={fieldRefs.email}
+            label="Email Address*"
+            onChange={handleChangeInput("email")}
+            size="small"
+            value={formInputs.email}
+            variant="outlined"
+          /> */}
+
+          <TextField
+            className="mb-0"
+            color="primary"
+            disabled={loading}
+            error={!!errors.password}
+            fullWidth
+            helperText={errors.password}
+            inputRef={fieldRefs.password}
+            label="Password*"
+            onChange={handleChangeInput("password")}
+            type={showPassword ? "text" : "password"}
+            size="small"
+            value={formInputs.password}
+            variant="outlined"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment className="!ml-0" position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    className="!text-gray-400"
+                    disabled={loading}
+                    edge="end"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? (
+                      <Icon name={"EyeOff"} />
+                    ) : (
+                      <Icon name={"Eye"} />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          <TextField
+            className="mb-0"
+            color="primary"
+            disabled={loading}
+            error={!!errors.confirmPassword}
+            fullWidth
+            helperText={errors.confirmPassword}
+            inputRef={fieldRefs.confirmPassword}
+            label="Re-type Password*"
+            onChange={handleChangeInput("confirmPassword")}
+            type={showPassword ? "text" : "password"}
+            size="small"
+            value={formInputs.confirmPassword}
+            variant="outlined"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment className="!ml-0" position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    className="!text-gray-400"
+                    disabled={loading}
+                    edge="end"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? (
+                      <Icon name={"EyeOff"} />
+                    ) : (
+                      <Icon name={"Eye"} />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Stack>
+
+        <Button
+          className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !shadow-none !text-sm !text-white !tracking-normal !transition-all w-full hover:!bg-primary-100"
+          disabled={loading}
+          onClick={handleClickLogin}
+          variant="contained"
+        >
+          {loading ? (
+            <CircularProgress size={20} className="!text-white" />
+          ) : (
+            "Sign up"
+          )}
+        </Button>
+      </Stack>
+    </Box>
+  );
+};
+
+export default SignupPage;
