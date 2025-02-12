@@ -50,7 +50,6 @@ const createProfile = async ({fullName, jobTitle, currentCompany, location, emai
 
   const url = `${API_BASE_URL}`;
 
-  console.log("code reaches here");
   const response = await apiWrapper({
     body: formData,
     dispatch,
@@ -60,7 +59,8 @@ const createProfile = async ({fullName, jobTitle, currentCompany, location, emai
     },
     method: "POST", // Use PUT instead of POST for updates
   });
-
+  console.log("returning", response);
+  
   return response;
 };
 

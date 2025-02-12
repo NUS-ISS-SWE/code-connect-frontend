@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { useParams, navigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
   Stack,
@@ -12,6 +12,7 @@ import {
   Divider
 } from "@mui/material";
 import { getProfileById, createProfile, updateProfile } from "../api/ProfileApi";
+import { PATHS } from "../paths";
 
 // Dummy reducer for toast messages
 const toastReducer = (state, action) => {
@@ -24,6 +25,7 @@ const toastReducer = (state, action) => {
 };
 
 const ProfilePage = () => {
+  const navigate  = useNavigate();
   const { id } = useParams(); // Get profile ID from URL
   const [tabIndex, setTabIndex] = useState(0);
   const [formData, setFormData] = useState(null);
@@ -32,7 +34,6 @@ const ProfilePage = () => {
   const [toastState, dispatch] = useReducer(toastReducer, { message: "", isOpen: false });
 
   const createUpdateProfile = async() =>{
-    console.log("code reaches here");
     if (id){
       const { data, error } = await updateProfile({ id, ...formData }, dispatch);
       if (error) {
@@ -51,7 +52,7 @@ const ProfilePage = () => {
   
     }
     else{
-      const { data, error } = await createProfile({...formData }, dispatch);
+      const { data, error } = await createProfile({...formData }, dispatch);      
       if (error) {
         console.error("Error creating profile:", error);
         return;
@@ -65,11 +66,8 @@ const ProfilePage = () => {
           variant: "success",
         },
       });  
-    }
-  
-    if (!id) {
-      // Redirect to the new profile page
-      navigate(`${PATHS.get("PROFILE").PATH}/${data.id}`);
+        // Redirect to the new profile page
+        navigate(`${PATHS.get("PROFILE").PATH}/${data.id}`);
     }
   }
 
