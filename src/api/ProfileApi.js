@@ -34,21 +34,63 @@ const getProfileById = async ({id}, dispatch) => {
     return { data: null, error: error.message, status: 500 };
   }
 };
+const createProfile = async ({fullName, jobTitle, currentCompany, location, email, phone, aboutMe, programmingLanguages, education, experience }, dispatch) => {
+  const formData = JSON.stringify({
+    fullName,
+    jobTitle,
+    currentCompany,
+    location,
+    email,
+    phone,
+    aboutMe,
+    programmingLanguages,
+    education,
+    experience,
+  });
 
-const updateProfile = async ({ username, password }, dispatch) => {
-  const formData = JSON.stringify({ username, password });
+  const url = `${API_BASE_URL}`;
 
+  console.log("code reaches here");
   const response = await apiWrapper({
     body: formData,
     dispatch,
-    endpoint: `/api/v1/updateProfile`,
+    endpoint: url, // Update specific profile by ID
     headers: {
       "Content-Type": "application/json",
     },
-    method: "POST",
+    method: "POST", // Use PUT instead of POST for updates
   });
 
   return response;
 };
 
-export { getProfileById, updateProfile };
+const updateProfile = async ({ id, fullName, jobTitle, currentCompany, location, email, phone, aboutMe, programmingLanguages, education, experience }, dispatch) => {
+  const formData = JSON.stringify({
+    fullName,
+    jobTitle,
+    currentCompany,
+    location,
+    email,
+    phone,
+    aboutMe,
+    programmingLanguages,
+    education,
+    experience,
+  });
+
+  const url = `${API_BASE_URL}/${id}`;
+
+  const response = await apiWrapper({
+    body: formData,
+    dispatch,
+    endpoint: url, // Update specific profile by ID
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "PUT", // Use PUT instead of POST for updates
+  });
+
+  return response;
+};
+
+export { getProfileById, updateProfile, createProfile };

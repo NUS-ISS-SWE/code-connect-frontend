@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, navigate } from "react-router-dom";
 import {
   Box,
   Stack,
@@ -11,7 +11,7 @@ import {
   Tab,
   Divider
 } from "@mui/material";
-import { getProfileById } from "../api/ProfileApi";
+import { getProfileById, createProfile, updateProfile } from "../api/ProfileApi";
 
 // Dummy reducer for toast messages
 const toastReducer = (state, action) => {
@@ -30,6 +30,48 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [toastState, dispatch] = useReducer(toastReducer, { message: "", isOpen: false });
+
+  const createUpdateProfile = async() =>{
+    console.log("code reaches here");
+    if (id){
+      const { data, error } = await updateProfile({ id, ...formData }, dispatch);
+      if (error) {
+        console.error("Error updated profile:", error);
+        return;
+      }
+    
+      dispatch({
+        type: "SHOW_TOAST",
+        payload: {
+          message: "Profile updated successfully",
+          isOpen: true,
+          variant: "success",
+        },
+      });  
+  
+    }
+    else{
+      const { data, error } = await createProfile({...formData }, dispatch);
+      if (error) {
+        console.error("Error creating profile:", error);
+        return;
+      }
+    
+      dispatch({
+        type: "SHOW_TOAST",
+        payload: {
+          message: "Profile created successfully",
+          isOpen: true,
+          variant: "success",
+        },
+      });  
+    }
+  
+    if (!id) {
+      // Redirect to the new profile page
+      navigate(`${PATHS.get("PROFILE").PATH}/${data.id}`);
+    }
+  }
 
   useEffect(() => {
     if (!id) {
@@ -55,10 +97,9 @@ const ProfilePage = () => {
         const { data, error } = await getProfileById({ id }, dispatch);
         if (error) throw new Error(error);
 
-        console.log("Profile Data2:", data);
         const profileData = await data.json();
-
         setFormData(profileData);
+
       } catch (err) {
         console.error("Error fetching profile:", err);
         setError(err.message);
@@ -222,8 +263,9 @@ const ProfilePage = () => {
               onChange={handleChange}
             />
 
-            <Button variant="contained" color="primary">
-              Save Changes
+            <Button variant="contained" color="primary"
+            onClick={createUpdateProfile}>
+              {id ? "Save Changes" : "Create Profile"}
             </Button>
           </Stack>
         )}
