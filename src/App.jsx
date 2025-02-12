@@ -32,11 +32,13 @@ function App() {
             <Route path={PATHS.get("LOGIN").PATH} element={<LoginPage />} />
 
             <Route path={PATHS.get("SIGNUP").PATH} element={<SignupPage />} />
+            
+            <Route path={PATHS.get("PROFILE").PATH} element={<ProfilePage />} />
+            <Route path={PATHS.get("GETPROFILE").PATH} element={<ProfilePage />} />
           </Route>
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
-            <Route path={PATHS.get("PROFILE").PATH} element={<ProfilePage />} />
           </Route>
         </Routes>
       </Suspense>
