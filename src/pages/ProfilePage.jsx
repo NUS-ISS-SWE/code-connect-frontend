@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useReducer } from "react";
+import { useParams } from "react-router-dom";
 import {
   Box,
   Stack,
@@ -10,22 +11,64 @@ import {
   Tab,
   Divider
 } from "@mui/material";
+import { getProfileById } from "../api/ProfileApi";
+
+// Dummy reducer for toast messages
+const toastReducer = (state, action) => {
+  switch (action.type) {
+    case "SHOW_TOAST":
+      return { ...state, message: action.payload.message, isOpen: action.payload.isOpen };
+    default:
+      return state;
+  }
+};
 
 const ProfilePage = () => {
+  const { id } = useParams(); // Get profile ID from URL
   const [tabIndex, setTabIndex] = useState(0);
-  const [formData, setFormData] = useState({
-    fullName: "Test User",
-    jobTitle: "Software Engineer",
-    currentCompany: "Tech Corp",
-    location: "Singapore",
-    email: "testuser@example.com",
-    phone: "12345678",
-    aboutMe: "Passionate developer currently doing their masters in SWE at NUS-ISS.",
-    programmingLanguages: "React.JS, SpringBoot",
-    education: "NUS ISS SWE",
-    experience: "work experience"
-  });
-  
+  const [formData, setFormData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [toastState, dispatch] = useReducer(toastReducer, { message: "", isOpen: false });
+
+  useEffect(() => {
+    if (!id) {
+      // If no ID is provided, show an empty form for creating a profile
+      setFormData({
+        fullName: "",
+        jobTitle: "",
+        currentCompany: "",
+        location: "",
+        email: "",
+        phone: "",
+        aboutMe: "",
+        programmingLanguages: "",
+        education: "",
+        experience: "",
+      });
+      setLoading(false);
+      return;
+    }
+
+    const fetchProfile = async () => {
+      try {
+        const { data, error } = await getProfileById({ id }, dispatch);
+        if (error) throw new Error(error);
+
+        console.log("Profile Data2:", data);
+        const profileData = await data.json();
+
+        setFormData(profileData);
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [id]); // Runs when the ID changes
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
@@ -34,6 +77,9 @@ const ProfilePage = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  if (loading) return <Typography>Loading...</Typography>;
+  if (error) return <Typography color="error">{error}</Typography>;
 
   return (
     <Box
@@ -50,10 +96,12 @@ const ProfilePage = () => {
       <Divider sx={{ borderBottom: "1px solid #ccc", mb: 2 }} />
 
       {/* Tabs for View / Edit */}
-      <Tabs value={tabIndex} onChange={handleTabChange} left>
+      {id && (
+        <Tabs value={tabIndex} onChange={handleTabChange}>
         <Tab label="View" />
         <Tab label="Edit" />
       </Tabs>
+      )}
 
       {/* Profile Section */}
       <Stack spacing={3} sx={{ mt: 3 }}>
@@ -67,8 +115,8 @@ const ProfilePage = () => {
           <Typography variant="h6">{formData.fullName}</Typography>
         </Stack>
 
-        {tabIndex === 0 ? (
-          // View Mode
+        {id && tabIndex === 0 ? (
+          // View Mode (when an ID is provided)
           <Stack spacing={2}>
             <Typography>
               <strong>Job Title:</strong> {formData.jobTitle}

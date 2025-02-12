@@ -49,7 +49,16 @@ export const PATHS = new Map([
     {
       ID: "_profile",
       LABEL: "Profile",
-      PATH: "/user",
+      PATH: "/profile",
+      IS_PROTECTED: false,
+    },
+  ],
+  [
+    "GETPROFILE",
+    {
+      ID: "_getprofile",
+      LABEL: "GetProfile",
+      PATH: "/profile/:id",
       IS_PROTECTED: false,
     },
   ],
