@@ -18,6 +18,7 @@ export default defineConfig({
             "useContext",
             "useEffect",
             "useRef",
+            "useReducer",
             "useState",
             "useMemo",
           ],
@@ -25,6 +26,7 @@ export default defineConfig({
         "react-router-dom",
         {
           "@mui/material": [
+            "Avatar",
             "Box",
             "Button",
             "CircularProgress",
@@ -37,6 +39,8 @@ export default defineConfig({
             "MenuItem",
             "Snackbar",
             "Stack",
+            "Tab",
+            "Tabs",
             "TextField",
             "Toolbar",
             "Typography",

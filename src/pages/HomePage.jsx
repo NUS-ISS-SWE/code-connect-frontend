@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-no-undef */
 import Navbar from "../components/Navbar";
+
 import { useGlobalContext } from "../hooks/useGlobalContext";
 
 const HomePage = () => {
