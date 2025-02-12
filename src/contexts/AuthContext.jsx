@@ -1,49 +1,50 @@
 /* eslint-disable react/prop-types */
+/* eslint-disable no-undef */
+import {
+  fetchToken,
+  LOGIN_TOKEN_KEY,
+  removeToken,
+  storeToken,
+} from "../utils/auth";
 
 export const AuthContext = createContext();
-export const LOGIN_TOKEN_KEY = "cc-token";
-
-export const fetchToken = (key) => {
-  return localStorage.getItem(key);
-};
-
-export const storeToken = (key, token) => {
-  if (token) {
-    localStorage.setItem(key, token);
-  }
-};
-
-export const removeToken = (key) => {
-  localStorage.removeItem(key);
-};
 
 export const AuthProvider = ({ children }) => {
-  const navigate = useNavigate();
-
-  const [token, setToken] = useState(fetchToken(LOGIN_TOKEN_KEY) || null);
   const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    initializeAuth();
+  }, []);
+
+  const initializeAuth = async () => {
+    const token = fetchToken(LOGIN_TOKEN_KEY);
+
+    if (token) {
+      // TODO: Verify if token is valid with backend or check expiration
+      // const isValid = await verifyToken(token);
+      // isValid ? login(LOGIN_TOKEN_KEY, token) : logout();
+
+      login(LOGIN_TOKEN_KEY, token);
+    }
+  };
 
   const login = (key, token) => {
-    setToken(token);
+    setUser((prevState) => ({ ...prevState, token }));
+    setIsAuthenticated(true);
+
     storeToken(key, token);
   };
 
   const logout = () => {
-    // navigate(PATHS.get("HOME").PATH);
-
-    setToken(null);
+    setIsAuthenticated(false);
     removeToken(LOGIN_TOKEN_KEY);
 
     setUser(null);
   };
 
-  useEffect(() => {
-    // Auto-logout if token expires
-    if (!token) logout();
-  }, [token]);
-
   const authState = {
-    token,
+    isAuthenticated,
     login,
     logout,
     user,

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-undef */
 const PublicRoute = () => {
   return <Outlet />;
 };

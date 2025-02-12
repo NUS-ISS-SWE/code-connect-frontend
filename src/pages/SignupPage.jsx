@@ -1,11 +1,13 @@
+/* eslint-disable react/jsx-no-undef */
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 
 import { loginUser, registerUser } from "../api/UserApi";
 import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon.jsx";
-import { LOGIN_TOKEN_KEY } from "../contexts/AuthContext.jsx";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
+import { LOGIN_TOKEN_KEY } from "../utils/auth.js";
 import { PATHS } from "../paths";
 
 const SignupPage = () => {
@@ -94,7 +96,7 @@ const SignupPage = () => {
     const { data, message, status } = await loginUser(formInputs, dispatch);
 
     if (status === 200) {
-      login(LOGIN_TOKEN_KEY, data);
+      login(LOGIN_TOKEN_KEY, data.token);
 
       dispatch({
         type: "SHOW_TOAST",

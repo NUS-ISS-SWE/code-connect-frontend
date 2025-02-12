@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable react/jsx-no-undef */
 import Loader from "./components/Loader.jsx";
 import Toast from "./components/Toast.jsx";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";

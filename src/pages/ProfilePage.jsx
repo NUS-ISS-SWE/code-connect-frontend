@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-undef */
 import { intervalToDuration } from "date-fns";
 
 import Icon from "../constants/Icon.jsx";
