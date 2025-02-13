@@ -36,6 +36,15 @@ export const PATHS = new Map([
     },
   ],
   [
+    "JOBS",
+    {
+      ID: "_jobs",
+      LABEL: "Jobs",
+      PATH: "/jobs",
+      IS_PROTECTED: false,
+    },
+  ],
+  [
     "LOGIN",
     {
       ID: "_login",

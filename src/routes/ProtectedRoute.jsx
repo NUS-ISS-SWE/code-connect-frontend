@@ -1,16 +1,21 @@
-import { Outlet, Navigate } from "react-router-dom";
-
+/* eslint-disable no-undef */
+/* eslint-disable react/jsx-no-undef */
 import { useAuthContext } from "../hooks/useAuthContext";
 import { PATHS } from "../paths";
 
 const ProtectedRoute = () => {
-  const { user } = useAuthContext();
+  const { isAuthenticated } = useAuthContext();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  return user?.isAuthenticated ? (
-    <Outlet />
-  ) : (
-    <Navigate to={PATHS.get("LOGIN").PATH} />
-  );
+  useEffect(() => {
+    // Redirect to login page if user is not authenticated
+    if (!isAuthenticated) {
+      navigate(PATHS.get("LOGIN").PATH);
+    }
+  }, [isAuthenticated, location]);
+
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

@@ -1,6 +1,5 @@
-import { lazy, Suspense } from "react";
-import { Route, Routes } from "react-router-dom";
-
+/* eslint-disable no-undef */
+/* eslint-disable react/jsx-no-undef */
 import Loader from "./components/Loader.jsx";
 import Toast from "./components/Toast.jsx";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
@@ -32,13 +31,16 @@ function App() {
             <Route path={PATHS.get("LOGIN").PATH} element={<LoginPage />} />
 
             <Route path={PATHS.get("SIGNUP").PATH} element={<SignupPage />} />
-            
-            <Route path={PATHS.get("PROFILE").PATH} element={<ProfilePage />} />
-            <Route path={PATHS.get("GETPROFILE").PATH} element={<ProfilePage />} />
           </Route>
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
+            <Route path={PATHS.get("PROFILE").PATH} element={<ProfilePage />} />
+
+            <Route
+              path={PATHS.get("GETPROFILE").PATH}
+              element={<ProfilePage />}
+            />
           </Route>
         </Routes>
       </Suspense>

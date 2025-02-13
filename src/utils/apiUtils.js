@@ -1,9 +1,6 @@
 /* eslint-disable no-undef */
-import {
-  fetchToken,
-  LOGIN_TOKEN_KEY,
-  removeToken,
-} from "../contexts/AuthContext.jsx";
+
+import { fetchToken, removeToken, LOGIN_TOKEN_KEY } from "./auth.js";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
