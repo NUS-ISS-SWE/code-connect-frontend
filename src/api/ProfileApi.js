@@ -1,10 +1,8 @@
 import { apiWrapper } from "../utils/apiUtils";
 
-const API_BASE_URL = "http://localhost:8080/profiles";
-
-const getProfileById = async ({id}, dispatch) => {
+const getProfileById = async ({ id }, dispatch) => {
   try {
-    const url = `${API_BASE_URL}/${id}`;
+    const url = `/profiles/${id}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -34,7 +32,21 @@ const getProfileById = async ({id}, dispatch) => {
     return { data: null, error: error.message, status: 500 };
   }
 };
-const createProfile = async ({fullName, jobTitle, currentCompany, location, email, phone, aboutMe, programmingLanguages, education, experience }, dispatch) => {
+const createProfile = async (
+  {
+    fullName,
+    jobTitle,
+    currentCompany,
+    location,
+    email,
+    phone,
+    aboutMe,
+    programmingLanguages,
+    education,
+    experience,
+  },
+  dispatch
+) => {
   const formData = JSON.stringify({
     fullName,
     jobTitle,
@@ -48,23 +60,36 @@ const createProfile = async ({fullName, jobTitle, currentCompany, location, emai
     experience,
   });
 
-  const url = `${API_BASE_URL}`;
-
   const response = await apiWrapper({
     body: formData,
     dispatch,
-    endpoint: url, // Update specific profile by ID
+    endpoint: "/profiles", // Update specific profile by ID
     headers: {
       "Content-Type": "application/json",
     },
     method: "POST", // Use PUT instead of POST for updates
   });
   console.log("returning", response);
-  
+
   return response;
 };
 
-const updateProfile = async ({ id, fullName, jobTitle, currentCompany, location, email, phone, aboutMe, programmingLanguages, education, experience }, dispatch) => {
+const updateProfile = async (
+  {
+    id,
+    fullName,
+    jobTitle,
+    currentCompany,
+    location,
+    email,
+    phone,
+    aboutMe,
+    programmingLanguages,
+    education,
+    experience,
+  },
+  dispatch
+) => {
   const formData = JSON.stringify({
     fullName,
     jobTitle,
@@ -78,7 +103,7 @@ const updateProfile = async ({ id, fullName, jobTitle, currentCompany, location,
     experience,
   });
 
-  const url = `${API_BASE_URL}/${id}`;
+  const url = `/profiles/${id}`;
 
   const response = await apiWrapper({
     body: formData,
@@ -93,4 +118,35 @@ const updateProfile = async ({ id, fullName, jobTitle, currentCompany, location,
   return response;
 };
 
-export { getProfileById, updateProfile, createProfile };
+const retrieveResume = async ({ id }, dispatch) => {
+  const url = `/profiles/${id}/resume`;
+
+  const response = await apiWrapper({
+    dispatch,
+    endpoint: url,
+    method: "GET",
+  });
+
+  return response;
+};
+
+const uploadResume = async ({ id, formData }, dispatch) => {
+  const url = `/profiles/${id}/uploadResume`;
+
+  const response = await apiWrapper({
+    body: formData,
+    dispatch,
+    endpoint: url,
+    method: "POST",
+  });
+
+  return response;
+};
+
+export {
+  getProfileById,
+  updateProfile,
+  createProfile,
+  retrieveResume,
+  uploadResume,
+};

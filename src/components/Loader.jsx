@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-undef */
 /* eslint-disable react/prop-types */
 
 import { useGlobalContext } from "../hooks/useGlobalContext";

@@ -1,4 +1,4 @@
-export const PATHS = new Map([
+const paths = new Map([
   [
     "ERROR",
     {
@@ -81,3 +81,5 @@ export const PATHS = new Map([
     },
   ],
 ]);
+
+export default paths;

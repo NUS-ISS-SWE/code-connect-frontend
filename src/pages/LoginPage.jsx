@@ -7,8 +7,9 @@ import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon.jsx";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { LOGIN_TOKEN_KEY } from "../utils/auth.js";
-import { PATHS } from "../paths";
+import { paths } from "../routes";
+import { LOGIN_TOKEN_KEY } from "../utils/authUtils.js";
+
 
 const LoginPage = () => {
   const { login } = useAuthContext();
@@ -78,7 +79,7 @@ const LoginPage = () => {
           },
         });
 
-        navigate(PATHS.get("HOME").PATH);
+        navigate(paths.get("HOME").PATH);
       } else {
         dispatch({
           type: "SHOW_TOAST",
@@ -130,7 +131,7 @@ const LoginPage = () => {
 
             <Link
               className={`!font-normal !text-sm !text-primary hover:underline`}
-              to={PATHS.get("SIGNUP").PATH}
+              to={paths.get("SIGNUP").PATH}
             >
               Create an account
             </Link>

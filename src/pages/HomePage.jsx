@@ -8,7 +8,7 @@ const HomePage = () => {
   const { state, dispatch } = useGlobalContext();
 
   return (
-    <Stack className="bg-gray-100 flex flex-1 items-start justify-start min-h-[100vh] w-screen">
+    <Stack className="bg-gray-100 flex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
 
       <Stack className="flex flex-1 items-start justify-start mx-auto max-w-7xl w-full">

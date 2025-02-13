@@ -7,8 +7,8 @@ import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon.jsx";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { LOGIN_TOKEN_KEY } from "../utils/auth.js";
-import { PATHS } from "../paths";
+import { paths } from "../routes";
+import { LOGIN_TOKEN_KEY } from "../utils/authUtils.js";
 
 const SignupPage = () => {
   const { login } = useAuthContext();
@@ -107,7 +107,7 @@ const SignupPage = () => {
         },
       });
 
-      navigate(PATHS.get("HOME").PATH);
+      navigate(paths.get("HOME").PATH);
     } else {
       dispatch({
         type: "SHOW_TOAST",
@@ -149,7 +149,7 @@ const SignupPage = () => {
 
             <Link
               className={`!font-normal !text-sm !text-primary hover:underline`}
-              to={PATHS.get("LOGIN").PATH}
+              to={paths.get("LOGIN").PATH}
             >
               Login
             </Link>

@@ -1,7 +1,8 @@
 /* eslint-disable no-undef */
 /* eslint-disable react/jsx-no-undef */
 import { useAuthContext } from "../hooks/useAuthContext";
-import { PATHS } from "../paths";
+import paths from "./paths";
+
 
 const ProtectedRoute = () => {
   const { isAuthenticated } = useAuthContext();
@@ -11,7 +12,7 @@ const ProtectedRoute = () => {
   useEffect(() => {
     // Redirect to login page if user is not authenticated
     if (!isAuthenticated) {
-      navigate(PATHS.get("LOGIN").PATH);
+      navigate(paths.get("LOGIN").PATH);
     }
   }, [isAuthenticated, location]);
 

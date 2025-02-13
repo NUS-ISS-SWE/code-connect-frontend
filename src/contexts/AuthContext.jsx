@@ -5,7 +5,7 @@ import {
   LOGIN_TOKEN_KEY,
   removeToken,
   storeToken,
-} from "../utils/auth";
+} from "../utils/authUtils";
 
 export const AuthContext = createContext();
 

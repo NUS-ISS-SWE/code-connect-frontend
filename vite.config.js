@@ -57,7 +57,15 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
+      // Proxy API requests to User Authentication
       "/api": {
+        target: "http://localhost:8081",
+        changeOrigin: true,
+        secure: false,
+      },
+
+      // Proxy API requests to Profile Management
+      "/profiles": {
         target: "http://localhost:8080",
         changeOrigin: true,
         secure: false,
