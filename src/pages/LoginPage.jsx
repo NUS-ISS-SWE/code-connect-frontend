@@ -1,24 +1,15 @@
+/* eslint-disable react/jsx-no-undef */
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import {
-  Box,
-  Button,
-  CircularProgress,
-  IconButton,
-  InputAdornment,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 
 import { loginUser } from "../api/UserApi";
 import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon.jsx";
-import { LOGIN_TOKEN_KEY } from "../contexts/AuthContext.jsx";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { PATHS } from "../paths";
+import { paths } from "../routes";
+import { LOGIN_TOKEN_KEY } from "../utils/authUtils.js";
+
 
 const LoginPage = () => {
   const { login } = useAuthContext();
@@ -77,7 +68,7 @@ const LoginPage = () => {
       const { data, message, status } = await loginUser(formInputs, dispatch);
 
       if (status === 200) {
-        login(LOGIN_TOKEN_KEY, data);
+        login(LOGIN_TOKEN_KEY, data.token);
 
         dispatch({
           type: "SHOW_TOAST",
@@ -88,7 +79,7 @@ const LoginPage = () => {
           },
         });
 
-        navigate(PATHS.get("HOME").PATH);
+        navigate(paths.get("HOME").PATH);
       } else {
         dispatch({
           type: "SHOW_TOAST",
@@ -140,7 +131,7 @@ const LoginPage = () => {
 
             <Link
               className={`!font-normal !text-sm !text-primary hover:underline`}
-              to={PATHS.get("SIGNUP").PATH}
+              to={paths.get("SIGNUP").PATH}
             >
               Create an account
             </Link>

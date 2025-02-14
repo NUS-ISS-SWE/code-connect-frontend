@@ -16,7 +16,12 @@ const loginUser = async ({ username, password }, dispatch) => {
       throw new Error("Login failed");
     }
 
-    return { data: response, error: "", status: response.status };
+    // const jsonData = await response.json();
+
+    // Dummy token for now
+    const dummyToken = "123";
+
+    return { data: { token: dummyToken }, error: "", status: response.status };
   } catch (error) {
     console.error("Error:", error);
 

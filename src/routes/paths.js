@@ -1,4 +1,4 @@
-export const PATHS = new Map([
+const paths = new Map([
   [
     "ERROR",
     {
@@ -32,6 +32,15 @@ export const PATHS = new Map([
       ID: "_home",
       LABEL: "Home",
       PATH: "/",
+      IS_PROTECTED: false,
+    },
+  ],
+  [
+    "JOBS",
+    {
+      ID: "_jobs",
+      LABEL: "Jobs",
+      PATH: "/jobs",
       IS_PROTECTED: false,
     },
   ],
@@ -72,3 +81,5 @@ export const PATHS = new Map([
     },
   ],
 ]);
+
+export default paths;

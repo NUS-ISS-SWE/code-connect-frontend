@@ -1,6 +1,6 @@
-import { Box, Stack, Typography } from "@mui/material";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/jsx-no-undef */
+import Navbar from "../components/Navbar";
 
 import { useGlobalContext } from "../hooks/useGlobalContext";
 
@@ -8,11 +8,13 @@ const HomePage = () => {
   const { state, dispatch } = useGlobalContext();
 
   return (
-    <Box className="bg-gray-100 flex flex-1 items-start justify-center min-h-[100vh] w-screen">
-      <Stack className="flex flex-1 items-start justify-start max-w-7xl w-full">
+    <Stack className="bg-gray-100 flex flex-1 items-start justify-start min-h-[100vh] w-full">
+      <Navbar />
+
+      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-7xl w-full">
         <h1>Home Page</h1>
       </Stack>
-    </Box>
+    </Stack>
   );
 };
 
