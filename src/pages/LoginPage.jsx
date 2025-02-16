@@ -1,15 +1,13 @@
 /* eslint-disable react/jsx-no-undef */
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
 
 import { loginUser } from "../api/UserApi";
 import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon.jsx";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { paths } from "../routes";
-import { LOGIN_TOKEN_KEY } from "../utils/authUtils.js";
+import paths from "../routes/paths.js";
 
+import { LOGIN_TOKEN_KEY } from "../utils/authUtils.js";
 
 const LoginPage = () => {
   const { login } = useAuthContext();
@@ -65,9 +63,9 @@ const LoginPage = () => {
     const firstErrorField = validate();
 
     if (!firstErrorField) {
-      const { data, message, status } = await loginUser(formInputs, dispatch);
+      const { data, error, status } = await loginUser(formInputs, dispatch);
 
-      if (status === 200) {
+      if (!error) {
         login(LOGIN_TOKEN_KEY, data.token);
 
         dispatch({
@@ -84,7 +82,7 @@ const LoginPage = () => {
         dispatch({
           type: "SHOW_TOAST",
           payload: {
-            message: String(message),
+            message: String(error),
             isOpen: true,
             variant: "error",
           },
@@ -152,6 +150,13 @@ const LoginPage = () => {
             size="small"
             value={formInputs.username}
             variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment className="!ml-0 !text-gray-400" position="end">
+                  <Icon name={"UserLine"} size={"1.3em"} />
+                </InputAdornment>
+              ),
+            }}
           />
 
           {/* <TextField
@@ -184,6 +189,11 @@ const LoginPage = () => {
             value={formInputs.password}
             variant="outlined"
             InputProps={{
+              startAdornment: (
+                <InputAdornment className="!ml-0 !text-gray-400" position="end">
+                  <Icon name={"Lock"} size={"1.3em"} />
+                </InputAdornment>
+              ),
               endAdornment: (
                 <InputAdornment className="!ml-0" position="end">
                   <IconButton

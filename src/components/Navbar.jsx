@@ -1,9 +1,8 @@
 /* eslint-disable react/jsx-no-undef */
-/* eslint-disable no-undef */
 import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon";
 import { useAuthContext } from "../hooks/useAuthContext";
-import { paths } from "../routes";
+import paths from "../routes/paths";
 
 export const NAV_OPTIONS = [
   { title: paths.get("HOME").LABEL, path: paths.get("HOME").PATH },
@@ -35,20 +34,20 @@ const Navbar = () => {
       className="!bg-white border-b border-gray-200 border-solid  flex items-center justify-center sticky top-0 z-40 w-full"
       elevation={0}
     >
-      <Toolbar className="flex items-center justify-between mx-auto max-w-7xl space-x-6 !px-0 lg:!px-0 !py-4 lg:!py-0 w-full">
+      <Toolbar className="flex items-center justify-between mx-auto max-w-7xl space-x-3 !px-3 lg:!px-0 !py-4 lg:!py-0 w-full">
         {/* Logo */}
         <Box className="flex items-center">
           <Link to={paths.get("HOME").PATH}>
             <img
               src={logo}
               alt="Code Connect Logo"
-              className="h-6 lg:h-7 w-auto"
+              className="h-8 lg:h-7 w-auto"
             />
           </Link>
         </Box>
 
         {/* Desktop Navigation Links */}
-        <Box className="hidden lg:flex flex-1 justify-start space-x-1">
+        <Box className="hidden lg:flex flex-1 justify-start px-12 space-x-2">
           {NAV_OPTIONS.map((option) => {
             return (
               <Button
@@ -64,7 +63,7 @@ const Navbar = () => {
                 {option.title}
 
                 <Box
-                  className={`absolute !bg-primary -bottom-1 duration-500 h-0.5 margin-x-auto origin-left scale-x-0 transform transition-transform w-3/5 ${
+                  className={`absolute !bg-primary -bottom-[17px] duration-500 h-[3px] margin-x-auto origin-left scale-x-0 transform transition-transform w-3/5 ${
                     isActive(option.path) ? "scale-x-100" : ""
                   } ${
                     isMousedOver && isMousedOver === option.path
@@ -77,11 +76,11 @@ const Navbar = () => {
           })}
         </Box>
 
-        <Box className="hidden lg:flex justify-end space-x-3">
+        <Box className="hidden lg:flex justify-end space-x-4">
           {/* Login & Sign Up Buttons */}
           {!user && (
             <Button
-              className="!capitalize !duration-500 !ease-in-out !font-semibold !text-sm !text-black !tracking-normal !transition-all hover:!text-primary"
+              className="!capitalize !duration-500 !ease-in-out !font-semibold !text-sm !text-primary !tracking-normal !transition-all hover:!text-primary"
               component={Link}
               to={paths.get("LOGIN").PATH}
               onMouseEnter={() => setIsMousedOver("login")}
@@ -89,7 +88,7 @@ const Navbar = () => {
             >
               Login
               <Box
-                className={`absolute !bg-primary -bottom-1 duration-500 h-0.5 margin-x-auto origin-left scale-x-0 transform transition-transform w-3/5 ${
+                className={`absolute !bg-primary -bottom-[15px] duration-500 h-[3px] margin-x-auto origin-left scale-x-0 transform transition-transform w-3/5 ${
                   isMousedOver && isMousedOver === "login" ? "scale-x-100" : ""
                 }`}
               />
@@ -97,7 +96,7 @@ const Navbar = () => {
           )}
           {!user && (
             <Button
-              className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !text-sm !text-white !tracking-normal !transition-all hover:!bg-primary-100"
+              className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !text-sm !text-white !tracking-normal !transition-all hover:!bg-primary-100 !shadow-none"
               component={Link}
               to={paths.get("SIGNUP").PATH}
               variant="contained"
@@ -110,7 +109,7 @@ const Navbar = () => {
           {user && (
             <ClickAwayListener onClickAway={() => setIsProfileMenuOpen(false)}>
               <IconButton
-                className="!bg-gray-100 relative !text-gray-300"
+                className="!bg-gray-200 relative !text-gray-400"
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
               >
                 <Icon name={"User"} size={"0.9em"} />
@@ -146,15 +145,15 @@ const Navbar = () => {
         <div className="lg:hidden flex items-center">
           <IconButton
             aria-label="menu"
-            className="!text-white"
+            className="!text-black"
             color="inherit"
             edge="start"
             onClick={handleMenuOpen}
           >
             {anchorEl ? (
-              <Icon name={"Close"} size={"1.4em"} />
+              <Icon name={"Close"} size={"1.1em"} />
             ) : (
-              <Icon name={"Menu"} size={"1.4em"} />
+              <Icon name={"Menu"} size={"1.1em"} />
             )}
           </IconButton>
 
@@ -167,7 +166,7 @@ const Navbar = () => {
             {NAV_OPTIONS.map((option) => {
               return (
                 <MenuItem
-                  className="!capitalize !duration-500 !ease-in-out !font-semibold !text-xs !text-white !transition-all hover:!text-primary"
+                  className="!capitalize !font-normal !text-sm !text-black"
                   component={Link}
                   key={option.path}
                   onClick={handleMenuClose}
@@ -179,6 +178,7 @@ const Navbar = () => {
             })}
             {!user && (
               <MenuItem
+                className="!capitalize !font-normal !text-sm !text-primary"
                 onClick={handleMenuClose}
                 component={Link}
                 to={paths.get("LOGIN").PATH}
@@ -188,6 +188,7 @@ const Navbar = () => {
             )}
             {!user && (
               <MenuItem
+                className="!capitalize !font-normal !text-sm !text-primary"
                 onClick={handleMenuClose}
                 component={Link}
                 to={paths.get("SIGNUP").PATH}

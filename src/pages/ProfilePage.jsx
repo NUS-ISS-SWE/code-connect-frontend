@@ -11,8 +11,7 @@ import {
   retrieveResume,
 } from "../api/ProfileApi";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { paths } from "../routes";
-import { use } from "react";
+import paths from "../routes/paths";
 
 const ProfilePage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -104,7 +103,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (id) {
-      // fetchResume();
+      fetchResume();
     }
   }, [id]);
 

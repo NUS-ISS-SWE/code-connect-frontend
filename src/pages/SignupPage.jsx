@@ -7,7 +7,7 @@ import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon.jsx";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { paths } from "../routes";
+import paths from "../routes/paths.js";
 import { LOGIN_TOKEN_KEY } from "../utils/authUtils.js";
 
 const SignupPage = () => {
@@ -68,16 +68,16 @@ const SignupPage = () => {
     return Object.keys(newErrors)[0];
   };
 
-  const handleClickLogin = async (e) => {
+  const handleClickSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
 
     const firstErrorField = validate();
 
     if (!firstErrorField) {
-      const { data, status } = await registerUser(formInputs, dispatch);
+      const { data, error, status } = await registerUser(formInputs, dispatch);
 
-      if (status === 200) {
+      if (!error) {
         handleLoginUser();
       }
     } else {
@@ -170,6 +170,13 @@ const SignupPage = () => {
             size="small"
             value={formInputs.username}
             variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment className="!ml-0 !text-gray-400" position="end">
+                  <Icon name={"UserLine"} size={"1.3em"} />
+                </InputAdornment>
+              ),
+            }}
           />
 
           {/* <TextField
@@ -202,6 +209,11 @@ const SignupPage = () => {
             value={formInputs.password}
             variant="outlined"
             InputProps={{
+              startAdornment: (
+                <InputAdornment className="!ml-0 !text-gray-400" position="end">
+                  <Icon name={"Lock"} size={"1.3em"} />
+                </InputAdornment>
+              ),
               endAdornment: (
                 <InputAdornment className="!ml-0" position="end">
                   <IconButton
@@ -237,6 +249,11 @@ const SignupPage = () => {
             value={formInputs.confirmPassword}
             variant="outlined"
             InputProps={{
+              startAdornment: (
+                <InputAdornment className="!ml-0 !text-gray-400" position="end">
+                  <Icon name={"Lock"} size={"1.3em"} />
+                </InputAdornment>
+              ),
               endAdornment: (
                 <InputAdornment className="!ml-0" position="end">
                   <IconButton
@@ -261,7 +278,7 @@ const SignupPage = () => {
         <Button
           className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !shadow-none !text-sm !text-white !tracking-normal !transition-all w-full hover:!bg-primary-100"
           disabled={loading}
-          onClick={handleClickLogin}
+          onClick={handleClickSubmit}
           variant="contained"
         >
           {loading ? (
