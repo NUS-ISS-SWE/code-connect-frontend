@@ -84,7 +84,7 @@ const HomePage = () => {
       </Stack>
 
       {/* Body */}
-      <Stack className="flex flex-1 items-center justify-start mx-auto max-w-7xl py-16 w-full">
+      <Stack className="flex flex-1 items-center justify-start mx-auto max-w-7xl py-16 space-y-2 w-full">
         {/* Header */}
         <Stack className="flex flex-1 items-start justify-start px-6 space-y-8 w-full lg:w-[800px] ">
           <Stack className="flex items-center justify-center space-y-4">

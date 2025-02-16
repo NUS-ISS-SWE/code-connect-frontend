@@ -1,5 +1,4 @@
 /* eslint-disable react/jsx-no-undef */
-import paths from "../routes/paths";
 
 const Footer = () => {
   return (
