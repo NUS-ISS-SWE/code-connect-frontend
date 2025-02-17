@@ -7,6 +7,7 @@ import PublicRoute from "./PublicRoute.jsx";
 
 const ErrorPage = lazy(() => import("../pages/ErrorPage.jsx"));
 const HomePage = lazy(() => import("../pages/HomePage.jsx"));
+const JobsPage = lazy(() => import("../pages/JobsPage.jsx"));
 const LoginPage = lazy(() => import("../pages/LoginPage.jsx"));
 const ProfilePage = lazy(() => import("../pages/ProfilePage.jsx"));
 const SignupPage = lazy(() => import("../pages/SignupPage.jsx"));
@@ -20,6 +21,8 @@ const AppRoutes = () => {
           <Route path={paths.get("ERROR").PATH} element={<ErrorPage />} />
 
           <Route path={paths.get("HOME").PATH} element={<HomePage />} />
+
+          <Route path={paths.get("JOBS").PATH} element={<JobsPage />} />
 
           <Route path={paths.get("LOGIN").PATH} element={<LoginPage />} />
 

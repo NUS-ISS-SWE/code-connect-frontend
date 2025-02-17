@@ -11,8 +11,7 @@ import {
   retrieveResume,
 } from "../api/ProfileApi";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { paths } from "../routes";
-import { use } from "react";
+import paths from "../routes/paths";
 
 const ProfilePage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -20,6 +19,7 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const { id } = useParams(); // Get profile ID from URL
 
+  const [resume, setResume] = useState(null);
   const [draftUploadedResume, setDraftUploadedResume] = useState(null);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState(null);
@@ -104,7 +104,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (id) {
-      // fetchResume();
+      fetchResume();
     }
   }, [id]);
 
@@ -117,12 +117,12 @@ const ProfilePage = () => {
   };
 
   const fetchResume = async () => {
-    // dispatch({ type: "LOADING", payload: { isOpen: true } });
+    dispatch({ type: "LOADING", payload: { isOpen: true } });
 
     const { data, error } = await retrieveResume({ id }, dispatch);
 
     if (data) {
-      setDraftUploadedResume(resumeData);
+      setResume(data);
     }
 
     dispatch({ type: "LOADING", payload: { isOpen: false } });
@@ -156,6 +156,11 @@ const ProfilePage = () => {
       console.error("Error uploading resume:", error);
       return;
     }
+
+    setResume({
+      file: draftUploadedResume,
+      fileUrl: URL.createObjectURL(draftUploadedResume),
+    });
 
     dispatch({
       type: "SHOW_TOAST",
@@ -223,7 +228,7 @@ const ProfilePage = () => {
                 <strong>About Me:</strong> {formData.aboutMe}
               </Typography>
               <Typography>
-                <strong>Programming Languages:</strong>{" "}
+                <strong>Programming Languages:</strong>
                 {formData.programmingLanguages}
               </Typography>
               <Typography>
@@ -232,6 +237,28 @@ const ProfilePage = () => {
               <Typography>
                 <strong>Work Experience:</strong> {formData.experience}
               </Typography>
+
+              {resume && (
+                <Stack className="flex justify-start space-y-1 w-full">
+                  <Typography className={`!capitalize !font-semibold !text-md`}>
+                    Resume:
+                  </Typography>
+
+                  <Box className="flex items-center justify-start relative space-x-2 !text-sm text-gray-500 w-[100%]">
+                    <Icon name="File" size={"1.1rem"} />
+
+                    <Typography
+                      className={`cursor-pointer !text-sm text-primary hover:underline`}
+                      component={Link}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      to={resume.fileUrl}
+                    >
+                      {`${resume?.file?.name}`}
+                    </Typography>
+                  </Box>
+                </Stack>
+              )}
             </Stack>
           ) : (
             // Edit / Create Mode

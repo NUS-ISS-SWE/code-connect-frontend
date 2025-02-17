@@ -8,13 +8,19 @@ import {
   RiAiGenerateText,
   RiArrowDownSFill,
   RiArrowRightSFill,
+  RiBarChartFill,
+  RiBriefcase4Fill,
   RiCloseFill,
   RiEyeLine,
   RiEyeOffLine,
   RiFile3Fill,
+  RiLockLine,
   RiLogoutBoxLine,
   RiMenuLine,
+  RiShakeHandsFill,
+  RiToolsFill,
   RiUserFill,
+  RiUserLine,
 } from "react-icons/ri";
 
 const ICONS_MAP = {
@@ -24,6 +30,8 @@ const ICONS_MAP = {
   ArrowDown: RiArrowDownSFill,
   ArrowLeftCircle: IoIosArrowDropleftCircle,
   ArrowRight: RiArrowRightSFill,
+  BarChart: RiBarChartFill,
+  Briefcase: RiBriefcase4Fill,
   Cog: MdSettings,
   Close: RiCloseFill,
   Email: MdEmail,
@@ -31,11 +39,15 @@ const ICONS_MAP = {
   EyeOff: RiEyeOffLine,
   File: RiFile3Fill,
   Home: FaHome,
+  Lock: RiLockLine,
   Logout: RiLogoutBoxLine,
   Menu: RiMenuLine,
   People: MdPeopleAlt,
   Settings: FaCog,
+  ShakeHands: RiShakeHandsFill,
+  Tools: RiToolsFill,
   User: RiUserFill,
+  UserLine: RiUserLine,
 };
 
 const Icon = ({ name, size = 24, color = "inherit", ...props }) => {

@@ -4,7 +4,7 @@ const loginUser = async ({ username, password }, dispatch) => {
   const credentials = btoa(`${username}:${password}`); // Encode in Base64
 
   try {
-    const response = await fetch("/api/v1/login", {
+    const response = await fetch(`/api/v1/login`, {
       method: "GET",
       headers: {
         Authorization: `Basic ${credentials}`, // Attach Basic Auth
@@ -33,6 +33,7 @@ const loginUser = async ({ username, password }, dispatch) => {
         variant: "error",
       },
     });
+    return { data: {}, error: error, status: {} };
   }
 };
 
