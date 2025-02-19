@@ -1,4 +1,4 @@
-import { apiWrapper } from "../utils/apiUtils";
+import { apiWrapper, prepareProfileFormData } from "../utils/apiUtils";
 
 const getProfileById = async ({ id }, dispatch) => {
   try {
@@ -32,83 +32,26 @@ const getProfileById = async ({ id }, dispatch) => {
     return { data: null, error: error.message, status: 500 };
   }
 };
-const createProfile = async (
-  {
-    fullName,
-    jobTitle,
-    currentCompany,
-    location,
-    email,
-    phone,
-    aboutMe,
-    programmingLanguages,
-    education,
-    experience,
-  },
-  dispatch
-) => {
-  const formData = JSON.stringify({
-    fullName,
-    jobTitle,
-    currentCompany,
-    location,
-    email,
-    phone,
-    aboutMe,
-    programmingLanguages,
-    education,
-    experience,
-  });
 
+const createProfile = async (formData, dispatch) => {
   const response = await apiWrapper({
-    body: formData,
+    body: JSON.stringify(prepareProfileFormData(formData)),
     dispatch,
-    endpoint: "/profiles", // Update specific profile by ID
+    endpoint: "/profiles",
     headers: {
       "Content-Type": "application/json",
     },
-    method: "POST", // Use PUT instead of POST for updates
+    method: "POST",
   });
-  console.log("returning", response);
 
   return response;
 };
 
-const updateProfile = async (
-  {
-    id,
-    fullName,
-    jobTitle,
-    currentCompany,
-    location,
-    email,
-    phone,
-    aboutMe,
-    programmingLanguages,
-    education,
-    experience,
-  },
-  dispatch
-) => {
-  const formData = JSON.stringify({
-    fullName,
-    jobTitle,
-    currentCompany,
-    location,
-    email,
-    phone,
-    aboutMe,
-    programmingLanguages,
-    education,
-    experience,
-  });
-
-  const url = `/profiles/${id}`;
-
+const updateProfile = async (formData, dispatch) => {
   const response = await apiWrapper({
-    body: formData,
+    body: JSON.stringify(formData),
     dispatch,
-    endpoint: url, // Update specific profile by ID
+    endpoint: `/profiles/${formData.id}`, // Update specific profile by ID
     headers: {
       "Content-Type": "application/json",
     },
@@ -118,7 +61,7 @@ const updateProfile = async (
   return response;
 };
 
-const retrieveResume = async ({ id }, dispatch) => {
+const retrieveResume = async ({ id, fileName }, dispatch) => {
   try {
     const response = await fetch(`/profiles/${id}/resume`, {
       method: "GET",
@@ -129,7 +72,9 @@ const retrieveResume = async ({ id }, dispatch) => {
     }
 
     const blob = await response.blob();
-    const file = new File([blob], "Resume.pdf", { type: "application/pdf" });
+    const file = new File([blob], fileName || "Resume.pdf", {
+      type: "application/pdf",
+    });
     const fileUrl = URL.createObjectURL(file);
 
     return { data: { file, fileUrl }, error: "", status: response.status };

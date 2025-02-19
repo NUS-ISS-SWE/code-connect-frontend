@@ -72,7 +72,8 @@ const ProfilePage = () => {
         },
       });
     } else {
-      const { data, error } = await createProfile({ ...formData }, dispatch);
+      const { data, error } = await createProfile(formData, dispatch);
+
       if (error) {
         console.error("Error creating profile:", error);
         return;
@@ -135,7 +136,10 @@ const ProfilePage = () => {
   const fetchResume = async () => {
     dispatch({ type: "LOADING", payload: { isOpen: true } });
 
-    const { data, error } = await retrieveResume({ id }, dispatch);
+    const { data, error } = await retrieveResume(
+      { id, fileName: user.resumeData?.resumeFileName },
+      dispatch
+    );
 
     if (data) {
       setResume(data);

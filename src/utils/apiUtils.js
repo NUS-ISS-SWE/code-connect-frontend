@@ -61,4 +61,12 @@ const apiWrapper = async ({
   }
 };
 
-export { apiWrapper, baseUrl };
+const prepareProfileFormData = (formData) => {
+  const processedData = { ...formData };
+  processedData.education = formData.education.split(","); // Convert education string to array
+  processedData.experience = formData.experience.split(","); // Convert experience string to array
+
+  return processedData;
+};
+
+export { apiWrapper, baseUrl, prepareProfileFormData };
