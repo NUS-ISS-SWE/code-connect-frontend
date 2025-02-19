@@ -2,9 +2,7 @@ import {
   Avatar,
   Box,
   Button,
-  CircularProgress,
   Divider,
-  IconButton,
   Stack,
   Tab,
   Tabs,
@@ -15,13 +13,13 @@ import { Link } from "react-router-dom";
 
 import Icon from "../constants/Icon";
 import Navbar from "../components/Navbar";
+import UploadResume from "../components/profilePageComponents/UploadResume";
 
 import {
   createProfile,
   getProfileById,
   retrieveResume,
   updateProfile,
-  uploadResume,
 } from "../api/ProfileApi";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
@@ -35,7 +33,7 @@ const ProfilePage = () => {
   const { id } = useParams(); // Get profile ID from URL
 
   const [resume, setResume] = useState(null);
-  const [draftUploadedResume, setDraftUploadedResume] = useState(null);
+
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -100,6 +98,17 @@ const ProfilePage = () => {
     fetchProfile();
   }, [id]); // Runs when the ID changes
 
+  useEffect(() => {
+    if (!user) return;
+
+    // fetch resume if user has resume-related data
+    if (user.resumeData?.resumeContent) {
+      fetchResume();
+    } else {
+      setResume(null);
+    }
+  }, [user]);
+
   const fetchProfile = async () => {
     try {
       const { data, error } = await getProfileById({ id }, dispatch);
@@ -117,27 +126,14 @@ const ProfilePage = () => {
     }
   };
 
-  useEffect(() => {
-    if (!user) return;
-
-    if (user.resumeData?.resumeContent) {
-      fetchResume();
-    }
-  }, [user]);
-
-  const handleTabChange = (event, newValue) => {
-    setTabIndex(newValue);
-  };
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
   const fetchResume = async () => {
     dispatch({ type: "LOADING", payload: { isOpen: true } });
 
     const { data, error } = await retrieveResume(
-      { id, fileName: user.resumeData?.resumeFileName },
+      {
+        id,
+        fileName: user.resumeData?.resumeFileName, // pass uploaded resume file name from user data
+      },
       dispatch
     );
 
@@ -148,50 +144,12 @@ const ProfilePage = () => {
     dispatch({ type: "LOADING", payload: { isOpen: false } });
   };
 
-  const handleAddResume = async (event) => {
-    dispatch({ type: "LOADING", payload: { isOpen: true } });
-
-    const file = event.target.files[0];
-
-    if (file) {
-      setDraftUploadedResume(file);
-    }
-
-    dispatch({ type: "LOADING", payload: { isOpen: false } });
+  const handleTabChange = (event, newValue) => {
+    setTabIndex(newValue);
   };
 
-  const handleRemoveResume = () => {
-    setDraftUploadedResume(null);
-  };
-
-  const handleUpdateResume = async () => {
-    dispatch({ type: "LOADING", payload: { isOpen: true } });
-
-    const formData = new FormData();
-    formData.append("file", draftUploadedResume);
-
-    const { data, error } = await uploadResume({ id, formData }, dispatch);
-
-    if (error) {
-      console.error("Error uploading resume:", error);
-      return;
-    }
-
-    setResume({
-      file: draftUploadedResume,
-      fileUrl: URL.createObjectURL(draftUploadedResume),
-    });
-
-    dispatch({
-      type: "SHOW_TOAST",
-      payload: {
-        message: "Resume uploaded successfully",
-        isOpen: true,
-        variant: "success",
-      },
-    });
-
-    dispatch({ type: "LOADING", payload: { isOpen: false } });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   if (loading) return <Typography>Loading...</Typography>;
@@ -375,86 +333,7 @@ const ProfilePage = () => {
               </Button>
 
               {/* Upload Resume */}
-              {id && (
-                <Stack className="flex justify-start pt-4 space-y-4 w-[100%]">
-                  <Stack className="space-y-1">
-                    <Typography className={`!capitalize !font-medium !text-lg`}>
-                      Upload Resume
-                    </Typography>
-
-                    <Divider />
-                  </Stack>
-
-                  {draftUploadedResume ? (
-                    <Stack className="flex justify-start space-y-1 w-[100%]">
-                      <Box className="flex items-center justify-start relative space-x-2 !text-sm text-gray-500 w-[100%]">
-                        <Icon name="File" size={"1.1rem"} />
-
-                        <Typography
-                          className={`!text-sm text-gray-700`}
-                          // className={`!text-sm text-accent hover:underline`}
-                        >
-                          {`${draftUploadedResume.name}`}
-                        </Typography>
-                        <IconButton
-                          className="h-fit !rounded-md"
-                          onClick={handleRemoveResume}
-                        >
-                          <Icon name="Close" size={"1.1rem"} />
-                        </IconButton>
-                      </Box>
-                    </Stack>
-                  ) : (
-                    <Stack className="flex justify-start space-y-1 w-[100%]">
-                      <Box className="flex justify-start space-x-2 w-[100%]">
-                        <Box
-                          className="!bg-white !border !border-gray-300 !border-solid  cursor-pointer !duration-500 !ease-in-out !font-normal !flex !gap-2 items-center !justify-start !pb-0.5 !pl-0.5 !pr-1.5 !pt-0.5 !rounded-md !shadow-none !text-sm !text-gray-900 !tracking-normal !transition-all w-[100%] hover:!border-gray-900"
-                          disabled={loading}
-                          component="label"
-                        >
-                          <Button
-                            className="!bg-gray-100 !border !border-gray-300 !border-solid !capitalize !duration-500 !ease-in-out !font-semibold !pb-1.5 !pl-3 !pr-3 !pt-1.5 !shadow-none !text-sm !text-gray-900 !tracking-normal !transition-all w-fit hover:!bg-gray-200"
-                            disabled={loading}
-                            component="label"
-                          >
-                            Choose File
-                            <input
-                              accept=".pdf"
-                              type="file"
-                              hidden
-                              onChange={handleAddResume}
-                            />
-                          </Button>
-                          No file chosen
-                          <input
-                            accept=".pdf"
-                            type="file"
-                            hidden
-                            onChange={handleAddResume}
-                          />
-                        </Box>
-                      </Box>
-
-                      <Typography className={`!text-xs text-gray-700 `}>
-                        Allowed types: pdf.
-                      </Typography>
-                    </Stack>
-                  )}
-
-                  <Button
-                    className="!bg-black !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !shadow-none !text-sm !text-white !tracking-normal !transition-all w-fit hover:!bg-primary-100"
-                    disabled={loading}
-                    onClick={handleUpdateResume}
-                    variant="contained"
-                  >
-                    {loading ? (
-                      <CircularProgress size={20} className="!text-white" />
-                    ) : (
-                      "Update Resume"
-                    )}
-                  </Button>
-                </Stack>
-              )}
+              {id && <UploadResume />}
             </Stack>
           )}
         </Stack>

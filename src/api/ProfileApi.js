@@ -61,6 +61,16 @@ const updateProfile = async (formData, dispatch) => {
   return response;
 };
 
+const deleteResume = async ({ id }, dispatch) => {
+  const response = await apiWrapper({
+    dispatch,
+    endpoint: `/profiles/${id}/deleteResume`,
+    method: "DELETE",
+  });
+
+  return response;
+};
+
 const retrieveResume = async ({ id, fileName }, dispatch) => {
   try {
     const response = await fetch(`/profiles/${id}/resume`, {
@@ -95,12 +105,10 @@ const retrieveResume = async ({ id, fileName }, dispatch) => {
 };
 
 const uploadResume = async ({ id, formData }, dispatch) => {
-  const url = `/profiles/${id}/uploadResume`;
-
   const response = await apiWrapper({
     body: formData,
     dispatch,
-    endpoint: url,
+    endpoint: `/profiles/${id}/uploadResume`,
     method: "POST",
   });
 
@@ -108,6 +116,7 @@ const uploadResume = async ({ id, formData }, dispatch) => {
 };
 
 export {
+  deleteResume,
   getProfileById,
   updateProfile,
   createProfile,
