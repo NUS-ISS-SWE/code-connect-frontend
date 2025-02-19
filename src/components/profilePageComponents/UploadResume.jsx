@@ -28,8 +28,11 @@ const UploadResume = () => {
   useEffect(() => {
     if (!user) return;
 
+    // fetch resume if user has resume-related data
     if (user.resumeData?.resumeContent) {
       fetchResume();
+    } else {
+      setResume(null);
     }
   }, [user]);
 
