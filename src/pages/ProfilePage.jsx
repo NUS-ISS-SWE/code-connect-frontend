@@ -1,20 +1,35 @@
-/* eslint-disable no-undef */
-/* eslint-disable react/jsx-no-undef */
+import {
+  Avatar,
+  Box,
+  Button,
+  CircularProgress,
+  Divider,
+  IconButton,
+  Stack,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Link } from "react-router-dom";
+
 import Icon from "../constants/Icon";
 import Navbar from "../components/Navbar";
 
 import {
-  getProfileById,
   createProfile,
+  getProfileById,
+  retrieveResume,
   updateProfile,
   uploadResume,
-  retrieveResume,
 } from "../api/ProfileApi";
+import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import paths from "../routes/paths";
 
 const ProfilePage = () => {
   const { state, dispatch } = useGlobalContext();
+  const { setUser, user } = useAuthContext();
 
   const navigate = useNavigate();
   const { id } = useParams(); // Get profile ID from URL
@@ -22,8 +37,19 @@ const ProfilePage = () => {
   const [resume, setResume] = useState(null);
   const [draftUploadedResume, setDraftUploadedResume] = useState(null);
   const [error, setError] = useState(null);
-  const [formData, setFormData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    jobTitle: "",
+    currentCompany: "",
+    location: "",
+    email: "",
+    phone: "",
+    aboutMe: "",
+    programmingLanguages: "",
+    education: "",
+    experience: "",
+  });
+  const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
 
   const createUpdateProfile = async () => {
@@ -66,47 +92,37 @@ const ProfilePage = () => {
   };
 
   useEffect(() => {
-    if (!id) {
-      // If no ID is provided, show an empty form for creating a profile
-      setFormData({
-        fullName: "",
-        jobTitle: "",
-        currentCompany: "",
-        location: "",
-        email: "",
-        phone: "",
-        aboutMe: "",
-        programmingLanguages: "",
-        education: "",
-        experience: "",
-      });
-      setLoading(false);
-      return;
-    }
+    // If no ID is provided, show an empty form for creating a profile
+    if (!id) return;
 
-    const fetchProfile = async () => {
-      try {
-        const { data, error } = await getProfileById({ id }, dispatch);
-        if (error) throw new Error(error);
-
-        const profileData = await data.json();
-        setFormData(profileData);
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    //TODO: fetch user profile should happen on login
     fetchProfile();
   }, [id]); // Runs when the ID changes
 
+  const fetchProfile = async () => {
+    try {
+      const { data, error } = await getProfileById({ id }, dispatch);
+      if (error) throw new Error(error);
+
+      const profileData = await data.json();
+
+      setFormData(profileData);
+      setUser({ ...user, ...profileData });
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (id) {
+    if (!user) return;
+
+    if (user.resumeData?.resumeContent) {
       fetchResume();
     }
-  }, [id]);
+  }, [user]);
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
@@ -202,7 +218,7 @@ const ProfilePage = () => {
           <Stack direction="row" alignItems="center" spacing={2}>
             <Avatar sx={{ width: 100, height: 100 }} alt="Profile Picture" />
             <Typography variant="h6">
-              {formData.fullName || "New User"}
+              {formData?.fullName || "New User"}
             </Typography>
           </Stack>
 
@@ -210,32 +226,32 @@ const ProfilePage = () => {
             // View Mode (when an ID is provided)
             <Stack className="flex items-start justify-start space-y-6 w-full">
               <Typography>
-                <strong>Job Title:</strong> {formData.jobTitle}
+                <strong>Job Title:</strong> {formData?.jobTitle}
               </Typography>
               <Typography>
-                <strong>Company:</strong> {formData.currentCompany}
+                <strong>Company:</strong> {formData?.currentCompany}
               </Typography>
               <Typography>
-                <strong>Location:</strong> {formData.location}
+                <strong>Location:</strong> {formData?.location}
               </Typography>
               <Typography>
-                <strong>Email:</strong> {formData.email}
+                <strong>Email:</strong> {formData?.email}
               </Typography>
               <Typography>
-                <strong>Phone:</strong> {formData.phone}
+                <strong>Phone:</strong> {formData?.phone}
               </Typography>
               <Typography>
-                <strong>About Me:</strong> {formData.aboutMe}
+                <strong>About Me:</strong> {formData?.aboutMe}
               </Typography>
               <Typography>
                 <strong>Programming Languages:</strong>
-                {formData.programmingLanguages}
+                {formData?.programmingLanguages}
               </Typography>
               <Typography>
-                <strong>Education:</strong> {formData.education}
+                <strong>Education:</strong> {formData?.education}
               </Typography>
               <Typography>
-                <strong>Work Experience:</strong> {formData.experience}
+                <strong>Work Experience:</strong> {formData?.experience}
               </Typography>
 
               {resume && (
@@ -268,7 +284,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Full Name"
                 name="fullName"
-                value={formData.fullName}
+                value={formData?.fullName}
                 onChange={handleChange}
               />
               <TextField
@@ -276,7 +292,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Job Title"
                 name="jobTitle"
-                value={formData.jobTitle}
+                value={formData?.jobTitle}
                 onChange={handleChange}
               />
               <TextField
@@ -284,7 +300,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Current Company"
                 name="currentCompany"
-                value={formData.currentCompany}
+                value={formData?.currentCompany}
                 onChange={handleChange}
               />
               <TextField
@@ -292,7 +308,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Location"
                 name="location"
-                value={formData.location}
+                value={formData?.location}
                 onChange={handleChange}
               />
               <TextField
@@ -300,7 +316,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Email"
                 name="email"
-                value={formData.email}
+                value={formData?.email}
                 onChange={handleChange}
               />
               <TextField
@@ -308,7 +324,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Phone Number"
                 name="phone"
-                value={formData.phone}
+                value={formData?.phone}
                 onChange={handleChange}
               />
               <TextField
@@ -318,7 +334,7 @@ const ProfilePage = () => {
                 name="aboutMe"
                 multiline
                 rows={3}
-                value={formData.aboutMe}
+                value={formData?.aboutMe}
                 onChange={handleChange}
               />
               <TextField
@@ -326,7 +342,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Programming Languages"
                 name="programmingLanguages"
-                value={formData.programmingLanguages}
+                value={formData?.programmingLanguages}
                 onChange={handleChange}
               />
               <TextField
@@ -334,7 +350,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Education"
                 name="education"
-                value={formData.education}
+                value={formData?.education}
                 onChange={handleChange}
               />
               <TextField
@@ -342,7 +358,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Work Experience"
                 name="experience"
-                value={formData.experience}
+                value={formData?.experience}
                 onChange={handleChange}
               />
 

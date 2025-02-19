@@ -25,11 +25,11 @@ const apiWrapper = async ({
       signal,
     });
 
-    const jsonData = await response.json();
-
     if (!response.ok) {
-      throw jsonData;
+      throw response;
     }
+
+    const jsonData = await response.json();
 
     return { data: jsonData, error: "", status: response.status };
   } catch (err) {

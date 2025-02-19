@@ -1,13 +1,20 @@
-/* eslint-disable react/jsx-no-undef */
+import {
+  Box,
+  Button,
+  ClickAwayListener,
+  IconButton,
+  Menu,
+  MenuItem,
+  Stack,
+  Toolbar,
+} from "@mui/material";
+import { Link } from "react-router-dom";
+
 import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon";
 import { useAuthContext } from "../hooks/useAuthContext";
 import paths from "../routes/paths";
-
-export const NAV_OPTIONS = [
-  { title: paths.get("HOME").LABEL, path: paths.get("HOME").PATH },
-  { title: paths.get("JOBS").LABEL, path: paths.get("JOBS").PATH },
-];
+import { NAV_OPTIONS } from "../utils/optionUtils";
 
 const Navbar = () => {
   const { logout, user } = useAuthContext();

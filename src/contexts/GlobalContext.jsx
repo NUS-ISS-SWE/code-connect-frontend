@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-import { createContext, useReducer } from "react";
 import globalReducer from "../reducers/globalReducer";
 
 export const GlobalContext = createContext();

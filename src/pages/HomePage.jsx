@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/jsx-no-undef */
+import { Box, Button, Stack, Typography } from "@mui/material";
+
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
