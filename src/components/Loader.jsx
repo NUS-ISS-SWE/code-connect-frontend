@@ -1,5 +1,4 @@
-/* eslint-disable react/jsx-no-undef */
-/* eslint-disable react/prop-types */
+import { Box, LinearProgress, Stack, Typography } from "@mui/material";
 
 import { useGlobalContext } from "../hooks/useGlobalContext";
 

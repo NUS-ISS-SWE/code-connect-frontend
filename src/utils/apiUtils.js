@@ -25,11 +25,11 @@ const apiWrapper = async ({
       signal,
     });
 
-    const jsonData = await response.json();
-
     if (!response.ok) {
-      throw jsonData;
+      throw response;
     }
+
+    const jsonData = await response.json();
 
     return { data: jsonData, error: "", status: response.status };
   } catch (err) {
@@ -61,4 +61,12 @@ const apiWrapper = async ({
   }
 };
 
-export { apiWrapper, baseUrl };
+const prepareProfileFormData = (formData) => {
+  const processedData = { ...formData };
+  processedData.education = formData.education.split(","); // Convert education string to array
+  processedData.experience = formData.experience.split(","); // Convert experience string to array
+
+  return processedData;
+};
+
+export { apiWrapper, baseUrl, prepareProfileFormData };
