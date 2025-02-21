@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-undef */
 import {
   fetchToken,
   LOGIN_TOKEN_KEY,

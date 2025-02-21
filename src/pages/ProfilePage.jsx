@@ -1,29 +1,53 @@
-/* eslint-disable no-undef */
-/* eslint-disable react/jsx-no-undef */
+import {
+  Avatar,
+  Box,
+  Button,
+  Divider,
+  Stack,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Link } from "react-router-dom";
+
 import Icon from "../constants/Icon";
 import Navbar from "../components/Navbar";
+import UploadResume from "../components/profilePageComponents/UploadResume";
 
 import {
-  getProfileById,
   createProfile,
-  updateProfile,
-  uploadResume,
+  getProfileById,
   retrieveResume,
+  updateProfile,
 } from "../api/ProfileApi";
+import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import paths from "../routes/paths";
 
 const ProfilePage = () => {
   const { state, dispatch } = useGlobalContext();
+  const { setUser, user } = useAuthContext();
 
   const navigate = useNavigate();
   const { id } = useParams(); // Get profile ID from URL
 
   const [resume, setResume] = useState(null);
-  const [draftUploadedResume, setDraftUploadedResume] = useState(null);
+
   const [error, setError] = useState(null);
-  const [formData, setFormData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    jobTitle: "",
+    currentCompany: "",
+    location: "",
+    email: "",
+    phone: "",
+    aboutMe: "",
+    programmingLanguages: "",
+    education: "",
+    experience: "",
+  });
+  const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
 
   const createUpdateProfile = async () => {
@@ -46,7 +70,8 @@ const ProfilePage = () => {
         },
       });
     } else {
-      const { data, error } = await createProfile({ ...formData }, dispatch);
+      const { data, error } = await createProfile(formData, dispatch);
+
       if (error) {
         console.error("Error creating profile:", error);
         return;
@@ -66,60 +91,51 @@ const ProfilePage = () => {
   };
 
   useEffect(() => {
-    if (!id) {
-      // If no ID is provided, show an empty form for creating a profile
-      setFormData({
-        fullName: "",
-        jobTitle: "",
-        currentCompany: "",
-        location: "",
-        email: "",
-        phone: "",
-        aboutMe: "",
-        programmingLanguages: "",
-        education: "",
-        experience: "",
-      });
-      setLoading(false);
-      return;
-    }
+    // If no ID is provided, show an empty form for creating a profile
+    if (!id) return;
 
-    const fetchProfile = async () => {
-      try {
-        const { data, error } = await getProfileById({ id }, dispatch);
-        if (error) throw new Error(error);
-
-        const profileData = await data.json();
-        setFormData(profileData);
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    //TODO: fetch user profile should happen on login
     fetchProfile();
   }, [id]); // Runs when the ID changes
 
   useEffect(() => {
-    if (id) {
+    if (!user) return;
+
+    // fetch resume if user has resume-related data
+    if (user.resumeData?.resumeContent) {
       fetchResume();
+    } else {
+      setResume(null);
     }
-  }, [id]);
+  }, [user]);
 
-  const handleTabChange = (event, newValue) => {
-    setTabIndex(newValue);
-  };
+  const fetchProfile = async () => {
+    try {
+      const { data, error } = await getProfileById({ id }, dispatch);
+      if (error) throw new Error(error);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+      const profileData = await data.json();
+
+      setFormData(profileData);
+      setUser({ ...user, ...profileData });
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fetchResume = async () => {
     dispatch({ type: "LOADING", payload: { isOpen: true } });
 
-    const { data, error } = await retrieveResume({ id }, dispatch);
+    const { data, error } = await retrieveResume(
+      {
+        id,
+        fileName: user.resumeData?.resumeFileName, // pass uploaded resume file name from user data
+      },
+      dispatch
+    );
 
     if (data) {
       setResume(data);
@@ -128,50 +144,12 @@ const ProfilePage = () => {
     dispatch({ type: "LOADING", payload: { isOpen: false } });
   };
 
-  const handleAddResume = async (event) => {
-    dispatch({ type: "LOADING", payload: { isOpen: true } });
-
-    const file = event.target.files[0];
-
-    if (file) {
-      setDraftUploadedResume(file);
-    }
-
-    dispatch({ type: "LOADING", payload: { isOpen: false } });
+  const handleTabChange = (event, newValue) => {
+    setTabIndex(newValue);
   };
 
-  const handleRemoveResume = () => {
-    setDraftUploadedResume(null);
-  };
-
-  const handleUpdateResume = async () => {
-    dispatch({ type: "LOADING", payload: { isOpen: true } });
-
-    const formData = new FormData();
-    formData.append("file", draftUploadedResume);
-
-    const { data, error } = await uploadResume({ id, formData }, dispatch);
-
-    if (error) {
-      console.error("Error uploading resume:", error);
-      return;
-    }
-
-    setResume({
-      file: draftUploadedResume,
-      fileUrl: URL.createObjectURL(draftUploadedResume),
-    });
-
-    dispatch({
-      type: "SHOW_TOAST",
-      payload: {
-        message: "Resume uploaded successfully",
-        isOpen: true,
-        variant: "success",
-      },
-    });
-
-    dispatch({ type: "LOADING", payload: { isOpen: false } });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   if (loading) return <Typography>Loading...</Typography>;
@@ -202,7 +180,7 @@ const ProfilePage = () => {
           <Stack direction="row" alignItems="center" spacing={2}>
             <Avatar sx={{ width: 100, height: 100 }} alt="Profile Picture" />
             <Typography variant="h6">
-              {formData.fullName || "New User"}
+              {formData?.fullName || "New User"}
             </Typography>
           </Stack>
 
@@ -210,32 +188,32 @@ const ProfilePage = () => {
             // View Mode (when an ID is provided)
             <Stack className="flex items-start justify-start space-y-6 w-full">
               <Typography>
-                <strong>Job Title:</strong> {formData.jobTitle}
+                <strong>Job Title:</strong> {formData?.jobTitle}
               </Typography>
               <Typography>
-                <strong>Company:</strong> {formData.currentCompany}
+                <strong>Company:</strong> {formData?.currentCompany}
               </Typography>
               <Typography>
-                <strong>Location:</strong> {formData.location}
+                <strong>Location:</strong> {formData?.location}
               </Typography>
               <Typography>
-                <strong>Email:</strong> {formData.email}
+                <strong>Email:</strong> {formData?.email}
               </Typography>
               <Typography>
-                <strong>Phone:</strong> {formData.phone}
+                <strong>Phone:</strong> {formData?.phone}
               </Typography>
               <Typography>
-                <strong>About Me:</strong> {formData.aboutMe}
+                <strong>About Me:</strong> {formData?.aboutMe}
               </Typography>
               <Typography>
                 <strong>Programming Languages:</strong>
-                {formData.programmingLanguages}
+                {formData?.programmingLanguages}
               </Typography>
               <Typography>
-                <strong>Education:</strong> {formData.education}
+                <strong>Education:</strong> {formData?.education}
               </Typography>
               <Typography>
-                <strong>Work Experience:</strong> {formData.experience}
+                <strong>Work Experience:</strong> {formData?.experience}
               </Typography>
 
               {resume && (
@@ -268,7 +246,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Full Name"
                 name="fullName"
-                value={formData.fullName}
+                value={formData?.fullName}
                 onChange={handleChange}
               />
               <TextField
@@ -276,7 +254,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Job Title"
                 name="jobTitle"
-                value={formData.jobTitle}
+                value={formData?.jobTitle}
                 onChange={handleChange}
               />
               <TextField
@@ -284,7 +262,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Current Company"
                 name="currentCompany"
-                value={formData.currentCompany}
+                value={formData?.currentCompany}
                 onChange={handleChange}
               />
               <TextField
@@ -292,7 +270,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Location"
                 name="location"
-                value={formData.location}
+                value={formData?.location}
                 onChange={handleChange}
               />
               <TextField
@@ -300,7 +278,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Email"
                 name="email"
-                value={formData.email}
+                value={formData?.email}
                 onChange={handleChange}
               />
               <TextField
@@ -308,7 +286,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Phone Number"
                 name="phone"
-                value={formData.phone}
+                value={formData?.phone}
                 onChange={handleChange}
               />
               <TextField
@@ -318,7 +296,7 @@ const ProfilePage = () => {
                 name="aboutMe"
                 multiline
                 rows={3}
-                value={formData.aboutMe}
+                value={formData?.aboutMe}
                 onChange={handleChange}
               />
               <TextField
@@ -326,7 +304,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Programming Languages"
                 name="programmingLanguages"
-                value={formData.programmingLanguages}
+                value={formData?.programmingLanguages}
                 onChange={handleChange}
               />
               <TextField
@@ -334,7 +312,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Education"
                 name="education"
-                value={formData.education}
+                value={formData?.education}
                 onChange={handleChange}
               />
               <TextField
@@ -342,7 +320,7 @@ const ProfilePage = () => {
                 fullWidth
                 label="Work Experience"
                 name="experience"
-                value={formData.experience}
+                value={formData?.experience}
                 onChange={handleChange}
               />
 
@@ -355,86 +333,7 @@ const ProfilePage = () => {
               </Button>
 
               {/* Upload Resume */}
-              {id && (
-                <Stack className="flex justify-start pt-4 space-y-4 w-[100%]">
-                  <Stack className="space-y-1">
-                    <Typography className={`!capitalize !font-medium !text-lg`}>
-                      Upload Resume
-                    </Typography>
-
-                    <Divider />
-                  </Stack>
-
-                  {draftUploadedResume ? (
-                    <Stack className="flex justify-start space-y-1 w-[100%]">
-                      <Box className="flex items-center justify-start relative space-x-2 !text-sm text-gray-500 w-[100%]">
-                        <Icon name="File" size={"1.1rem"} />
-
-                        <Typography
-                          className={`!text-sm text-gray-700`}
-                          // className={`!text-sm text-accent hover:underline`}
-                        >
-                          {`${draftUploadedResume.name}`}
-                        </Typography>
-                        <IconButton
-                          className="h-fit !rounded-md"
-                          onClick={handleRemoveResume}
-                        >
-                          <Icon name="Close" size={"1.1rem"} />
-                        </IconButton>
-                      </Box>
-                    </Stack>
-                  ) : (
-                    <Stack className="flex justify-start space-y-1 w-[100%]">
-                      <Box className="flex justify-start space-x-2 w-[100%]">
-                        <Box
-                          className="!bg-white !border !border-gray-300 !border-solid  cursor-pointer !duration-500 !ease-in-out !font-normal !flex !gap-2 items-center !justify-start !pb-0.5 !pl-0.5 !pr-1.5 !pt-0.5 !rounded-md !shadow-none !text-sm !text-gray-900 !tracking-normal !transition-all w-[100%] hover:!border-gray-900"
-                          disabled={loading}
-                          component="label"
-                        >
-                          <Button
-                            className="!bg-gray-100 !border !border-gray-300 !border-solid !capitalize !duration-500 !ease-in-out !font-semibold !pb-1.5 !pl-3 !pr-3 !pt-1.5 !shadow-none !text-sm !text-gray-900 !tracking-normal !transition-all w-fit hover:!bg-gray-200"
-                            disabled={loading}
-                            component="label"
-                          >
-                            Choose File
-                            <input
-                              accept=".pdf"
-                              type="file"
-                              hidden
-                              onChange={handleAddResume}
-                            />
-                          </Button>
-                          No file chosen
-                          <input
-                            accept=".pdf"
-                            type="file"
-                            hidden
-                            onChange={handleAddResume}
-                          />
-                        </Box>
-                      </Box>
-
-                      <Typography className={`!text-xs text-gray-700 `}>
-                        Allowed types: pdf.
-                      </Typography>
-                    </Stack>
-                  )}
-
-                  <Button
-                    className="!bg-black !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !shadow-none !text-sm !text-white !tracking-normal !transition-all w-fit hover:!bg-primary-100"
-                    disabled={loading}
-                    onClick={handleUpdateResume}
-                    variant="contained"
-                  >
-                    {loading ? (
-                      <CircularProgress size={20} className="!text-white" />
-                    ) : (
-                      "Update Resume"
-                    )}
-                  </Button>
-                </Stack>
-              )}
+              {id && <UploadResume />}
             </Stack>
           )}
         </Stack>

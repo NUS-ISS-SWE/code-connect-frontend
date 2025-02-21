@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-no-undef */
+import { Box, Typography } from "@mui/material";
 
 const Footer = () => {
   return (

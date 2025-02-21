@@ -1,5 +1,6 @@
-/* eslint-disable react/jsx-no-undef */
-/* eslint-disable no-undef */
+import { Suspense } from "react";
+import { Route, Routes } from "react-router-dom";
+
 import paths from "./paths.js";
 import Loader from "../components/Loader.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
