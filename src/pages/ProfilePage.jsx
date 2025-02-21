@@ -15,37 +15,56 @@ import paths from "../routes/paths";
 
 const ProfilePage = () => {
   const { state, dispatch } = useGlobalContext();
-
+  const fieldRefs = {
+    fullName: useRef(null),
+    jobTitle: useRef(null),
+    currentCompany: useRef(null),
+    location: useRef(null),
+    email: useRef(null),
+    phone: useRef(null),
+    aboutMe: useRef(null),
+    programmingLanguages: useRef(null),
+    education: useRef(null),
+    experience: useRef(null),
+  };
   const navigate = useNavigate();
   const { id } = useParams(); // Get profile ID from URL
 
   const [resume, setResume] = useState(null);
   const [draftUploadedResume, setDraftUploadedResume] = useState(null);
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tabIndex, setTabIndex] = useState(0);
 
   const createUpdateProfile = async () => {
-    if (id) {
-      const { data, error } = await updateProfile(
-        { id, ...formData },
-        dispatch
-      );
-      if (error) {
-        console.error("Error updated profile:", error);
-        return;
-      }
+    setLoading(true);
 
-      dispatch({
-        type: "SHOW_TOAST",
-        payload: {
-          message: "Profile updated successfully",
-          isOpen: true,
-          variant: "success",
-        },
-      });
+    const firstErrorField = validate();
+
+    if (!firstErrorField) {
+    if (id) {
+        await updateProfileDB();
+      } else {
+        await createProfileDB();
+      }
     } else {
+      setLoading(false);
+      if (fieldRefs[firstErrorField]) {
+        fieldRefs[firstErrorField]?.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    }
+    }
+    setLoading(false);
+  };
+
+  const createProfileDB = async () => {
+    setLoading(false);
+  };
+
       const { data, error } = await createProfile({ ...formData }, dispatch);
       if (error) {
         console.error("Error creating profile:", error);
@@ -62,7 +81,26 @@ const ProfilePage = () => {
       });
       // Redirect to the new profile page
       navigate(`${paths.get("PROFILE").PATH}/${data.id}`);
+  };
+
+  const updateProfileDB = async () => {
+    const { error } = await updateProfile(
+      { id, ...formData },
+      dispatch
+    );
+    if (error) {
+      console.error("Error updated profile:", error);
+      return;
     }
+
+    dispatch({
+      type: "SHOW_TOAST",
+      payload: {
+        message: "Profile updated successfully",
+        isOpen: true,
+        variant: "success",
+      },
+    });
   };
 
   useEffect(() => {
