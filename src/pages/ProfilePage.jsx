@@ -84,6 +84,10 @@ const ProfilePage = () => {
     if (!formData.experience)
       newErrors.experience = "Please enter your experience!";
 
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(formData.email)) 
+      newErrors.email = "Please enter a valid email!";
     // if (!formInputs.email) newErrors.email = "Please enter email address!";
     // else if (!/\S+@\S+\.\S+/.test(formInputs.email))
     //   newErrors.email = "Invalid email format";
