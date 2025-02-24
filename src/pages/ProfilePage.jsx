@@ -85,24 +85,13 @@ const ProfilePage = () => {
       newErrors.experience = "Please enter your experience!";
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
     if (!emailPattern.test(formData.email)) 
       newErrors.email = "Please enter a valid email!";
-    // if (!formInputs.email) newErrors.email = "Please enter email address!";
-    // else if (!/\S+@\S+\.\S+/.test(formInputs.email))
-    //   newErrors.email = "Invalid email format";
 
-    // if (!formData.password) {
-    //   newErrors.password = "Password is required";
-    // } else if (formInputs.password.length < 6) {
-    //   newErrors.password = "Password must be at least 6 characters";
-    // }
+    const sgPhonePattern = /^(?:\+65\s?)?(?:6\d{7}|8\d{7}|9\d{7}|1800\d{6}|800\d{7})$/;
 
-    // if (!formData.confirmPassword) {
-    //   newErrors.confirmPassword = "Confirm Password is required";
-    // } else if (formInputs.password !== formInputs.confirmPassword) {
-    //   newErrors.confirmPassword = "Passwords do not match";
-    // }
+    if (!sgPhonePattern.test(formData.phone))
+      newErrors.phone = "Please enter a valid Singapore phone number!";
 
     setErrors(newErrors);
 
