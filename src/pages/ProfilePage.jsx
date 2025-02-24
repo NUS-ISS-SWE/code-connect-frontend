@@ -57,6 +57,33 @@ const ProfilePage = () => {
     if (!formData.fullName)
       newErrors.fullName = "Please enter your name!";
 
+    if (!formData.jobTitle)
+      newErrors.jobTitle = "Please enter a job title!";
+
+    if (!formData.currentCompany)
+      newErrors.currentCompany = "Please enter your company!";
+
+    if (!formData.location)
+      newErrors.location = "Please enter your location!";
+
+    if (!formData.email)
+      newErrors.email = "Please enter your email!";
+
+    if (!formData.phone)
+      newErrors.phone = "Please enter your phone number!";
+
+    if (!formData.aboutMe)
+      newErrors.aboutMe = "Please enter your about me!";
+
+    if (!formData.programmingLanguages)
+      newErrors.programmingLanguages = "Please enter your programming languages!";
+
+    if (!formData.education)
+      newErrors.education = "Please enter your education!";
+
+    if (!formData.experience)
+      newErrors.experience = "Please enter your experience!";
+
     // if (!formInputs.email) newErrors.email = "Please enter email address!";
     // else if (!/\S+@\S+\.\S+/.test(formInputs.email))
     //   newErrors.email = "Invalid email format";
@@ -142,8 +169,23 @@ const ProfilePage = () => {
   };
 
   useEffect(() => {
+    if (!id) {
     // If no ID is provided, show an empty form for creating a profile
-    if (!id) return;
+      setFormData({
+        fullName: "",
+        jobTitle: "",
+        currentCompany: "",
+        location: "",
+        email: "",
+        phone: "",
+        aboutMe: "",
+        programmingLanguages: "",
+        education: "",
+        experience: "",
+      });
+      setLoading(false);
+      return;
+    }
 
     //TODO: fetch user profile should happen on login
     fetchProfile();
@@ -315,6 +357,8 @@ const ProfilePage = () => {
                 fullWidth
                 label="Job Title"
                 name="jobTitle"
+                error={!!errors.jobTitle}
+            helperText={errors.jobTitle}                                
             inputRef={fieldRefs.jobTitle}
                 value={formData?.jobTitle}
                 onChange={handleChange}
@@ -324,6 +368,8 @@ const ProfilePage = () => {
                 fullWidth
                 label="Current Company"
                 name="currentCompany"
+                error={!!errors.currentCompany}
+                helperText={errors.currentCompany}       
             inputRef={fieldRefs.currentCompany}
                 value={formData?.currentCompany}
                 onChange={handleChange}
@@ -333,6 +379,8 @@ const ProfilePage = () => {
                 fullWidth
                 label="Location"
                 name="location"
+                error={!!errors.location}
+                helperText={errors.location}       
             inputRef={fieldRefs.location}
                 value={formData?.location}
                 onChange={handleChange}
@@ -342,6 +390,8 @@ const ProfilePage = () => {
                 fullWidth
                 label="Email"
                 name="email"
+                error={!!errors.email}
+                helperText={errors.email}       
             inputRef={fieldRefs.email}
                 value={formData?.email}
                 onChange={handleChange}
@@ -351,6 +401,8 @@ const ProfilePage = () => {
                 fullWidth
                 label="Phone Number"
                 name="phone"
+                error={!!errors.phone}
+                helperText={errors.phone}       
             inputRef={fieldRefs.phone}
                 value={formData?.phone}
                 onChange={handleChange}
@@ -362,6 +414,8 @@ const ProfilePage = () => {
                 name="aboutMe"
                 multiline
                 rows={3}
+                error={!!errors.aboutMe}
+                helperText={errors.aboutMe}       
             inputRef={fieldRefs.aboutMe}
                 value={formData?.aboutMe}
                 onChange={handleChange}
@@ -371,6 +425,8 @@ const ProfilePage = () => {
                 fullWidth
                 label="Programming Languages"
                 name="programmingLanguages"
+                error={!!errors.programmingLanguages}
+                helperText={errors.programmingLanguages}       
             inputRef={fieldRefs.programmingLanguages}
                 value={formData?.programmingLanguages}
                 onChange={handleChange}
@@ -380,6 +436,8 @@ const ProfilePage = () => {
                 fullWidth
                 label="Education"
                 name="education"
+      error={!!errors.education}
+      helperText={errors.education}
             inputRef={fieldRefs.education}
                 value={formData?.education}
                 onChange={handleChange}
@@ -389,6 +447,8 @@ const ProfilePage = () => {
                 fullWidth
                 label="Work Experience"
                 name="experience"
+                error={!!errors.experience}
+                helperText={errors.experience}       
             inputRef={fieldRefs.experience}
                 value={formData?.experience}
                 onChange={handleChange}
