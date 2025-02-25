@@ -7,7 +7,7 @@ const Loader = ({ show }) => {
   const { loading } = state;
 
   return loading.isOpen || show ? (
-    <Box className="sticky top-0 z-[999]">
+    <Box className="fixed top-0 z-[999]">
       <Stack>
         <LinearProgress />
         <Typography>{loading.message}</Typography>
