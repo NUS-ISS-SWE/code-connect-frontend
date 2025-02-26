@@ -23,7 +23,7 @@ const getProfileById = async ({ id }, dispatch) => {
     dispatch({
       type: "SHOW_TOAST",
       payload: {
-        message: error,
+        message: String(error),
         isOpen: true,
         variant: "error",
       },
