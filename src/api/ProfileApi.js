@@ -35,7 +35,7 @@ const getProfileById = async ({ id }, dispatch) => {
 
 const createProfile = async (formData, dispatch) => {
   const response = await apiWrapper({
-    body: JSON.stringify(prepareProfileFormData(formData)),
+    body: JSON.stringify(formData),
     dispatch,
     endpoint: "/profiles",
     headers: {

@@ -8,6 +8,7 @@ import {
   Tabs,
   TextField,
   Typography,
+  Chip
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
@@ -37,6 +38,8 @@ const ProfilePage = () => {
     phone: useRef(null),
     aboutMe: useRef(null),
     programmingLanguages: useRef(null),
+    certifications: useRef(null),
+    skillSet: useRef(null),
     education: useRef(null),
     experience: useRef(null),
   };
@@ -50,7 +53,7 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [tabIndex, setTabIndex] = useState(0);
 
-  
+
   const validate = () => {
     const newErrors = {};
 
@@ -72,6 +75,12 @@ const ProfilePage = () => {
     if (!formData.phone)
       newErrors.phone = "Please enter your phone number!";
 
+    if (!formData.skillSet)
+      newErrors.skillSet = "Please enter your skillset!";
+
+    if (!formData.certifications)
+      newErrors.certifications = "Please enter your certifications!";
+
     if (!formData.aboutMe)
       newErrors.aboutMe = "Please enter your about me!";
 
@@ -85,7 +94,7 @@ const ProfilePage = () => {
       newErrors.experience = "Please enter your experience!";
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(formData.email)) 
+    if (!emailPattern.test(formData.email))
       newErrors.email = "Please enter a valid email!";
 
     const sgPhonePattern = /^(?:\+65\s?)?(?:6\d{7}|8\d{7}|9\d{7}|1800\d{6}|800\d{7})$/;
@@ -122,23 +131,40 @@ const ProfilePage = () => {
     setLoading(false);
   };
 
-  const createProfileDB = async () => {
-      const { data, error } = await createProfile({ ...formData }, dispatch);
-      if (error) {
-        console.error("Error creating profile:", error);
-        return;
-      }
+  const handleInputChange = (field) => (event) => {
+    const value = event.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: splitValueAndMap(value), // Convert comma-separated input to array
+    }));
+  };
 
-      dispatch({
-        type: "SHOW_TOAST",
-        payload: {
-          message: "Profile created successfully",
-          isOpen: true,
-          variant: "success",
-        },
-      });
-      // Redirect to the new profile page
-      navigate(`${paths.get("PROFILE").PATH}/${data.id}`);
+  const handleEducationChange = handleInputChange("education");
+  const handleExperienceChange = handleInputChange("experience");
+  const handleSkillsetChange = handleInputChange("skillSet");
+  const handleCertificationsChange = handleInputChange("certifications");
+
+  const splitValueAndMap = (value) => {
+    return value.split(",").map((item) => item.trim());
+  }
+
+  const createProfileDB = async () => {
+    const { data, error } = await createProfile({ ...formData }, dispatch);
+    if (error) {
+      console.error("Error creating profile:", error);
+      return;
+    }
+
+    dispatch({
+      type: "SHOW_TOAST",
+      payload: {
+        message: "Profile created successfully",
+        isOpen: true,
+        variant: "success",
+      },
+    });
+    // Redirect to the new profile page
+    navigate(`${paths.get("PROFILE").PATH}/${data.id}`);
   };
 
   const updateProfileDB = async () => {
@@ -163,7 +189,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (!id) {
-    // If no ID is provided, show an empty form for creating a profile
+      // If no ID is provided, show an empty form for creating a profile
       setFormData({
         fullName: "",
         jobTitle: "",
@@ -171,6 +197,9 @@ const ProfilePage = () => {
         location: "",
         email: "",
         phone: "",
+        certifications: "",
+        skillSet: "",
+        profilePicture:"",
         aboutMe: "",
         programmingLanguages: "",
         education: "",
@@ -242,12 +271,12 @@ const ProfilePage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  {loading ? (
-    <CircularProgress size={20} className="!text-white" />
-  ) : (
-    "Sign up"
-  )}
-  
+  // {loading ? (
+  //   <CircularProgress size={20} className="!text-white" />
+  // ) : (
+  //   "Sign up"
+  // )}
+
   return (
     <Stack className="bg-whiteflex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
@@ -287,6 +316,9 @@ const ProfilePage = () => {
                 <strong>Company:</strong> {formData?.currentCompany}
               </Typography>
               <Typography>
+                <strong>Work Experience:</strong> {formData?.experience}
+              </Typography>
+              <Typography>
                 <strong>Location:</strong> {formData?.location}
               </Typography>
               <Typography>
@@ -303,10 +335,13 @@ const ProfilePage = () => {
                 {formData?.programmingLanguages}
               </Typography>
               <Typography>
+                <strong>Skillset:</strong> {formData?.skillSet}
+              </Typography>
+              <Typography>
                 <strong>Education:</strong> {formData?.education}
               </Typography>
               <Typography>
-                <strong>Work Experience:</strong> {formData?.experience}
+                <strong>Certifications:</strong> {formData?.certifications}
               </Typography>
 
               {resume && (
@@ -340,8 +375,8 @@ const ProfilePage = () => {
                 label="Full Name"
                 name="fullName"
                 error={!!errors.fullName}
-            helperText={errors.fullName}
-            inputRef={fieldRefs.fullName}
+                helperText={errors.fullName}
+                inputRef={fieldRefs.fullName}
                 value={formData?.fullName}
                 onChange={handleChange}
               />
@@ -351,8 +386,8 @@ const ProfilePage = () => {
                 label="Job Title"
                 name="jobTitle"
                 error={!!errors.jobTitle}
-            helperText={errors.jobTitle}                                
-            inputRef={fieldRefs.jobTitle}
+                helperText={errors.jobTitle}
+                inputRef={fieldRefs.jobTitle}
                 value={formData?.jobTitle}
                 onChange={handleChange}
               />
@@ -362,19 +397,35 @@ const ProfilePage = () => {
                 label="Current Company"
                 name="currentCompany"
                 error={!!errors.currentCompany}
-                helperText={errors.currentCompany}       
-            inputRef={fieldRefs.currentCompany}
+                helperText={errors.currentCompany}
+                inputRef={fieldRefs.currentCompany}
                 value={formData?.currentCompany}
                 onChange={handleChange}
               />
               <TextField
                 size="small"
                 fullWidth
+                label="Work Experience"
+                name="experience"
+                error={!!errors.experience}
+                helperText={errors.experience}
+                inputRef={fieldRefs.experience}
+                value={(Array.isArray(formData?.experience) ? formData.experience.join(", ") : "")}
+                onChange={handleExperienceChange}
+              />
+              <Stack direction="row" spacing={1} flexWrap="wrap">
+                {(Array.isArray(formData?.experience) ? formData.experience : []).map((exp, index) => (
+                  <Chip key={index} label={exp} />
+                ))}
+              </Stack>
+              <TextField
+                size="small"
+                fullWidth
                 label="Location"
                 name="location"
                 error={!!errors.location}
-                helperText={errors.location}       
-            inputRef={fieldRefs.location}
+                helperText={errors.location}
+                inputRef={fieldRefs.location}
                 value={formData?.location}
                 onChange={handleChange}
               />
@@ -384,8 +435,8 @@ const ProfilePage = () => {
                 label="Email"
                 name="email"
                 error={!!errors.email}
-                helperText={errors.email}       
-            inputRef={fieldRefs.email}
+                helperText={errors.email}
+                inputRef={fieldRefs.email}
                 value={formData?.email}
                 onChange={handleChange}
               />
@@ -395,8 +446,8 @@ const ProfilePage = () => {
                 label="Phone Number"
                 name="phone"
                 error={!!errors.phone}
-                helperText={errors.phone}       
-            inputRef={fieldRefs.phone}
+                helperText={errors.phone}
+                inputRef={fieldRefs.phone}
                 value={formData?.phone}
                 onChange={handleChange}
               />
@@ -408,8 +459,8 @@ const ProfilePage = () => {
                 multiline
                 rows={3}
                 error={!!errors.aboutMe}
-                helperText={errors.aboutMe}       
-            inputRef={fieldRefs.aboutMe}
+                helperText={errors.aboutMe}
+                inputRef={fieldRefs.aboutMe}
                 value={formData?.aboutMe}
                 onChange={handleChange}
               />
@@ -419,34 +470,62 @@ const ProfilePage = () => {
                 label="Programming Languages"
                 name="programmingLanguages"
                 error={!!errors.programmingLanguages}
-                helperText={errors.programmingLanguages}       
-            inputRef={fieldRefs.programmingLanguages}
+                helperText={errors.programmingLanguages}
+                inputRef={fieldRefs.programmingLanguages}
                 value={formData?.programmingLanguages}
                 onChange={handleChange}
               />
               <TextField
                 size="small"
                 fullWidth
-                label="Education"
-                name="education"
-      error={!!errors.education}
-      helperText={errors.education}
-            inputRef={fieldRefs.education}
-                value={formData?.education}
-                onChange={handleChange}
+                label="Skills"
+                name="skills"
+                error={!!errors.skillSet}
+                helperText={errors.skillSet}
+                inputRef={fieldRefs.skillSet}
+                value={(Array.isArray(formData?.skillSet) ? formData.skillSet.join(", ") : "")}
+                onChange={handleSkillsetChange}
               />
+              <Stack direction="row" spacing={1} flexWrap="wrap">
+                {(Array.isArray(formData?.skillSet) ? formData.skillSet : []).map((skill, index) => (
+                  <Chip key={index} label={skill} />
+                ))}
+              </Stack>
+
               <TextField
                 size="small"
                 fullWidth
-                label="Work Experience"
-                name="experience"
-                error={!!errors.experience}
-                helperText={errors.experience}       
-            inputRef={fieldRefs.experience}
-                value={formData?.experience}
-                onChange={handleChange}
+                label="Education"
+                name="education"
+                error={!!errors.education}
+                helperText={errors.education}
+                inputRef={fieldRefs.education}
+                value={(Array.isArray(formData?.education) ? formData.education.join(", ") : "")}
+                onChange={handleEducationChange}
               />
-
+              <Stack direction="row" spacing={1} flexWrap="wrap">
+                {(Array.isArray(formData?.education) ? formData.education : []).map((edu, index) => (
+                  <Chip key={index} label={edu} />
+                ))}
+              </Stack>
+              <TextField
+                size="small"
+                fullWidth
+                label="Certifications"
+                name="certifications"
+                error={!!errors.certifications}
+                helperText={errors.certifications}
+                inputRef={fieldRefs.certifications}
+                value={(Array.isArray(formData?.certifications) ? formData.certifications.join(", ") : "")}
+                onChange={handleCertificationsChange}
+              />
+              <Stack direction="row" spacing={1} flexWrap="wrap">
+                {(Array.isArray(formData?.certifications) ? formData.certifications : []).map((cert, index) => (
+                  <Chip key={index} label={cert} />
+                ))}
+              </Stack>
+              {/* Upload Resume */}
+              {id && <UploadResume />}
               <Button
                 variant="contained"
                 color="primary"
@@ -454,9 +533,6 @@ const ProfilePage = () => {
               >
                 {id ? "Save Changes" : "Create Profile"}
               </Button>
-
-              {/* Upload Resume */}
-              {id && <UploadResume />}
             </Stack>
           )}
         </Stack>
