@@ -47,6 +47,25 @@ const createProfile = async (formData, dispatch) => {
   return response;
 };
 
+const uploadProfilePicture = async (file, id, dispatch) => {
+const formData = new FormData();
+formData.append("file", file);
+
+  try {
+    const response = await apiWrapper({
+      body: formData,
+      dispatch,
+      endpoint: `/profiles/${id}/profilePicture`, // API endpoint for image upload
+      headers: {
+      },
+      method: "POST",
+    });
+  } catch (error) {
+    console.error("Error uploading profile picture:", error);
+    return null;
+  } 
+}  
+
 const updateProfile = async (formData, dispatch) => {
   const response = await apiWrapper({
     body: JSON.stringify(formData),
@@ -122,4 +141,5 @@ export {
   createProfile,
   retrieveResume,
   uploadResume,
+  uploadProfilePicture
 };

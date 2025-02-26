@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   Divider,
@@ -15,12 +14,14 @@ import { Link } from "react-router-dom";
 import Icon from "../constants/Icon";
 import Navbar from "../components/Navbar";
 import UploadResume from "../components/profilePageComponents/UploadResume";
+import ProfilePictureUpload from "../components/profilePageComponents/ProfilePictureUpload";
 
 import {
   createProfile,
   getProfileById,
   retrieveResume,
   updateProfile,
+  uploadProfilePicture
 } from "../api/ProfileApi";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
@@ -32,6 +33,7 @@ const ProfilePage = () => {
   const fieldRefs = {
     fullName: useRef(null),
     jobTitle: useRef(null),
+    profilePicture: useRef(null),
     currentCompany: useRef(null),
     location: useRef(null),
     email: useRef(null),
@@ -113,13 +115,7 @@ const ProfilePage = () => {
 
     const firstErrorField = validate();
 
-    if (!firstErrorField) {
-      if (id) {
-        await updateProfileDB();
-      } else {
-        await createProfileDB();
-      }
-    } else {
+    if (firstErrorField) {
       setLoading(false);
       if (fieldRefs[firstErrorField]) {
         fieldRefs[firstErrorField]?.current.scrollIntoView({
@@ -127,7 +123,26 @@ const ProfilePage = () => {
           block: "center",
         });
       }
+      return;
     }
+
+
+  let profilePictureUrl = formData.profilePictureUrl; // Keep existing URL if not changed
+
+  if (formData.profilePicture instanceof File) {
+    // Upload only if it's a new file
+    const uploadedUrl = await uploadProfilePicture(formData.profilePicture, id, dispatch);
+  }
+
+  // Prepare final formData object
+  const updatedFormData = { ...formData, profilePicture: profilePictureUrl };
+
+  if (id) {
+    await updateProfileDB(updatedFormData);
+  } else {
+    await createProfileDB(updatedFormData);
+  }
+
     setLoading(false);
   };
 
@@ -193,13 +208,13 @@ const ProfilePage = () => {
       setFormData({
         fullName: "",
         jobTitle: "",
+        profilePicture : "",
         currentCompany: "",
         location: "",
         email: "",
         phone: "",
         certifications: "",
         skillSet: "",
-        profilePicture:"",
         aboutMe: "",
         programmingLanguages: "",
         education: "",
@@ -299,13 +314,7 @@ const ProfilePage = () => {
         {/* Profile Section */}
         <Stack className="flex items-start justify-start py-4 space-y-4 w-full">
           {/* Profile Picture */}
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar sx={{ width: 100, height: 100 }} alt="Profile Picture" />
-            <Typography variant="h6">
-              {formData?.fullName || "New User"}
-            </Typography>
-          </Stack>
-
+          <ProfilePictureUpload formData={formData} setFormData={setFormData} showSelectButton={tabIndex === 1 && id}  />
           {id && tabIndex === 0 ? (
             // View Mode (when an ID is provided)
             <Stack className="flex items-start justify-start space-y-6 w-full">
