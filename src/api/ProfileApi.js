@@ -1,4 +1,4 @@
-import { apiWrapper, prepareProfileFormData } from "../utils/apiUtils";
+import { apiWrapper } from "../utils/apiUtils";
 
 const getProfileById = async ({ id }, dispatch) => {
   try {

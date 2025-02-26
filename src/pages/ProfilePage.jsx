@@ -75,10 +75,10 @@ const ProfilePage = () => {
     if (!formData.phone)
       newErrors.phone = "Please enter your phone number!";
 
-    if (!formData.skillSet)
+    if (!formData.skillSet || formData.skillSet[0] == '')
       newErrors.skillSet = "Please enter your skillset!";
 
-    if (!formData.certifications)
+    if (!formData.certifications  || formData.certifications[0] == '')
       newErrors.certifications = "Please enter your certifications!";
 
     if (!formData.aboutMe)
@@ -87,10 +87,10 @@ const ProfilePage = () => {
     if (!formData.programmingLanguages)
       newErrors.programmingLanguages = "Please enter your programming languages!";
 
-    if (!formData.education)
+    if (!formData.education || formData.education[0] == '')
       newErrors.education = "Please enter your education!";
 
-    if (!formData.experience)
+    if (!formData.experience || formData.experience[0] == '')
       newErrors.experience = "Please enter your experience!";
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -146,8 +146,8 @@ const ProfilePage = () => {
 
   const splitValueAndMap = (value) => {
     return value.split(",").map((item) => item.trim());
-  }
-
+   }
+  
   const createProfileDB = async () => {
     const { data, error } = await createProfile({ ...formData }, dispatch);
     if (error) {
@@ -414,7 +414,7 @@ const ProfilePage = () => {
                 onChange={handleExperienceChange}
               />
               <Stack direction="row" spacing={1} flexWrap="wrap">
-                {(Array.isArray(formData?.experience) ? formData.experience : []).map((exp, index) => (
+                {(Array.isArray(formData?.experience) ? formData.experience : []).filter((item) => item != "").map((exp, index) => (
                   <Chip key={index} label={exp} />
                 ))}
               </Stack>
@@ -487,7 +487,7 @@ const ProfilePage = () => {
                 onChange={handleSkillsetChange}
               />
               <Stack direction="row" spacing={1} flexWrap="wrap">
-                {(Array.isArray(formData?.skillSet) ? formData.skillSet : []).map((skill, index) => (
+                {(Array.isArray(formData?.skillSet) ? formData.skillSet : []).filter((item) => item != "").map((skill, index) => (
                   <Chip key={index} label={skill} />
                 ))}
               </Stack>
@@ -504,7 +504,7 @@ const ProfilePage = () => {
                 onChange={handleEducationChange}
               />
               <Stack direction="row" spacing={1} flexWrap="wrap">
-                {(Array.isArray(formData?.education) ? formData.education : []).map((edu, index) => (
+                {(Array.isArray(formData?.education) ? formData.education : []).filter((item) => item != "").map((edu, index) => (
                   <Chip key={index} label={edu} />
                 ))}
               </Stack>
@@ -520,7 +520,7 @@ const ProfilePage = () => {
                 onChange={handleCertificationsChange}
               />
               <Stack direction="row" spacing={1} flexWrap="wrap">
-                {(Array.isArray(formData?.certifications) ? formData.certifications : []).map((cert, index) => (
+                {(Array.isArray(formData?.certifications) ? formData.certifications : []).filter((item) => item != "").map((cert, index) => (
                   <Chip key={index} label={cert} />
                 ))}
               </Stack>
