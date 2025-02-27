@@ -32,7 +32,11 @@ const LoginPage = () => {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [formInputs, setFormInputs] = useState({ email: "", password: "" });
+  const [formInputs, setFormInputs] = useState({
+    email: "",
+    password: "",
+    role: "USER",
+  });
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChangeInput = (key) => (evt) => {
@@ -76,7 +80,7 @@ const LoginPage = () => {
       const { data, error, status } = await loginUser(formInputs, dispatch);
 
       if (!error) {
-        login(LOGIN_TOKEN_KEY, data.token);
+        login(LOGIN_TOKEN_KEY, data.accessToken);
 
         dispatch({
           type: "SHOW_TOAST",

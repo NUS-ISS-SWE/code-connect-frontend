@@ -36,6 +36,7 @@ const SignupPage = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    role: "USER",
   });
   const [showPassword, setShowPassword] = useState(false);
 
@@ -104,7 +105,7 @@ const SignupPage = () => {
     const { data, message, status } = await loginUser(formInputs, dispatch);
 
     if (status === 200) {
-      login(LOGIN_TOKEN_KEY, data.token);
+      login(LOGIN_TOKEN_KEY, data.accessToken);
 
       dispatch({
         type: "SHOW_TOAST",
