@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { loginUser, registerUser } from "../api/UserApi";
 import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon.jsx";
+import { ROLES } from "../constants/roles.js";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import paths from "../routes/paths.js";
@@ -36,7 +37,7 @@ const SignupPage = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "USER",
+    role: ROLES.get("user").value,
   });
   const [showPassword, setShowPassword] = useState(false);
 
@@ -112,7 +113,7 @@ const SignupPage = () => {
         payload: {
           message: "You have been logged in",
           isOpen: true,
-          variant: "",
+          variant: "success",
         },
       });
 
