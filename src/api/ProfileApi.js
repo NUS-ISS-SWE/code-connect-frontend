@@ -1,4 +1,4 @@
-import { apiWrapper, prepareProfileFormData } from "../utils/apiUtils";
+import { apiWrapper } from "../utils/apiUtils";
 
 const getProfileById = async ({ id }, dispatch) => {
   try {
@@ -35,7 +35,7 @@ const getProfileById = async ({ id }, dispatch) => {
 
 const createProfile = async (formData, dispatch) => {
   const response = await apiWrapper({
-    body: JSON.stringify(prepareProfileFormData(formData)),
+    body: JSON.stringify(formData),
     dispatch,
     endpoint: "/profiles",
     headers: {
@@ -46,6 +46,27 @@ const createProfile = async (formData, dispatch) => {
 
   return response;
 };
+
+const uploadProfilePicture = async (file, id, dispatch) => {
+const formData = new FormData();
+formData.append("file", file);
+
+try {
+    const response = await apiWrapper({
+      body: formData,
+      dispatch,
+      endpoint: `/profiles/${id}/profilePicture`, // API endpoint for image upload
+      headers: {
+      },
+      method: "POST",
+    });
+
+    return { data: response?.data?.profilePicture, error: "", status: response.status };
+  } catch (error) {
+    console.error("Error uploading profile picture:", error);
+    return null;
+  } 
+}  
 
 const updateProfile = async (formData, dispatch) => {
   const response = await apiWrapper({
@@ -122,4 +143,5 @@ export {
   createProfile,
   retrieveResume,
   uploadResume,
+  uploadProfilePicture
 };
