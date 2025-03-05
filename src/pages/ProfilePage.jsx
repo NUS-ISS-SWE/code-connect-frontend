@@ -1,68 +1,205 @@
-/* eslint-disable no-undef */
-/* eslint-disable react/jsx-no-undef */
+import {
+  Box,
+  Button,
+  Divider,
+  Stack,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+  Chip
+} from "@mui/material";
+import { Link } from "react-router-dom";
+
 import Icon from "../constants/Icon";
 import Navbar from "../components/Navbar";
+import UploadResume from "../components/profilePageComponents/UploadResume";
+import ProfilePictureUpload from "../components/profilePageComponents/ProfilePictureUpload";
 
 import {
-  getProfileById,
   createProfile,
-  updateProfile,
-  uploadResume,
+  getProfileById,
   retrieveResume,
+  updateProfile,
+  uploadProfilePicture
 } from "../api/ProfileApi";
+import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import paths from "../routes/paths";
 
 const ProfilePage = () => {
   const { state, dispatch } = useGlobalContext();
-
+  const { setUser, user } = useAuthContext();
+  const fieldRefs = {
+    fullName: useRef(null),
+    jobTitle: useRef(null),
+    profilePicture: useRef(null),
+    currentCompany: useRef(null),
+    location: useRef(null),
+    email: useRef(null),
+    phone: useRef(null),
+    aboutMe: useRef(null),
+    programmingLanguages: useRef(null),
+    certifications: useRef(null),
+    skillSet: useRef(null),
+    education: useRef(null),
+    experience: useRef(null),
+  };
   const navigate = useNavigate();
   const { id } = useParams(); // Get profile ID from URL
 
   const [resume, setResume] = useState(null);
   const [draftUploadedResume, setDraftUploadedResume] = useState(null);
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tabIndex, setTabIndex] = useState(0);
 
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (!formData.fullName)
+      newErrors.fullName = "Please enter your name!";
+
+    if (!formData.jobTitle)
+      newErrors.jobTitle = "Please enter a job title!";
+
+    if (!formData.currentCompany)
+      newErrors.currentCompany = "Please enter your company!";
+
+    if (!formData.location)
+      newErrors.location = "Please enter your location!";
+
+    if (!formData.email)
+      newErrors.email = "Please enter your email!";
+
+    if (!formData.phone)
+      newErrors.phone = "Please enter your phone number!";
+
+    if (!formData.skillSet || formData.skillSet[0] == '')
+      newErrors.skillSet = "Please enter your skillset!";
+
+    if (!formData.certifications  || formData.certifications[0] == '')
+      newErrors.certifications = "Please enter your certifications!";
+
+    if (!formData.aboutMe)
+      newErrors.aboutMe = "Please enter your about me!";
+
+    if (!formData.programmingLanguages)
+      newErrors.programmingLanguages = "Please enter your programming languages!";
+
+    if (!formData.education || formData.education[0] == '')
+      newErrors.education = "Please enter your education!";
+
+    if (!formData.experience || formData.experience[0] == '')
+      newErrors.experience = "Please enter your experience!";
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email))
+      newErrors.email = "Please enter a valid email!";
+
+    const sgPhonePattern = /^(?:\+65\s?)?(?:6\d{7}|8\d{7}|9\d{7}|1800\d{6}|800\d{7})$/;
+
+    if (!sgPhonePattern.test(formData.phone))
+      newErrors.phone = "Please enter a valid Singapore phone number!";
+
+    setErrors(newErrors);
+
+    // Return first key in error object
+    return Object.keys(newErrors)[0];
+  };
+
   const createUpdateProfile = async () => {
-    if (id) {
-      const { data, error } = await updateProfile(
-        { id, ...formData },
-        dispatch
-      );
-      if (error) {
-        console.error("Error updated profile:", error);
-        return;
-      }
+    setLoading(true);
 
-      dispatch({
-        type: "SHOW_TOAST",
-        payload: {
-          message: "Profile updated successfully",
-          isOpen: true,
-          variant: "success",
-        },
-      });
-    } else {
-      const { data, error } = await createProfile({ ...formData }, dispatch);
-      if (error) {
-        console.error("Error creating profile:", error);
-        return;
-      }
+    const firstErrorField = validate();
 
-      dispatch({
-        type: "SHOW_TOAST",
-        payload: {
-          message: "Profile created successfully",
-          isOpen: true,
-          variant: "success",
-        },
-      });
-      // Redirect to the new profile page
-      navigate(`${paths.get("PROFILE").PATH}/${data.id}`);
+    if (firstErrorField) {
+      setLoading(false);
+      if (fieldRefs[firstErrorField]) {
+        fieldRefs[firstErrorField]?.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+      return;
     }
+
+
+  let profilePictureUrl = formData.profilePictureUrl; // Keep existing URL if not changed
+
+  if (formData.profilePicture instanceof File) {
+    // Upload only if it's a new file
+    const uploadedUrl = await uploadProfilePicture(formData.profilePicture, id, dispatch);
+  }
+
+  // Prepare final formData object
+  const updatedFormData = { ...formData, profilePicture: profilePictureUrl };
+
+  if (id) {
+    await updateProfileDB(updatedFormData);
+  } else {
+    await createProfileDB(updatedFormData);
+  }
+
+    setLoading(false);
+  };
+
+  const handleInputChange = (field) => (event) => {
+    const value = event.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: splitValueAndMap(value), // Convert comma-separated input to array
+    }));
+  };
+
+  const handleEducationChange = handleInputChange("education");
+  const handleExperienceChange = handleInputChange("experience");
+  const handleSkillsetChange = handleInputChange("skillSet");
+  const handleCertificationsChange = handleInputChange("certifications");
+
+  const splitValueAndMap = (value) => {
+    return value.split(",").map((item) => item.trim());
+   }
+  
+  const createProfileDB = async () => {
+    const { data, error } = await createProfile({ ...formData }, dispatch);
+    if (error) {
+      console.error("Error creating profile:", error);
+      return;
+    }
+
+    dispatch({
+      type: "SHOW_TOAST",
+      payload: {
+        message: "Profile created successfully",
+        isOpen: true,
+        variant: "success",
+      },
+    });
+    // Redirect to the new profile page
+    navigate(`${paths.get("PROFILE").PATH}/${data.id}`);
+  };
+
+  const updateProfileDB = async () => {
+    const { error } = await updateProfile(
+      { id, ...formData },
+      dispatch
+    );
+    if (error) {
+      console.error("Error updated profile:", error);
+      return;
+    }
+
+    dispatch({
+      type: "SHOW_TOAST",
+      payload: {
+        message: "Profile updated successfully",
+        isOpen: true,
+        variant: "success",
+      },
+    });
   };
 
   useEffect(() => {
@@ -71,10 +208,13 @@ const ProfilePage = () => {
       setFormData({
         fullName: "",
         jobTitle: "",
+        profilePicture : "",
         currentCompany: "",
         location: "",
         email: "",
         phone: "",
+        certifications: "",
+        skillSet: "",
         aboutMe: "",
         programmingLanguages: "",
         education: "",
@@ -84,42 +224,48 @@ const ProfilePage = () => {
       return;
     }
 
-    const fetchProfile = async () => {
-      try {
-        const { data, error } = await getProfileById({ id }, dispatch);
-        if (error) throw new Error(error);
-
-        const profileData = await data.json();
-        setFormData(profileData);
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    //TODO: fetch user profile should happen on login
     fetchProfile();
   }, [id]); // Runs when the ID changes
 
   useEffect(() => {
-    if (id) {
+    if (!user) return;
+
+    // fetch resume if user has resume-related data
+    if (user.resumeData?.resumeContent) {
       fetchResume();
+    } else {
+      setResume(null);
     }
-  }, [id]);
+  }, [user]);
 
-  const handleTabChange = (event, newValue) => {
-    setTabIndex(newValue);
-  };
+  const fetchProfile = async () => {
+    try {
+      const { data, error } = await getProfileById({ id }, dispatch);
+      if (error) throw new Error(error);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+      const profileData = await data.json();
+
+      setFormData(profileData);
+      setUser({ ...user, ...profileData });
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fetchResume = async () => {
     dispatch({ type: "LOADING", payload: { isOpen: true } });
 
-    const { data, error } = await retrieveResume({ id }, dispatch);
+    const { data, error } = await retrieveResume(
+      {
+        id,
+        fileName: user.resumeData?.resumeFileName, // pass uploaded resume file name from user data
+      },
+      dispatch
+    );
 
     if (data) {
       setResume(data);
@@ -128,54 +274,23 @@ const ProfilePage = () => {
     dispatch({ type: "LOADING", payload: { isOpen: false } });
   };
 
-  const handleAddResume = async (event) => {
-    dispatch({ type: "LOADING", payload: { isOpen: true } });
-
-    const file = event.target.files[0];
-
-    if (file) {
-      setDraftUploadedResume(file);
-    }
-
-    dispatch({ type: "LOADING", payload: { isOpen: false } });
+  const handleTabChange = (event, newValue) => {
+    setTabIndex(newValue);
   };
 
   const handleRemoveResume = () => {
     setDraftUploadedResume(null);
   };
 
-  const handleUpdateResume = async () => {
-    dispatch({ type: "LOADING", payload: { isOpen: true } });
-
-    const formData = new FormData();
-    formData.append("file", draftUploadedResume);
-
-    const { data, error } = await uploadResume({ id, formData }, dispatch);
-
-    if (error) {
-      console.error("Error uploading resume:", error);
-      return;
-    }
-
-    setResume({
-      file: draftUploadedResume,
-      fileUrl: URL.createObjectURL(draftUploadedResume),
-    });
-
-    dispatch({
-      type: "SHOW_TOAST",
-      payload: {
-        message: "Resume uploaded successfully",
-        isOpen: true,
-        variant: "success",
-      },
-    });
-
-    dispatch({ type: "LOADING", payload: { isOpen: false } });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  if (loading) return <Typography>Loading...</Typography>;
-  if (error) return <Typography color="error">{error}</Typography>;
+  // {loading ? (
+  //   <CircularProgress size={20} className="!text-white" />
+  // ) : (
+  //   "Sign up"
+  // )}
 
   return (
     <Stack className="bg-whiteflex flex-1 items-start justify-start min-h-[100vh] w-full">
@@ -199,43 +314,43 @@ const ProfilePage = () => {
         {/* Profile Section */}
         <Stack className="flex items-start justify-start py-4 space-y-4 w-full">
           {/* Profile Picture */}
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar sx={{ width: 100, height: 100 }} alt="Profile Picture" />
-            <Typography variant="h6">
-              {formData.fullName || "New User"}
-            </Typography>
-          </Stack>
-
+          <ProfilePictureUpload formData={formData} setFormData={setFormData} showSelectButton={tabIndex === 1 && id}  />
           {id && tabIndex === 0 ? (
             // View Mode (when an ID is provided)
             <Stack className="flex items-start justify-start space-y-6 w-full">
               <Typography>
-                <strong>Job Title:</strong> {formData.jobTitle}
+                <strong>Job Title:</strong> {formData?.jobTitle}
               </Typography>
               <Typography>
-                <strong>Company:</strong> {formData.currentCompany}
+                <strong>Company:</strong> {formData?.currentCompany}
               </Typography>
               <Typography>
-                <strong>Location:</strong> {formData.location}
+                <strong>Work Experience:</strong> {formData?.experience}
               </Typography>
               <Typography>
-                <strong>Email:</strong> {formData.email}
+                <strong>Location:</strong> {formData?.location}
               </Typography>
               <Typography>
-                <strong>Phone:</strong> {formData.phone}
+                <strong>Email:</strong> {formData?.email}
               </Typography>
               <Typography>
-                <strong>About Me:</strong> {formData.aboutMe}
+                <strong>Phone:</strong> {formData?.phone}
+              </Typography>
+              <Typography>
+                <strong>About Me:</strong> {formData?.aboutMe}
               </Typography>
               <Typography>
                 <strong>Programming Languages:</strong>
-                {formData.programmingLanguages}
+                {formData?.programmingLanguages}
               </Typography>
               <Typography>
-                <strong>Education:</strong> {formData.education}
+                <strong>Skillset:</strong> {formData?.skillSet}
               </Typography>
               <Typography>
-                <strong>Work Experience:</strong> {formData.experience}
+                <strong>Education:</strong> {formData?.education}
+              </Typography>
+              <Typography>
+                <strong>Certifications:</strong> {formData?.certifications}
               </Typography>
 
               {resume && (
@@ -268,7 +383,10 @@ const ProfilePage = () => {
                 fullWidth
                 label="Full Name"
                 name="fullName"
-                value={formData.fullName}
+                error={!!errors.fullName}
+                helperText={errors.fullName}
+                inputRef={fieldRefs.fullName}
+                value={formData?.fullName}
                 onChange={handleChange}
               />
               <TextField
@@ -276,7 +394,10 @@ const ProfilePage = () => {
                 fullWidth
                 label="Job Title"
                 name="jobTitle"
-                value={formData.jobTitle}
+                error={!!errors.jobTitle}
+                helperText={errors.jobTitle}
+                inputRef={fieldRefs.jobTitle}
+                value={formData?.jobTitle}
                 onChange={handleChange}
               />
               <TextField
@@ -284,15 +405,37 @@ const ProfilePage = () => {
                 fullWidth
                 label="Current Company"
                 name="currentCompany"
-                value={formData.currentCompany}
+                error={!!errors.currentCompany}
+                helperText={errors.currentCompany}
+                inputRef={fieldRefs.currentCompany}
+                value={formData?.currentCompany}
                 onChange={handleChange}
               />
               <TextField
                 size="small"
                 fullWidth
+                label="Work Experience"
+                name="experience"
+                error={!!errors.experience}
+                helperText={errors.experience}
+                inputRef={fieldRefs.experience}
+                value={(Array.isArray(formData?.experience) ? formData.experience.join(", ") : "")}
+                onChange={handleExperienceChange}
+              />
+              <Stack direction="row" spacing={1} flexWrap="wrap">
+                {(Array.isArray(formData?.experience) ? formData.experience : []).filter((item) => item != "").map((exp, index) => (
+                  <Chip key={index} label={exp} />
+                ))}
+              </Stack>
+              <TextField
+                size="small"
+                fullWidth
                 label="Location"
                 name="location"
-                value={formData.location}
+                error={!!errors.location}
+                helperText={errors.location}
+                inputRef={fieldRefs.location}
+                value={formData?.location}
                 onChange={handleChange}
               />
               <TextField
@@ -300,7 +443,10 @@ const ProfilePage = () => {
                 fullWidth
                 label="Email"
                 name="email"
-                value={formData.email}
+                error={!!errors.email}
+                helperText={errors.email}
+                inputRef={fieldRefs.email}
+                value={formData?.email}
                 onChange={handleChange}
               />
               <TextField
@@ -308,7 +454,10 @@ const ProfilePage = () => {
                 fullWidth
                 label="Phone Number"
                 name="phone"
-                value={formData.phone}
+                error={!!errors.phone}
+                helperText={errors.phone}
+                inputRef={fieldRefs.phone}
+                value={formData?.phone}
                 onChange={handleChange}
               />
               <TextField
@@ -318,7 +467,10 @@ const ProfilePage = () => {
                 name="aboutMe"
                 multiline
                 rows={3}
-                value={formData.aboutMe}
+                error={!!errors.aboutMe}
+                helperText={errors.aboutMe}
+                inputRef={fieldRefs.aboutMe}
+                value={formData?.aboutMe}
                 onChange={handleChange}
               />
               <TextField
@@ -326,26 +478,63 @@ const ProfilePage = () => {
                 fullWidth
                 label="Programming Languages"
                 name="programmingLanguages"
-                value={formData.programmingLanguages}
+                error={!!errors.programmingLanguages}
+                helperText={errors.programmingLanguages}
+                inputRef={fieldRefs.programmingLanguages}
+                value={formData?.programmingLanguages}
                 onChange={handleChange}
               />
+              <TextField
+                size="small"
+                fullWidth
+                label="Skills"
+                name="skills"
+                error={!!errors.skillSet}
+                helperText={errors.skillSet}
+                inputRef={fieldRefs.skillSet}
+                value={(Array.isArray(formData?.skillSet) ? formData.skillSet.join(", ") : "")}
+                onChange={handleSkillsetChange}
+              />
+              <Stack direction="row" spacing={1} flexWrap="wrap">
+                {(Array.isArray(formData?.skillSet) ? formData.skillSet : []).filter((item) => item != "").map((skill, index) => (
+                  <Chip key={index} label={skill} />
+                ))}
+              </Stack>
+
               <TextField
                 size="small"
                 fullWidth
                 label="Education"
                 name="education"
-                value={formData.education}
-                onChange={handleChange}
+                error={!!errors.education}
+                helperText={errors.education}
+                inputRef={fieldRefs.education}
+                value={(Array.isArray(formData?.education) ? formData.education.join(", ") : "")}
+                onChange={handleEducationChange}
               />
+              <Stack direction="row" spacing={1} flexWrap="wrap">
+                {(Array.isArray(formData?.education) ? formData.education : []).filter((item) => item != "").map((edu, index) => (
+                  <Chip key={index} label={edu} />
+                ))}
+              </Stack>
               <TextField
                 size="small"
                 fullWidth
-                label="Work Experience"
-                name="experience"
-                value={formData.experience}
-                onChange={handleChange}
+                label="Certifications"
+                name="certifications"
+                error={!!errors.certifications}
+                helperText={errors.certifications}
+                inputRef={fieldRefs.certifications}
+                value={(Array.isArray(formData?.certifications) ? formData.certifications.join(", ") : "")}
+                onChange={handleCertificationsChange}
               />
-
+              <Stack direction="row" spacing={1} flexWrap="wrap">
+                {(Array.isArray(formData?.certifications) ? formData.certifications : []).filter((item) => item != "").map((cert, index) => (
+                  <Chip key={index} label={cert} />
+                ))}
+              </Stack>
+              {/* Upload Resume */}
+              {id && <UploadResume />}
               <Button
                 variant="contained"
                 color="primary"
@@ -353,88 +542,6 @@ const ProfilePage = () => {
               >
                 {id ? "Save Changes" : "Create Profile"}
               </Button>
-
-              {/* Upload Resume */}
-              {id && (
-                <Stack className="flex justify-start pt-4 space-y-4 w-[100%]">
-                  <Stack className="space-y-1">
-                    <Typography className={`!capitalize !font-medium !text-lg`}>
-                      Upload Resume
-                    </Typography>
-
-                    <Divider />
-                  </Stack>
-
-                  {draftUploadedResume ? (
-                    <Stack className="flex justify-start space-y-1 w-[100%]">
-                      <Box className="flex items-center justify-start relative space-x-2 !text-sm text-gray-500 w-[100%]">
-                        <Icon name="File" size={"1.1rem"} />
-
-                        <Typography
-                          className={`!text-sm text-gray-700`}
-                          // className={`!text-sm text-accent hover:underline`}
-                        >
-                          {`${draftUploadedResume.name}`}
-                        </Typography>
-                        <IconButton
-                          className="h-fit !rounded-md"
-                          onClick={handleRemoveResume}
-                        >
-                          <Icon name="Close" size={"1.1rem"} />
-                        </IconButton>
-                      </Box>
-                    </Stack>
-                  ) : (
-                    <Stack className="flex justify-start space-y-1 w-[100%]">
-                      <Box className="flex justify-start space-x-2 w-[100%]">
-                        <Box
-                          className="!bg-white !border !border-gray-300 !border-solid  cursor-pointer !duration-500 !ease-in-out !font-normal !flex !gap-2 items-center !justify-start !pb-0.5 !pl-0.5 !pr-1.5 !pt-0.5 !rounded-md !shadow-none !text-sm !text-gray-900 !tracking-normal !transition-all w-[100%] hover:!border-gray-900"
-                          disabled={loading}
-                          component="label"
-                        >
-                          <Button
-                            className="!bg-gray-100 !border !border-gray-300 !border-solid !capitalize !duration-500 !ease-in-out !font-semibold !pb-1.5 !pl-3 !pr-3 !pt-1.5 !shadow-none !text-sm !text-gray-900 !tracking-normal !transition-all w-fit hover:!bg-gray-200"
-                            disabled={loading}
-                            component="label"
-                          >
-                            Choose File
-                            <input
-                              accept=".pdf"
-                              type="file"
-                              hidden
-                              onChange={handleAddResume}
-                            />
-                          </Button>
-                          No file chosen
-                          <input
-                            accept=".pdf"
-                            type="file"
-                            hidden
-                            onChange={handleAddResume}
-                          />
-                        </Box>
-                      </Box>
-
-                      <Typography className={`!text-xs text-gray-700 `}>
-                        Allowed types: pdf.
-                      </Typography>
-                    </Stack>
-                  )}
-
-                  <Button
-                    className="!bg-black !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !shadow-none !text-sm !text-white !tracking-normal !transition-all w-fit hover:!bg-primary-100"
-                    disabled={loading}
-                    onClick={handleUpdateResume}
-                    variant="contained"
-                  >
-                    {loading ? (
-                      <CircularProgress size={20} className="!text-white" />
-                    ) : (
-                      "Update Resume"
-                    )}
-                  </Button>
-                </Stack>
-              )}
             </Stack>
           )}
         </Stack>

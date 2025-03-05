@@ -23,7 +23,7 @@ const getProfileById = async ({ id }, dispatch) => {
     dispatch({
       type: "SHOW_TOAST",
       payload: {
-        message: error,
+        message: String(error),
         isOpen: true,
         variant: "error",
       },
@@ -32,83 +32,45 @@ const getProfileById = async ({ id }, dispatch) => {
     return { data: null, error: error.message, status: 500 };
   }
 };
-const createProfile = async (
-  {
-    fullName,
-    jobTitle,
-    currentCompany,
-    location,
-    email,
-    phone,
-    aboutMe,
-    programmingLanguages,
-    education,
-    experience,
-  },
-  dispatch
-) => {
-  const formData = JSON.stringify({
-    fullName,
-    jobTitle,
-    currentCompany,
-    location,
-    email,
-    phone,
-    aboutMe,
-    programmingLanguages,
-    education,
-    experience,
-  });
 
+const createProfile = async (formData, dispatch) => {
   const response = await apiWrapper({
-    body: formData,
+    body: JSON.stringify(formData),
     dispatch,
-    endpoint: "/profiles", // Update specific profile by ID
+    endpoint: "/profiles",
     headers: {
       "Content-Type": "application/json",
     },
-    method: "POST", // Use PUT instead of POST for updates
+    method: "POST",
   });
-  console.log("returning", response);
 
   return response;
 };
 
-const updateProfile = async (
-  {
-    id,
-    fullName,
-    jobTitle,
-    currentCompany,
-    location,
-    email,
-    phone,
-    aboutMe,
-    programmingLanguages,
-    education,
-    experience,
-  },
-  dispatch
-) => {
-  const formData = JSON.stringify({
-    fullName,
-    jobTitle,
-    currentCompany,
-    location,
-    email,
-    phone,
-    aboutMe,
-    programmingLanguages,
-    education,
-    experience,
-  });
+const uploadProfilePicture = async (file, id, dispatch) => {
+const formData = new FormData();
+formData.append("file", file);
 
-  const url = `/profiles/${id}`;
+  try {
+    const response = await apiWrapper({
+      body: formData,
+      dispatch,
+      endpoint: `/profiles/${id}/profilePicture`, // API endpoint for image upload
+      headers: {
+      },
+      method: "POST",
+    });
+  } catch (error) {
+    console.error("Error uploading profile picture:", error);
+    return null;
+  } 
+}  
 
+const updateProfile = async (formData, dispatch) => {
   const response = await apiWrapper({
-    body: formData,
+    body: JSON.stringify(formData),
     dispatch,
-    endpoint: url, // Update specific profile by ID
+    endpoint: `/profiles/${formData.id}`, // Update specific profile by ID
     headers: {
       "Content-Type": "application/json",
     },
@@ -118,7 +80,17 @@ const updateProfile = async (
   return response;
 };
 
-const retrieveResume = async ({ id }, dispatch) => {
+const deleteResume = async ({ id }, dispatch) => {
+  const response = await apiWrapper({
+    dispatch,
+    endpoint: `/profiles/${id}/deleteResume`,
+    method: "DELETE",
+  });
+
+  return response;
+};
+
+const retrieveResume = async ({ id, fileName }, dispatch) => {
   try {
     const response = await fetch(`/profiles/${id}/resume`, {
       method: "GET",
@@ -129,7 +101,9 @@ const retrieveResume = async ({ id }, dispatch) => {
     }
 
     const blob = await response.blob();
-    const file = new File([blob], "Resume.pdf", { type: "application/pdf" });
+    const file = new File([blob], fileName || "Resume.pdf", {
+      type: "application/pdf",
+    });
     const fileUrl = URL.createObjectURL(file);
 
     return { data: { file, fileUrl }, error: "", status: response.status };
@@ -150,12 +124,10 @@ const retrieveResume = async ({ id }, dispatch) => {
 };
 
 const uploadResume = async ({ id, formData }, dispatch) => {
-  const url = `/profiles/${id}/uploadResume`;
-
   const response = await apiWrapper({
     body: formData,
     dispatch,
-    endpoint: url,
+    endpoint: `/profiles/${id}/uploadResume`,
     method: "POST",
   });
 
@@ -163,9 +135,11 @@ const uploadResume = async ({ id, formData }, dispatch) => {
 };
 
 export {
+  deleteResume,
   getProfileById,
   updateProfile,
   createProfile,
   retrieveResume,
   uploadResume,
+  uploadProfilePicture
 };

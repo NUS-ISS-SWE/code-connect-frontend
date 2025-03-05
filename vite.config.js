@@ -17,52 +17,30 @@ export default defineConfig({
             "useCallback",
             "useContext",
             "useEffect",
+            "useMemo",
             "useRef",
             "useReducer",
             "useState",
-            "useMemo",
           ],
         },
         "react-router-dom",
-        {
-          "@mui/material": [
-            "Avatar",
-            "Box",
-            "Button",
-            "CircularProgress",
-            "ClickAwayListener",
-            "Divider",
-            "IconButton",
-            "InputAdornment",
-            "LinearProgress",
-            "Menu",
-            "MenuItem",
-            "Snackbar",
-            "Stack",
-            "Tab",
-            "Tabs",
-            "TextField",
-            "Toolbar",
-            "Typography",
-          ],
-        },
       ],
     }),
   ],
   test: {
     globals: true,
-    environment: 'jsdom',
-    setupFiles: './src/tests/setup.js',  
+    environment: "jsdom",
+    setupFiles: "./src/tests/setup.js",
   },
   server: {
     port: 5173,
     proxy: {
-      // Proxy API requests to User Authentication
-      "/api": {
-        target: "http://localhost:8081",
-        changeOrigin: true,
-        secure: false,
-      },
+      // // Proxy API requests to User Authentication
+      // "/api": {
+      //   target: "http://localhost:8081",
+      //   changeOrigin: true,
+      //   secure: false,
+      // },
 
       // Proxy API requests to Profile Management
       "/profiles": {

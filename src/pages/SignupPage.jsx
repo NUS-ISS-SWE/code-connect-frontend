@@ -1,6 +1,14 @@
-/* eslint-disable react/jsx-no-undef */
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
+import {
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Link } from "react-router-dom";
 
 import { loginUser, registerUser } from "../api/UserApi";
 import logo from "../assets/logo/logo.png";
@@ -28,6 +36,7 @@ const SignupPage = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    role: "USER",
   });
   const [showPassword, setShowPassword] = useState(false);
 
@@ -96,7 +105,7 @@ const SignupPage = () => {
     const { data, message, status } = await loginUser(formInputs, dispatch);
 
     if (status === 200) {
-      login(LOGIN_TOKEN_KEY, data.token);
+      login(LOGIN_TOKEN_KEY, data.accessToken);
 
       dispatch({
         type: "SHOW_TOAST",
