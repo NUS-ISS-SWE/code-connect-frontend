@@ -29,7 +29,7 @@ const ProfilePictureUpload = ({ formData, setFormData, showSelectButton }) => {
           src={
             preview // Show preview first (if user selects a new image)
               ? preview
-              : formData?.profilePicture?.startsWith("iVBORw") // Detect base64 (PNG example)
+              : formData?.profilePicture != null 
               ? `data:image/png;base64,${formData.profilePicture}`
               : "/default-avatar.png" // Fallback
           }
