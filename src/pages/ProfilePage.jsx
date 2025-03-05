@@ -126,21 +126,18 @@ const ProfilePage = () => {
       return;
     }
 
-
-  let profilePictureUrl = formData.profilePictureUrl; // Keep existing URL if not changed
-
+  
   if (formData.profilePicture instanceof File) {
     // Upload only if it's a new file
-    const uploadedUrl = await uploadProfilePicture(formData.profilePicture, id, dispatch);
+    const uploadedProfilePicture = await uploadProfilePicture(formData.profilePicture, id, dispatch);
+    formData.profilePicture = uploadedProfilePicture.data;
   }
 
-  // Prepare final formData object
-  const updatedFormData = { ...formData, profilePicture: profilePictureUrl };
-
+  
   if (id) {
-    await updateProfileDB(updatedFormData);
+    await updateProfileDB(formData);
   } else {
-    await createProfileDB(updatedFormData);
+    await createProfileDB(formData);
   }
 
     setLoading(false);
@@ -182,7 +179,7 @@ const ProfilePage = () => {
     navigate(`${paths.get("PROFILE").PATH}/${data.id}`);
   };
 
-  const updateProfileDB = async () => {
+  const updateProfileDB = async (formData) => {
     const { error } = await updateProfile(
       { id, ...formData },
       dispatch
