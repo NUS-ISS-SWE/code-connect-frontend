@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Divider,
   InputAdornment,
   Stack,
@@ -15,8 +16,10 @@ import Navbar from "../components/Navbar";
 
 import dummy from "../assets/dummy/index.js";
 import Icon from "../constants/Icon.jsx";
+import styles from "../constants/styles.jsx";
 import useContent from "../hooks/useContent.js";
 import { useGlobalContext } from "../hooks/useGlobalContext";
+import useKeyPress from "../hooks/useKeyPress.js";
 import { renderIntervalDuration } from "../utils/stringUtils.js";
 
 const JobsPage = () => {
@@ -24,6 +27,7 @@ const JobsPage = () => {
   const { loading } = state;
 
   const content = useContent();
+  const isEnterPressed = useKeyPress("Enter");
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Get initial values from URL
@@ -31,30 +35,63 @@ const JobsPage = () => {
   const initialJobType = searchParams.get("jobType") || "";
   const initialLocation = searchParams.get("location") || "";
 
-  const [filters, setFilters] = useState({
+  const [filteredJobs, setFilteredJobs] = useState([]);
+  const [searchFilters, setSearchFilters] = useState({
     jobType: initialJobType,
     location: initialLocation,
   });
-  const [jobs, setJobs] = useState([]);
   const [searchTerm, setSearchTerm] = useState(initialSearch);
 
   useEffect(() => {
-    // Load dummy data for now; replace with API call later
-    setJobs(dummy.jobListings);
+    fetchSearchResults();
   }, []);
 
+  // Effect hook listening to keyboard 'Enter' key
   useEffect(() => {
-    // Update URL params whenever filters or searchTerm change
-    const params = {};
-    if (searchTerm) params.search = searchTerm;
-    if (filters.jobType) params.jobType = filters.jobType;
-    if (filters.location) params.location = filters.location;
-
-    setSearchParams(params);
-  }, [searchTerm, filters, setSearchParams]);
+    if (isEnterPressed) {
+      handleTriggerSearch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEnterPressed]);
 
   const handleChangeSearchInput = (evt) => {
     setSearchTerm(evt.target.value);
+  };
+
+  const handleTriggerSearch = () => {
+    // Update URL params with searchFilters or searchTerm change
+    const params = {};
+    if (searchTerm) params.search = searchTerm;
+    if (searchFilters.jobType) params.jobType = searchFilters.jobType;
+    if (searchFilters.location) params.location = searchFilters.location;
+
+    setSearchParams(params);
+
+    fetchSearchResults();
+  };
+
+  const fetchSearchResults = async () => {
+    // TODO: Fetch search results from API
+
+    // Load dummy data for now; replace with API call later
+    const data = dummy.jobListings;
+    // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
+    const filteredJobs = filterJobs(data);
+
+    setFilteredJobs(filteredJobs);
+  };
+
+  // Filter jobs based on search term and search filters
+  const filterJobs = (jobs) => {
+    return jobs.filter(
+      (job) =>
+        (searchFilters.jobType === "" ||
+          job.jobType === searchFilters.jobType) &&
+        (searchFilters.location === "" ||
+          job.location.includes(searchFilters.location)) &&
+        (searchTerm === "" ||
+          job.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
   };
 
   return (
@@ -62,7 +99,7 @@ const JobsPage = () => {
       <Navbar />
 
       <Box
-        className={`bg-cover bg-fixed bg-right-bottom bg-no-repeat flex h-[300px] items-center justify-center w-full`}
+        className={`bg-cover bg-fixed bg-right-bottom bg-no-repeat flex h-[400px] items-center justify-center w-full`}
         sx={{
           backgroundImage: `url(${content.jobs.head.background})`,
         }}
@@ -76,29 +113,47 @@ const JobsPage = () => {
             {content.jobs.head.subheader}
           </Typography>
 
-          <TextField
-            className="bg-white w-full"
-            color="primary"
-            disabled={loading.isOpen}
-            fullWidth
-            onChange={handleChangeSearchInput}
-            placeholder={"Search..."}
-            size="small"
-            value={searchTerm}
-            variant="outlined"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment className="!ml-0 !text-gray-400" position="end">
-                  <Icon name={"Search"} size={"1.3em"} />
-                </InputAdornment>
-              ),
-            }}
-          />
+          <Box className="flex justify-start space-x-2 w-full">
+            <TextField
+              className="bg-white w-full"
+              color="primary"
+              disabled={loading.isOpen}
+              fullWidth
+              onChange={handleChangeSearchInput}
+              placeholder={"Search..."}
+              size="small"
+              value={searchTerm}
+              variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment
+                    className="!ml-0 !text-gray-400"
+                    position="end"
+                  >
+                    <Icon name={"Search"} size={"1.3em"} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            <Button
+              className={`${styles.buttonStyles} !bg-primary !min-w-[78px] !text-white hover:!bg-primary-100`}
+              disabled={loading.isOpen}
+              onClick={handleTriggerSearch}
+              variant="contained"
+            >
+              {loading.isOpen ? (
+                <CircularProgress size={16} className="!text-white" />
+              ) : (
+                "Search"
+              )}
+            </Button>
+          </Box>
         </Stack>
       </Box>
 
-      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-7xl py-8 !space-y-2 w-full">
-        {jobs.map((item, index) => {
+      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-7xl px-1 lg:px-0 py-8 !space-y-2 w-full">
+        {filteredJobs?.map((item, index) => {
           return (
             <Stack
               className="!bg-white !border !border-gray-300 !border-solid py-2 rounded-md space-y-2 w-full"
