@@ -22,7 +22,7 @@ const jobListings = [
   },
   {
     thumbnail: dummyThumbnail,
-    jobType: "Remote",
+    jobType: "Freelance",
     location: "Remote",
     postedDate: "2024-02-05",
     companyName: "Netflix",
@@ -72,7 +72,7 @@ const jobListings = [
   },
   {
     thumbnail: dummyThumbnail,
-    jobType: "Remote",
+    jobType: "Freelance",
     location: "Remote",
     postedDate: "2024-02-14",
     companyName: "Spotify",

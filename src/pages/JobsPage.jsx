@@ -3,7 +3,12 @@ import {
   Button,
   CircularProgress,
   Divider,
+  FormControl,
+  IconButton,
   InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Typography,
@@ -21,6 +26,7 @@ import useContent from "../hooks/useContent.js";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import useKeyPress from "../hooks/useKeyPress.js";
 import { renderIntervalDuration } from "../utils/stringUtils.js";
+import { JOB_TYPES_FILTER_OPTIONS } from "../utils/optionUtils.js";
 
 const JobsPage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -57,6 +63,22 @@ const JobsPage = () => {
   const handleChangeSearchInput = (evt) => {
     setSearchTerm(evt.target.value);
   };
+
+  const handleFilterChange = (type) => (evt) => {
+    setSearchFilters({ ...searchFilters, [type]: evt.target.value });
+  };
+
+  useEffect(() => {
+    // Update URL params with searchFilters
+    const params = {};
+    if (searchTerm) params.search = searchTerm;
+    if (searchFilters.jobType) params.jobType = searchFilters.jobType;
+    if (searchFilters.location) params.location = searchFilters.location;
+
+    setSearchParams(params);
+
+    fetchSearchResults();
+  }, [searchFilters]);
 
   const handleTriggerSearch = () => {
     // Update URL params with searchFilters or searchTerm change
@@ -99,7 +121,7 @@ const JobsPage = () => {
       <Navbar />
 
       <Box
-        className={`bg-cover bg-fixed bg-right-bottom bg-no-repeat flex h-[400px] items-center justify-center w-full`}
+        className={`bg-cover bg-fixed bg-right-bottom bg-no-repeat flex h-[360px] items-center justify-center w-full`}
         sx={{
           backgroundImage: `url(${content.jobs.head.background})`,
         }}
@@ -115,7 +137,7 @@ const JobsPage = () => {
 
           <Box className="flex justify-start space-x-2 w-full">
             <TextField
-              className="bg-white w-full"
+              className="bg-white rounded-sm w-full"
               color="primary"
               disabled={loading.isOpen}
               fullWidth
@@ -131,6 +153,17 @@ const JobsPage = () => {
                     position="end"
                   >
                     <Icon name={"Search"} size={"1.3em"} />
+                  </InputAdornment>
+                ),
+                endAdornment: searchTerm && (
+                  <InputAdornment position="end">
+                    <IconButton
+                      className="!text-gray-400"
+                      onClick={() => setSearchTerm("")}
+                      edge="end"
+                    >
+                      <Icon name={"Close"} size={"0.9em"} />
+                    </IconButton>
                   </InputAdornment>
                 ),
               }}
@@ -149,10 +182,37 @@ const JobsPage = () => {
               )}
             </Button>
           </Box>
+
+          {/* Job Type Filter */}
+          <FormControl size="small">
+            <Select
+              className="bg-white min-w-[150px] w-fit"
+              displayEmpty
+              onChange={handleFilterChange("jobType")}
+              name="jobType"
+              value={
+                JOB_TYPES_FILTER_OPTIONS.find(
+                  (f) => searchFilters?.jobType === f.value
+                )?.value
+              }
+            >
+              {JOB_TYPES_FILTER_OPTIONS.map((option, index) => {
+                return (
+                  <MenuItem key={index} value={option.value}>
+                    {option.title}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
         </Stack>
       </Box>
 
-      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-7xl px-1 lg:px-0 py-8 !space-y-2 w-full">
+      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-7xl px-1 lg:px-0 py-6 !space-y-2 w-full">
+        <Typography className="!font-semibold !text-xs lg:!text-xs text-start !text-gray-900">
+          {`${filteredJobs?.length} jobs - ${searchTerm || "all"}`}
+        </Typography>
+
         {filteredJobs?.map((item, index) => {
           return (
             <Stack
