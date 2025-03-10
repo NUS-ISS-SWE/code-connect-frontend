@@ -12,6 +12,7 @@ const JobsPage = lazy(() => import("../pages/JobsPage.jsx"));
 const LoginPage = lazy(() => import("../pages/LoginPage.jsx"));
 const ProfilePage = lazy(() => import("../pages/ProfilePage.jsx"));
 const SignupPage = lazy(() => import("../pages/SignupPage.jsx"));
+const JobPage = lazy(() => import("../pages/JobPage.jsx"));
 
 const AppRoutes = () => {
   return (
@@ -28,6 +29,8 @@ const AppRoutes = () => {
           <Route path={paths.get("LOGIN").PATH} element={<LoginPage />} />
 
           <Route path={paths.get("SIGNUP").PATH} element={<SignupPage />} />
+
+          <Route path={paths.get("CREATEJOB").PATH} element={<JobPage />} />
         </Route>
 
         {/* Protected Routes */}
