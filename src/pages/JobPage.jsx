@@ -14,6 +14,7 @@ import {
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { useGlobalContext } from "../hooks/useGlobalContext";
+import { getJobById, createJob, updateJob } from "../api/JobApi";
 
 const JobPage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -25,6 +26,28 @@ const JobPage = () => {
   const [formData, setFormData] = useState(null);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const createUpdateJob = async () => {
+    setLoading(true);
+
+    const { data, error } = await createJob({ ...formData }, dispatch);
+
+  if (error) {
+    console.error(`Error creating job:`, error);
+    return;
+  }
+
+  dispatch({
+    type: "SHOW_TOAST",
+    payload: {
+      message: `Job created successfully`,
+      isOpen: true,
+      variant: "success",
+    },
+  });
+
+    setLoading(false);
   };
 
   //Account for thumbnail and numberApplied for viewing?
@@ -162,7 +185,7 @@ const JobPage = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick="">
+            onClick={createUpdateJob}>
             Create Job
           </Button>
         </Stack>
