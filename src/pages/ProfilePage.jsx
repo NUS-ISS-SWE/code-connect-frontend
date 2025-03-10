@@ -10,6 +10,7 @@ import {
   Chip
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import Footer from "../components/Footer";
 
 import Icon from "../constants/Icon";
 import Navbar from "../components/Navbar";
@@ -543,6 +544,7 @@ const ProfilePage = () => {
           )}
         </Stack>
       </Stack>
+      <Footer />
     </Stack>
   );
 };
