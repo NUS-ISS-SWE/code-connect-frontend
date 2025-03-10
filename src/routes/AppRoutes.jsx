@@ -29,18 +29,13 @@ const AppRoutes = () => {
           <Route path={paths.get("LOGIN").PATH} element={<LoginPage />} />
 
           <Route path={paths.get("SIGNUP").PATH} element={<SignupPage />} />
-
-          <Route path={paths.get("CREATEJOB").PATH} element={<JobPage />} />
         </Route>
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
           <Route path={paths.get("PROFILE").PATH} element={<ProfilePage />} />
-
-          <Route
-            path={paths.get("GETPROFILE").PATH}
-            element={<ProfilePage />}
-          />
+          <Route path={paths.get("CREATEJOB").PATH} element={<JobPage />} />
+          <Route path={paths.get("GETPROFILE").PATH} element={<ProfilePage />}/>
         </Route>
       </Routes>
     </Suspense>
