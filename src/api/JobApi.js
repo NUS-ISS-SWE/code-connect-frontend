@@ -2,7 +2,7 @@ import { apiWrapper } from "../utils/apiUtils";
 
 const getJobById = async ({ id }, dispatch) => {
   try {
-    const url = `/jobs/${id}`;
+    const url = `/jobpostings/${id}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -37,7 +37,7 @@ const createJob = async (formData, dispatch) => {
   const response = await apiWrapper({
     body: JSON.stringify(formData),
     dispatch,
-    endpoint: "/jobs",
+    endpoint: "/jobpostings",
     headers: {
       "Content-Type": "application/json",
     },
@@ -72,7 +72,7 @@ const updateJob = async (formData, dispatch) => {
   const response = await apiWrapper({
     body: JSON.stringify(formData),
     dispatch,
-    endpoint: `/jobs/${formData.id}`, // Update specific profile by ID
+    endpoint: `/jobpostings/${formData.id}`, // Update specific profile by ID
     headers: {
       "Content-Type": "application/json",
     },

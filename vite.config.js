@@ -48,6 +48,12 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      // Proxy API requests to Profile Management
+            "/jobpostings": {
+              target: "http://localhost:8083",
+              changeOrigin: true,
+              secure: false,
+            },
     },
   },
 });
