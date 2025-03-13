@@ -3,17 +3,14 @@ import {
   Button,
   CircularProgress,
   Divider,
-  FormControl,
   IconButton,
   InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { intervalToDuration } from "date-fns";
+import { SelectPicker } from "rsuite";
 import { Link, useSearchParams } from "react-router-dom";
 
 import Footer from "../components/Footer";
@@ -26,7 +23,10 @@ import useContent from "../hooks/useContent.js";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import useKeyPress from "../hooks/useKeyPress.js";
 import { renderIntervalDuration } from "../utils/stringUtils.js";
-import { JOB_TYPES_FILTER_OPTIONS } from "../utils/optionUtils.js";
+import {
+  JOB_TYPES_FILTER_OPTIONS,
+  LOCATION_FILTER_OPTIONS,
+} from "../utils/optionUtils.js";
 
 const JobsPage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -37,20 +37,45 @@ const JobsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Get initial values from URL
-  const initialSearch = searchParams.get("search") || "";
+  const initialSearch =
+    decodeURIComponent(searchParams.get("search")) === "null"
+      ? ""
+      : decodeURIComponent(searchParams.get("search"));
   const initialJobType = searchParams.get("jobType") || "";
   const initialLocation = searchParams.get("location") || "";
+  const initialSalary = searchParams.get("salary") || "";
 
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [searchFilters, setSearchFilters] = useState({
     jobType: initialJobType,
     location: initialLocation,
+    salary: initialSalary,
   });
   const [searchTerm, setSearchTerm] = useState(initialSearch);
 
+  // Update URL params with searchFilters or searchTerm change
+  const updateUrlParams = (searchTerm, searchFilters) => {
+    const params = {};
+
+    /** Encode the search input so that special characters (e.g. ',', '&', and '=') are safely represented in the URL. */
+    if (searchTerm) params.search = encodeURIComponent(searchTerm);
+
+    if (searchFilters?.jobType) params.jobType = searchFilters.jobType;
+    if (searchFilters?.location) params.location = searchFilters.location;
+    if (searchFilters?.salary) params.salary = searchFilters.salary;
+
+    setSearchParams(params);
+  };
+
+  // Call fetch search results API on intial render
   useEffect(() => {
-    fetchSearchResults();
+    fetchSearchResults(searchTerm, searchFilters);
   }, []);
+
+  // Call fetch search results API on filter change
+  useEffect(() => {
+    fetchSearchResults(searchTerm, searchFilters);
+  }, [searchFilters]);
 
   // Effect hook listening to keyboard 'Enter' key
   useEffect(() => {
@@ -64,53 +89,60 @@ const JobsPage = () => {
     setSearchTerm(evt.target.value);
   };
 
-  const handleFilterChange = (type) => (evt) => {
-    setSearchFilters({ ...searchFilters, [type]: evt.target.value });
+  const handleClearSearchInput = () => {
+    const searchQuery = "";
+
+    // Call API to fetch Search results
+    fetchSearchResults(searchQuery, searchFilters);
+    // Reset searchTerm state
+    setSearchTerm(searchQuery);
   };
 
-  useEffect(() => {
-    // Update URL params with searchFilters
-    const params = {};
-    if (searchTerm) params.search = searchTerm;
-    if (searchFilters.jobType) params.jobType = searchFilters.jobType;
-    if (searchFilters.location) params.location = searchFilters.location;
+  const handleFilterChange = (type) => (value) => {
+    // Update searchFilters state
+    setSearchFilters({ ...searchFilters, [type]: value || "" });
+  };
 
-    setSearchParams(params);
-
-    fetchSearchResults();
-  }, [searchFilters]);
-
+  // Call fetch search results API on click of search
   const handleTriggerSearch = () => {
-    // Update URL params with searchFilters or searchTerm change
-    const params = {};
-    if (searchTerm) params.search = searchTerm;
-    if (searchFilters.jobType) params.jobType = searchFilters.jobType;
-    if (searchFilters.location) params.location = searchFilters.location;
+    const searchQuery = searchTerm.trim();
 
-    setSearchParams(params);
+    if (searchQuery !== "") {
+      // Call fetch search results API
+      fetchSearchResults(searchQuery, searchFilters);
 
-    fetchSearchResults();
+      // Update searchTerm state
+      setSearchTerm(searchQuery);
+    } else {
+      handleClearSearchInput();
+    }
   };
 
-  const fetchSearchResults = async () => {
+  const fetchSearchResults = async (searchTerm, searchFilters) => {
     // TODO: Fetch search results from API
 
     // Load dummy data for now; replace with API call later
     const data = dummy.jobListings;
     // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
-    const filteredJobs = filterJobs(data);
+    const filteredJobs = filterJobs(data, searchTerm, searchFilters);
 
+    // Store returned API data in filteredJobs state
     setFilteredJobs(filteredJobs);
+
+    // Update URL params with searchFilters or searchTerm change
+    updateUrlParams(searchTerm, searchFilters);
   };
 
   // Filter jobs based on search term and search filters
-  const filterJobs = (jobs) => {
+  const filterJobs = (jobs, searchTerm, searchFilters) => {
     return jobs.filter(
       (job) =>
         (searchFilters.jobType === "" ||
           job.jobType === searchFilters.jobType) &&
         (searchFilters.location === "" ||
           job.location.includes(searchFilters.location)) &&
+        (searchFilters.salary === "" ||
+          job.salary.includes(searchFilters.salary)) &&
         (searchTerm === "" ||
           job.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()))
     );
@@ -135,6 +167,7 @@ const JobsPage = () => {
             {content.jobs.head.subheader}
           </Typography>
 
+          {/* Searchbar */}
           <Box className="flex justify-start space-x-2 w-full">
             <TextField
               className="bg-white rounded-sm w-full"
@@ -159,7 +192,7 @@ const JobsPage = () => {
                   <InputAdornment position="end">
                     <IconButton
                       className="!text-gray-400"
-                      onClick={() => setSearchTerm("")}
+                      onClick={handleClearSearchInput}
                       edge="end"
                     >
                       <Icon name={"Close"} size={"0.9em"} />
@@ -183,34 +216,36 @@ const JobsPage = () => {
             </Button>
           </Box>
 
-          {/* Job Type Filter */}
-          <FormControl size="small">
-            <Select
-              className="bg-white min-w-[150px] w-fit"
-              displayEmpty
+          {/* Filters */}
+          <Box className="flex justify-start space-x-2 w-full">
+            {/* Job Type */}
+            <SelectPicker
+              data={JOB_TYPES_FILTER_OPTIONS}
               onChange={handleFilterChange("jobType")}
-              name="jobType"
-              value={
-                JOB_TYPES_FILTER_OPTIONS.find(
-                  (f) => searchFilters?.jobType === f.value
-                )?.value
-              }
-            >
-              {JOB_TYPES_FILTER_OPTIONS.map((option, index) => {
-                return (
-                  <MenuItem key={index} value={option.value}>
-                    {option.title}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
+              placeholder="Job Type"
+              style={{ width: 110 }}
+              value={searchFilters?.jobType}
+            />
+
+            {/* Location */}
+            <SelectPicker
+              data={LOCATION_FILTER_OPTIONS}
+              onChange={handleFilterChange("location")}
+              placeholder="Location"
+              style={{ width: 110 }}
+              value={searchFilters?.location}
+            />
+
+            {/* Salary Filter */}
+          </Box>
         </Stack>
       </Box>
 
       <Stack className="flex flex-1 items-start justify-start mx-auto max-w-7xl px-1 lg:px-0 py-6 !space-y-2 w-full">
         <Typography className="!font-semibold !text-xs lg:!text-xs text-start !text-gray-900">
-          {`${filteredJobs?.length} jobs - ${searchTerm || "all"}`}
+          {`${filteredJobs?.length} jobs - ${
+            searchParams.get("search") || "all"
+          }`}
         </Typography>
 
         {filteredJobs?.map((item, index) => {
