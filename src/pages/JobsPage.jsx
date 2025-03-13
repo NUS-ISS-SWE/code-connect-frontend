@@ -244,7 +244,9 @@ const JobsPage = () => {
       <Stack className="flex flex-1 items-start justify-start mx-auto max-w-7xl px-1 lg:px-0 py-6 !space-y-2 w-full">
         <Typography className="!font-semibold !text-xs lg:!text-xs text-start !text-gray-900">
           {`${filteredJobs?.length} jobs - ${
-            searchParams.get("search") || "all"
+            decodeURIComponent(searchParams.get("search")) === "null"
+              ? "all"
+              : decodeURIComponent(searchParams.get("search"))
           }`}
         </Typography>
 
