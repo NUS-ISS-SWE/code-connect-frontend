@@ -248,76 +248,84 @@ const JobsPage = () => {
           }`}
         </Typography>
 
-        {filteredJobs?.map((item, index) => {
-          return (
-            <Stack
-              className="!bg-white !border !border-gray-300 !border-solid py-2 rounded-md space-y-2 w-full"
-              key={index}
-            >
-              <Box className="flex flex-1 items-start justify-start px-2  space-x-3">
-                <img
-                  alt={item.jobTitle}
-                  src={item.thumbnail}
-                  style={{
-                    height: "auto",
-                    width: "48px",
-                  }}
-                />
+        {filteredJobs?.length > 0 ? (
+          filteredJobs?.map((item, index) => {
+            return (
+              <Stack
+                className="!bg-white !border !border-gray-300 !border-solid py-2 rounded-md space-y-2 w-full"
+                key={index}
+              >
+                <Box className="flex flex-1 items-start justify-start px-2  space-x-3">
+                  <img
+                    alt={item.jobTitle}
+                    src={item.thumbnail}
+                    style={{
+                      height: "auto",
+                      width: "48px",
+                    }}
+                  />
 
-                <Stack>
-                  <Typography
-                    className="!font-regular !text-sm lg:!text-sm text-start !text-gray-700 hover:underline"
-                    component={Link}
-                  >
-                    {item.companyName}
+                  <Stack>
+                    <Typography
+                      className="!font-regular !text-sm lg:!text-sm text-start !text-gray-700 hover:underline"
+                      component={Link}
+                    >
+                      {item.companyName}
+                    </Typography>
+                    <Typography
+                      className="!font-regular !text-lg lg:!text-xl text-start !text-primary hover:underline"
+                      component={Link}
+                    >
+                      {item.jobTitle}
+                    </Typography>
+                  </Stack>
+                </Box>
+
+                <Box className="flex flex-1 items-center justify-start px-2  space-x-1 !text-gray-700">
+                  <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
+                    {item.jobType}
                   </Typography>
-                  <Typography
-                    className="!font-regular !text-lg lg:!text-xl text-start !text-primary hover:underline"
-                    component={Link}
-                  >
-                    {item.jobTitle}
+
+                  <Icon name={"Dot"} size={"1em"} />
+
+                  <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
+                    {item.location}
                   </Typography>
-                </Stack>
-              </Box>
 
-              <Box className="flex flex-1 items-center justify-start px-2  space-x-1 !text-gray-700">
-                <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-                  {item.jobType}
-                </Typography>
+                  <Icon name={"Dot"} size={"1em"} />
 
-                <Icon name={"Dot"} size={"1em"} />
-
-                <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-                  {item.location}
-                </Typography>
-
-                <Icon name={"Dot"} size={"1em"} />
-
-                <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-                  {`Posted ${item.postedDate}`}
-                  {/* {`Posted ${renderIntervalDuration(
+                  <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
+                    {`Posted ${item.postedDate}`}
+                    {/* {`Posted ${renderIntervalDuration(
                     item.postedDate,
                     intervalToDuration
                   )}`} */}
-                </Typography>
-              </Box>
+                  </Typography>
+                </Box>
 
-              <Divider flexItem />
+                <Divider flexItem />
 
-              <Box className="flex flex-1 items-start justify-start px-2  space-x-1">
-                <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-                  {`${item.numberApplied} applied`}
-                </Typography>
+                <Box className="flex flex-1 items-start justify-start px-2  space-x-1">
+                  <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
+                    {`${item.numberApplied} applied`}
+                  </Typography>
 
-                <Icon name={"Dot"} size={"1em"} />
+                  <Icon name={"Dot"} size={"1em"} />
 
-                <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-primary">
-                  {item.salaryRange}
-                </Typography>
-              </Box>
-            </Stack>
-          );
-        })}
+                  <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-primary">
+                    {item.salaryRange}
+                  </Typography>
+                </Box>
+              </Stack>
+            );
+          })
+        ) : (
+          <Box className="bg-gray-100 !border !border-gray-300 !border-solid py-2 flex items-center justify-start min-h-[70px] p-3 rounded-md w-full">
+            <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
+              No records found
+            </Typography>
+          </Box>
+        )}
       </Stack>
 
       <Footer />
