@@ -18,10 +18,12 @@ import {
   RiLogoutBoxLine,
   RiMenuLine,
   RiShakeHandsFill,
+  RiSearchLine,
   RiToolsFill,
   RiUserFill,
   RiUserLine,
 } from "react-icons/ri";
+import { RxDotFilled } from "react-icons/rx";
 
 const ICONS_MAP = {
   Add: RiAddFill,
@@ -34,6 +36,7 @@ const ICONS_MAP = {
   Briefcase: RiBriefcase4Fill,
   Cog: MdSettings,
   Close: RiCloseFill,
+  Dot: RxDotFilled,
   Email: MdEmail,
   Eye: RiEyeLine,
   EyeOff: RiEyeOffLine,
@@ -43,6 +46,7 @@ const ICONS_MAP = {
   Logout: RiLogoutBoxLine,
   Menu: RiMenuLine,
   People: MdPeopleAlt,
+  Search: RiSearchLine,
   Settings: FaCog,
   ShakeHands: RiShakeHandsFill,
   Tools: RiToolsFill,

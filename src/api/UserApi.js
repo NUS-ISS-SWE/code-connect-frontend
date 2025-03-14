@@ -12,7 +12,7 @@ const loginUser = async ({ username, password, role }, dispatch) => {
     },
     method: "POST",
   });
-
+console.log('login response',response)
   return response;
 };
 

@@ -1,6 +1,6 @@
 import { Box, LinearProgress, Stack, Typography } from "@mui/material";
 
-import { useGlobalContext } from "../hooks/useGlobalContext";
+import { useGlobalContext } from "../../hooks/useGlobalContext";
 
 const Loader = ({ show }) => {
   const { state, dispatch } = useGlobalContext();

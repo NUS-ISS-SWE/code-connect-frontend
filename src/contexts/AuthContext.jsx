@@ -1,3 +1,4 @@
+import { useGlobalContext } from "../hooks/useGlobalContext";
 import {
   fetchToken,
   LOGIN_TOKEN_KEY,
@@ -8,6 +9,8 @@ import {
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const { state, dispatch } = useGlobalContext();
+
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -39,6 +42,15 @@ export const AuthProvider = ({ children }) => {
     removeToken(LOGIN_TOKEN_KEY);
 
     setUser(null);
+
+    dispatch({
+      type: "SHOW_TOAST",
+      payload: {
+        message: "You have been logged out",
+        isOpen: true,
+        variant: "success",
+      },
+    });
   };
 
   const authState = {

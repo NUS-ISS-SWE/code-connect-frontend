@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import paths from "./paths.js";
-import Loader from "../components/Loader.jsx";
+import Loader from "../components/common/Loader.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import PublicRoute from "./PublicRoute.jsx";
 
