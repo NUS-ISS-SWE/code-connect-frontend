@@ -12,7 +12,6 @@ import {
 import { intervalToDuration } from "date-fns";
 import { SelectPicker } from "rsuite";
 import { Link, useSearchParams } from "react-router-dom";
-
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
@@ -151,7 +150,6 @@ const JobsPage = () => {
   return (
     <Stack className="bg-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
-
       <Box
         className={`bg-cover bg-fixed bg-right-bottom bg-no-repeat flex h-[360px] items-center justify-center w-full`}
         sx={{
@@ -329,7 +327,13 @@ const JobsPage = () => {
           </Box>
         )}
       </Stack>
-
+      <Button
+              className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !text-sm !text-white !tracking-normal !transition-all w-full hover:!bg-primary-100 !shadow-none"
+              component={Link}
+              to={paths.get("CREATEJOB").PATH}
+              variant="contained">
+              {paths.get("CREATEJOB").LABEL}
+      </Button>
       <Footer />
     </Stack>
   );
