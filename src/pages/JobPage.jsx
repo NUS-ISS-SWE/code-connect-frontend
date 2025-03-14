@@ -68,7 +68,7 @@ const JobPage = () => {
           <b>{formData?.jobTitle}</b>
         </Typography>
         <Typography variant="h8" sx={{ textAlign: "left" }}>
-          <b>Posted On:</b> {formData?.postedDate ? formData.postedDate.toLocaleDateString() : date.toLocaleDateString()}
+          <b>Posted On:</b> {formData?.postedDate ? new Date(formData.postedDate).toLocaleDateString() : date.toLocaleDateString()}
         </Typography>
       <Divider flexItem />
       {id ? (

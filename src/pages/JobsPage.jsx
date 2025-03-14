@@ -26,6 +26,7 @@ import {
   JOB_TYPES_FILTER_OPTIONS,
   LOCATION_FILTER_OPTIONS,
 } from "../utils/optionUtils.js";
+import paths from "../routes/paths.js";
 
 const JobsPage = () => {
   const { state, dispatch } = useGlobalContext();
