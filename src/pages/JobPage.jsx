@@ -9,9 +9,9 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { getJobById } from "../api/JobApi";
 import EditJob from "../components/jobPageComponents/EditJob";
 import ViewJob from "../components/jobPageComponents/ViewJob";
+import { GetDataByIdAPI } from "../api/GeneralAPI";
 
 const JobPage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -22,6 +22,7 @@ const JobPage = () => {
   const fieldRefs = {
     jobTitle: useRef(null),
   };
+  const uri = "jobpostings";
   const [formData, setFormData] = useState(null);
 
   useEffect(() => {
@@ -39,7 +40,7 @@ const JobPage = () => {
   
   const fetchJob = async () => {
     try {
-      const { data, error } = await getJobById({ id }, dispatch);
+      const { data, error } = await GetDataByIdAPI(id, uri, dispatch);
       if (error) throw new Error(error);
 
       const jobData = await data.json();

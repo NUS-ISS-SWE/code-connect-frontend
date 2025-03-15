@@ -10,13 +10,9 @@ import EditProfile from "../components/profilePageComponents/EditProfile";
 import ViewProfile from "../components/profilePageComponents/ViewProfile";
 import Navbar from "../components/Navbar";
 import ProfilePictureUpload from "../components/profilePageComponents/ProfilePictureUpload";
-
-import {
-  getProfileById,
-  retrieveResume,
-} from "../api/ProfileApi";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
+import { GetDataByIdAPI } from "../api/GeneralAPI";
 
 const ProfilePage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -26,6 +22,7 @@ const ProfilePage = () => {
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tabIndex, setTabIndex] = useState(0);
+  const uri = "profiles";
 
   useEffect(() => {
     if (!id) {
@@ -66,7 +63,7 @@ const ProfilePage = () => {
 
   const fetchProfile = async () => {
     try {
-      const { data, error } = await getProfileById({ id }, dispatch);
+      const { data, error } = await GetDataByIdAPI(id, uri, dispatch);
       if (error) throw new Error(error);
 
       const profileData = await data.json();

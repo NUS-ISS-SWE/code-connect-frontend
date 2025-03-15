@@ -8,11 +8,12 @@ import {
   InputLabel
 } from "@mui/material";
 
-import { createJob, updateJob } from "../../api/JobApi";
+import { CreateAPI } from "../../api/GeneralAPI";
 
 const EditJob = ({formData, fieldRefs, setFormData, setLoading, dispatch }) => {
   const [errors, setErrors] = useState({});
   const [date, setDate] = useState(new Date());
+  const uri = "jobpostings";
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -21,7 +22,7 @@ const EditJob = ({formData, fieldRefs, setFormData, setLoading, dispatch }) => {
       setLoading(true);
   
       formData.postedDate = date.toISOString();
-      const { data, error } = await createJob({ ...formData }, dispatch);
+      const { data, error } = await CreateAPI(...formData , uri, dispatch);
   
     if (error) {
       console.error(`Error creating job:`, error);

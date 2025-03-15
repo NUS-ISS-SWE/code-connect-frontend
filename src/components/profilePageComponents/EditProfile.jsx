@@ -6,16 +6,20 @@ import {
   } from "@mui/material";
 
   import {
-    createProfile,
-    updateProfile,
-    uploadProfilePicture
+    UploadProfilePicture
   } from "../../api/ProfileApi";
+
+  import {
+    CreateAPI,
+    UpdateAPI,
+  } from "../../api/GeneralAPI";
 
   import UploadResume from "./UploadResume";
 
 const EditProfile = ({ formData, id, setFormData, setLoading, dispatch}) => {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const uri = "profiles";
 
     const fieldRefs = {
         fullName: useRef(null),
@@ -132,12 +136,12 @@ const EditProfile = ({ formData, id, setFormData, setLoading, dispatch}) => {
         if (isValid){
           if (formData.profilePicture instanceof File) {
             // Upload only if it's a new file
-            const uploadedProfilePicture = await uploadProfilePicture(formData.profilePicture, id, dispatch);
+            const uploadedProfilePicture = await UploadProfilePicture(formData.profilePicture, id, dispatch);
             formData.profilePicture = uploadedProfilePicture.data;
           }
       
-          const { data, error } = isCreate ? await createProfile({ ...formData }, dispatch) :
-            await updateProfile({ id, ...formData }, dispatch);
+          const { data, error } = isCreate ? await CreateAPI(...formData, uri, dispatch) :
+          await UpdateAPI(formData, uri, dispatch);
       
           if (error) {
             console.error(`Error ${isCreate ? "creating" : "updating"} profile:`, error);
