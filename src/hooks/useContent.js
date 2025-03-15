@@ -45,6 +45,15 @@ const useContent = () => {
         ],
       },
     },
+    jobs: {
+      head: {
+        action: "Search",
+        background: images.jobsBackground,
+        header: "Find Your Next Tech Job",
+        subheader:
+          "Browse curated job listings tailored to your skills and experience.",
+      },
+    },
   };
 
   return content;

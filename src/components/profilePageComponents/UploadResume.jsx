@@ -39,7 +39,7 @@ const UploadResume = () => {
   const fetchResume = async () => {
     dispatch({ type: "LOADING", payload: { isOpen: true } });
 
-    const { data, error } = await retrieveResume(
+    const { data } = await retrieveResume(
       { id, fileName: user.resumeData?.resumeFileName },
       dispatch
     );
@@ -54,7 +54,7 @@ const UploadResume = () => {
   const handleRemoveResume = async () => {
     dispatch({ type: "LOADING", payload: { isOpen: true } });
 
-    const { data, error } = await deleteResume({ id }, dispatch);
+    const { data } = await deleteResume({ id }, dispatch);
 
     if (data) {
       setResume(null);

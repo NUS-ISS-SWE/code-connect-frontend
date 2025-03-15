@@ -51,7 +51,7 @@ const uploadProfilePicture = async (file, id, dispatch) => {
 const formData = new FormData();
 formData.append("file", file);
 
-  try {
+try {
     const response = await apiWrapper({
       body: formData,
       dispatch,
@@ -60,6 +60,8 @@ formData.append("file", file);
       },
       method: "POST",
     });
+
+    return { data: response?.data?.profilePicture, error: "", status: response.status };
   } catch (error) {
     console.error("Error uploading profile picture:", error);
     return null;
