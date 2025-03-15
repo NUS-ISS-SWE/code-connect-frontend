@@ -140,7 +140,7 @@ const EditProfile = ({ formData, id, setFormData, setLoading, dispatch}) => {
             formData.profilePicture = uploadedProfilePicture.data;
           }
       
-          const { data, error } = isCreate ? await CreateAPI(...formData, uri, dispatch) :
+          const { data, error } = isCreate ? await CreateAPI(formData, uri, dispatch) :
           await UpdateAPI(formData, uri, dispatch);
       
           if (error) {

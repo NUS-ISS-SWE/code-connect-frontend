@@ -22,7 +22,7 @@ const EditJob = ({formData, fieldRefs, setFormData, setLoading, dispatch }) => {
       setLoading(true);
   
       formData.postedDate = date.toISOString();
-      const { data, error } = await CreateAPI(...formData , uri, dispatch);
+      const { data, error } = await CreateAPI(formData , uri, dispatch);
   
     if (error) {
       console.error(`Error creating job:`, error);
