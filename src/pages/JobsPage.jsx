@@ -25,6 +25,8 @@ import { renderIntervalDuration } from "../utils/stringUtils.js";
 import {
   JOB_TYPES_FILTER_OPTIONS,
   LOCATION_FILTER_OPTIONS,
+  SALARY_MAX_FILTER_OPTIONS,
+  SALARY_MIN_FILTER_OPTIONS,
 } from "../utils/optionUtils.js";
 import paths from "../routes/paths.js";
 
@@ -34,6 +36,7 @@ const JobsPage = () => {
 
   const content = useContent();
   const isEnterPressed = useKeyPress("Enter");
+  const searchInputRef = useRef(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Get initial values from URL
@@ -43,13 +46,20 @@ const JobsPage = () => {
       : decodeURIComponent(searchParams.get("search"));
   const initialJobType = searchParams.get("jobType") || "";
   const initialLocation = searchParams.get("location") || "";
-  const initialSalary = searchParams.get("salary") || "";
+  const initialSalaryMin = searchParams.get("salaryMin") || "";
+  const initialSalaryMax =
+    searchParams.get("salaryMax") === "Infinity"
+      ? Infinity
+      : parseInt(searchParams.get("salaryMax"), 10)
+      ? searchParams.get("salaryMax")
+      : "";
 
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [searchFilters, setSearchFilters] = useState({
     jobType: initialJobType,
     location: initialLocation,
-    salary: initialSalary,
+    salaryMin: initialSalaryMin,
+    salaryMax: initialSalaryMax,
   });
   const [searchTerm, setSearchTerm] = useState(initialSearch);
 
@@ -62,7 +72,8 @@ const JobsPage = () => {
 
     if (searchFilters?.jobType) params.jobType = searchFilters.jobType;
     if (searchFilters?.location) params.location = searchFilters.location;
-    if (searchFilters?.salary) params.salary = searchFilters.salary;
+    if (searchFilters.salaryMin) params.salaryMin = searchFilters.salaryMin;
+    if (searchFilters.salaryMax) params.salaryMax = searchFilters.salaryMax;
 
     setSearchParams(params);
   };
@@ -103,6 +114,16 @@ const JobsPage = () => {
     setSearchFilters({ ...searchFilters, [type]: value || "" });
   };
 
+  const handleClearFilters = () => {
+    // Reset searchFilters state
+    setSearchFilters({
+      jobType: "",
+      location: "",
+      salaryMin: "",
+      salaryMax: "",
+    });
+  };
+
   // Call fetch search results API on click of search
   const handleTriggerSearch = () => {
     const searchQuery = searchTerm.trim();
@@ -135,24 +156,58 @@ const JobsPage = () => {
 
   // Filter jobs based on search term and search filters
   const filterJobs = (jobs, searchTerm, searchFilters) => {
-    return jobs.filter(
-      (job) =>
-        (searchFilters.jobType === "" ||
-          job.jobType === searchFilters.jobType) &&
-        (searchFilters.location === "" ||
-          job.location.includes(searchFilters.location)) &&
-        (searchFilters.salary === "" ||
-          job.salary.includes(searchFilters.salary)) &&
-        (searchTerm === "" ||
-          job.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+    return jobs.filter((job) => {
+      const jobTitle =
+        searchTerm === "" ||
+        job.jobTitle.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const jobType =
+        searchFilters.jobType === "" || job.jobType === searchFilters.jobType;
+
+      const jobLocation =
+        searchFilters.location === "" ||
+        job.location.includes(searchFilters.location);
+
+      const minFilter = searchFilters.salaryMin
+        ? parseInt(searchFilters.salaryMin, 10)
+        : 0;
+      const maxFilter =
+        searchFilters.salaryMax && searchFilters.salaryMax !== Infinity
+          ? parseInt(searchFilters.salaryMax, 10)
+          : Infinity;
+      const [jobMinSalary, jobMaxSalary] = extractSalaryRange(job.salaryRange);
+
+      return (
+        jobTitle &&
+        jobType &&
+        jobLocation &&
+        jobMaxSalary >= minFilter &&
+        jobMinSalary <= maxFilter
+      );
+    });
+  };
+
+  const extractSalaryRange = (salaryRange) => {
+    if (!salaryRange) return [0, Infinity];
+
+    const salaryNumbers = salaryRange
+      .replaceAll("$", "")
+      .replaceAll(",", "")
+      .split("-");
+
+    if (!salaryNumbers || salaryNumbers.length < 2) return [0, Infinity];
+
+    const minSalary = parseInt(salaryNumbers[0].replace(/,/g, ""), 10);
+    const maxSalary = parseInt(salaryNumbers[1].replace(/,/g, ""), 10);
+
+    return [minSalary, maxSalary];
   };
 
   return (
     <Stack className="bg-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
       <Box
-        className={`bg-cover bg-fixed bg-right-bottom bg-no-repeat flex h-[360px] items-center justify-center w-full`}
+        className={`bg-cover bg-fixed bg-right-bottom bg-no-repeat flex h-[260px] items-center justify-center w-full`}
         sx={{
           backgroundImage: `url(${content.jobs.head.background})`,
         }}
@@ -169,7 +224,7 @@ const JobsPage = () => {
           {/* Searchbar */}
           <Box className="flex justify-start space-x-2 w-full">
             <TextField
-              className="bg-white rounded-sm w-full"
+              className="bg-white rounded-md w-full"
               color="primary"
               disabled={loading.isOpen}
               fullWidth
@@ -199,6 +254,7 @@ const JobsPage = () => {
                   </InputAdornment>
                 ),
               }}
+              inputRef={searchInputRef}
             />
 
             <Button
@@ -235,7 +291,39 @@ const JobsPage = () => {
               value={searchFilters?.location}
             />
 
-            {/* Salary Filter */}
+            {/* Salary Min Filter */}
+            <SelectPicker
+              data={SALARY_MIN_FILTER_OPTIONS}
+              disabledItemValues={SALARY_MIN_FILTER_OPTIONS.filter(
+                (f) => parseInt(f.value) >= parseInt(searchFilters?.salaryMax)
+              ).map((e) => e.value)}
+              onChange={handleFilterChange("salaryMin")}
+              placeholder="Monthly Salary (Min)"
+              searchable={false}
+              style={{ width: 200 }}
+              value={searchFilters?.salaryMin}
+            />
+
+            {/* Salary Max Filter */}
+            <SelectPicker
+              data={SALARY_MAX_FILTER_OPTIONS}
+              disabledItemValues={SALARY_MAX_FILTER_OPTIONS.filter(
+                (f) => parseInt(f.value) <= parseInt(searchFilters?.salaryMin)
+              ).map((e) => e.value)}
+              onChange={handleFilterChange("salaryMax")}
+              placeholder="Monthly Salary (Max)"
+              searchable={false}
+              style={{ width: 200 }}
+              value={searchFilters?.salaryMax}
+            />
+
+            <Typography
+              component={Button}
+              className="!capitalize !font-medium !text-xs lg:!text-sm text-start !text-white"
+              onClick={handleClearFilters}
+            >
+              Reset all filters
+            </Typography>
           </Box>
         </Stack>
       </Box>
@@ -329,11 +417,12 @@ const JobsPage = () => {
         )}
       </Stack>
       <Button
-              className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !text-sm !text-white !tracking-normal !transition-all w-full hover:!bg-primary-100 !shadow-none"
-              component={Link}
-              to={paths.get("CREATEJOB").PATH}
-              variant="contained">
-              {paths.get("CREATEJOB").LABEL}
+        className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !text-sm !text-white !tracking-normal !transition-all w-full hover:!bg-primary-100 !shadow-none"
+        component={Link}
+        to={paths.get("CREATEJOB").PATH}
+        variant="contained"
+      >
+        {paths.get("CREATEJOB").LABEL}
       </Button>
       <Footer />
     </Stack>
