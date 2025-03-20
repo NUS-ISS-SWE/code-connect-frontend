@@ -1,10 +1,10 @@
 import { apiWrapper, baseUrl } from "../utils/apiUtils";
 
 const loginUser = async ({ username, password, role }, dispatch) => {
-  const formData = JSON.stringify({ username, password, role });
+  const requestBody = JSON.stringify({ username, password, role });
 
   const response = await apiWrapper({
-    body: formData,
+    body: requestBody,
     dispatch,
     endpoint: `${baseUrl}/api/v1/login`,
     headers: {
@@ -12,15 +12,15 @@ const loginUser = async ({ username, password, role }, dispatch) => {
     },
     method: "POST",
   });
-console.log('login response',response)
+
   return response;
 };
 
 const registerUser = async ({ username, password, role }, dispatch) => {
-  const formData = JSON.stringify({ username, password, role });
+  const requestBody = JSON.stringify({ username, password, role });
 
   const response = await apiWrapper({
-    body: formData,
+    body: requestBody,
     dispatch,
     endpoint: `${baseUrl}/api/v1/register`,
     headers: {
@@ -32,4 +32,24 @@ const registerUser = async ({ username, password, role }, dispatch) => {
   return response;
 };
 
-export { loginUser, registerUser };
+const updatePassword = async (
+  { username, password, newPassword },
+  dispatch
+) => {
+  const requestBody = JSON.stringify({
+    username,
+    password,
+    newPassword,
+  });
+
+  const response = await apiWrapper({
+    body: requestBody,
+    dispatch,
+    endpoint: `${baseUrl}/api/v1/update-password`,
+    method: "POST",
+  });
+
+  return response;
+};
+
+export { loginUser, registerUser, updatePassword };

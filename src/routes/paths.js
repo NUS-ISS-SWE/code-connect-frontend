@@ -9,6 +9,15 @@ const paths = new Map([
     },
   ],
   [
+    "ACCOUNT",
+    {
+      ID: "_account",
+      LABEL: "Account",
+      PATH: "/account",
+      IS_PROTECTED: true,
+    },
+  ],
+  [
     "ADMIN",
     {
       ID: "_admin",

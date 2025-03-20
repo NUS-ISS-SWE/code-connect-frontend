@@ -6,6 +6,7 @@ import Loader from "../components/common/Loader.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import PublicRoute from "./PublicRoute.jsx";
 
+const AccountPage = lazy(() => import("../pages/AccountPage.jsx"));
 const ErrorPage = lazy(() => import("../pages/ErrorPage.jsx"));
 const HomePage = lazy(() => import("../pages/HomePage.jsx"));
 const JobsPage = lazy(() => import("../pages/JobsPage.jsx"));
@@ -33,10 +34,14 @@ const AppRoutes = () => {
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
+          <Route path={paths.get("ACCOUNT").PATH} element={<AccountPage />} />
           <Route path={paths.get("PROFILE").PATH} element={<ProfilePage />} />
-          <Route path={paths.get("GETPROFILE").PATH} element={<ProfilePage />}/>
+          <Route
+            path={paths.get("GETPROFILE").PATH}
+            element={<ProfilePage />}
+          />
           <Route path={paths.get("CREATEJOB").PATH} element={<JobPage />} />
-          <Route path={paths.get("GETJOB").PATH} element={<JobPage />}/>
+          <Route path={paths.get("GETJOB").PATH} element={<JobPage />} />
         </Route>
       </Routes>
     </Suspense>

@@ -111,7 +111,7 @@ const ProfilePage = () => {
       <Navbar />
 
       <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[70vw]">
-        <Typography variant="h4" sx={{ textAlign: "left" }}>
+        <Typography variant="h5" sx={{ textAlign: "left" }}>
           {id ? "Profile" : "Create Profile"}
         </Typography>
 

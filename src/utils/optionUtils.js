@@ -1,3 +1,4 @@
+import Icon from "../constants/Icon";
 import { JOB_TYPES } from "../constants/jobTypes";
 import paths from "../routes/paths";
 
@@ -54,6 +55,19 @@ const LOCATION_FILTER_OPTIONS = [
 const NAV_OPTIONS = [
   { title: paths.get("HOME").LABEL, path: paths.get("HOME").PATH },
   { title: paths.get("JOBS").LABEL, path: paths.get("JOBS").PATH },
+];
+
+const PROFILE_MENU_OPTIONS = [
+  {
+    icon: "UserLine",
+    title: paths.get("PROFILE").LABEL,
+    path: paths.get("PROFILE").PATH,
+  },
+  {
+    icon: "Settings",
+    title: paths.get("ACCOUNT").LABEL,
+    path: paths.get("ACCOUNT").PATH,
+  },
 ];
 
 const SALARY_MIN_FILTER_OPTIONS = [
@@ -186,6 +200,7 @@ export {
   JOB_TYPES_FILTER_OPTIONS,
   LOCATION_FILTER_OPTIONS,
   NAV_OPTIONS,
+  PROFILE_MENU_OPTIONS,
   SALARY_MIN_FILTER_OPTIONS,
   SALARY_MAX_FILTER_OPTIONS,
 };
