@@ -22,7 +22,7 @@ const HomePage = () => {
       >
         {/* Hero Background */}
         <Box
-          className={`relative lg:absolute bg-secondary-90 bg-cover bg-no-repeat bg-center blur-[0px] lg:brightness-[0.7] flex h-[200px] lg:h-full w-full`}
+          className={`relative lg:absolute bg-fixed bg-secondary-90 bg-cover bg-no-repeat bg-center blur-[0px] lg:brightness-[0.7] flex h-[200px] lg:h-full w-full`}
           sx={{
             backgroundImage: `url(${content.home.hero.background})`,
           }}

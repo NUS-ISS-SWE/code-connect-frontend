@@ -204,7 +204,7 @@ const JobsPage = () => {
     <Stack className="bg-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
       <Box
-        className={`bg-cover bg-fixed bg-right-bottom bg-no-repeat flex h-[280px] items-center justify-center w-full`}
+        className={`bg-cover bg-fixed bg-right-bottom bg-no-repeat flex h-[300px] items-center justify-center w-full`}
         sx={{
           backgroundImage: `url(${content.jobs.head.background})`,
         }}

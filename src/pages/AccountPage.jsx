@@ -26,6 +26,7 @@ const INITIAL_STATE = {
 
 const AccountPage = () => {
   const { state, dispatch } = useGlobalContext();
+  const { loading } = state;
 
   const fieldRefs = {
     currentPassword: useRef(null),
@@ -35,7 +36,6 @@ const AccountPage = () => {
 
   const [errors, setErrors] = useState({});
   const [formInputs, setFormInputs] = useState(INITIAL_STATE);
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState({});
 
   const handleChangeInput = (key) => (evt) => {
@@ -52,7 +52,6 @@ const AccountPage = () => {
   };
 
   const handleClickChangePassword = async (e) => {
-    setLoading(true);
     e.preventDefault();
 
     const firstErrorField = validate();
@@ -67,8 +66,6 @@ const AccountPage = () => {
         });
       }
     }
-
-    setLoading(false);
   };
 
   const handleUpdatePassword = async () => {
@@ -141,7 +138,7 @@ const AccountPage = () => {
       <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-12 w-[70vw]">
         <Stack className="space-y-4 w-full">
           <Stack className="space-y-2 w-full">
-            <Typography variant="h5" sx={{ textAlign: "left" }}>
+            <Typography className="!font-medium flex-1 text-left !text-2xl">
               Change Password
             </Typography>
 
@@ -152,7 +149,7 @@ const AccountPage = () => {
             <TextField
               className="mb-0 !w-[50%]"
               color="primary"
-              disabled={loading}
+              disabled={loading.isOpen}
               error={!!errors.currentPassword}
               fullWidth
               helperText={errors.currentPassword}
@@ -177,7 +174,7 @@ const AccountPage = () => {
                     <IconButton
                       aria-label="toggle password visibility"
                       className="!text-gray-400"
-                      disabled={loading}
+                      disabled={loading.isOpen}
                       edge="end"
                       onClick={handleToggleShowPassword("currentPassword")}
                     >
@@ -195,7 +192,7 @@ const AccountPage = () => {
             <TextField
               className="mb-0 !w-[50%]"
               color="primary"
-              disabled={loading}
+              disabled={loading.isOpen}
               error={!!errors.password}
               fullWidth
               helperText={errors.password}
@@ -220,7 +217,7 @@ const AccountPage = () => {
                     <IconButton
                       aria-label="toggle password visibility"
                       className="!text-gray-400"
-                      disabled={loading}
+                      disabled={loading.isOpen}
                       edge="end"
                       onClick={handleToggleShowPassword("password")}
                     >
@@ -238,7 +235,7 @@ const AccountPage = () => {
             <TextField
               className="mb-0 !w-[50%]"
               color="primary"
-              disabled={loading}
+              disabled={loading.isOpen}
               error={!!errors.confirmPassword}
               fullWidth
               helperText={errors.confirmPassword}
@@ -263,7 +260,7 @@ const AccountPage = () => {
                     <IconButton
                       aria-label="toggle password visibility"
                       className="!text-gray-400"
-                      disabled={loading}
+                      disabled={loading.isOpen}
                       edge="end"
                       onClick={handleToggleShowPassword("confirmPassword")}
                     >
@@ -281,11 +278,11 @@ const AccountPage = () => {
 
           <Button
             className={`${styles.buttonStyles} !bg-gray-100 !font-semibold !text-black w-fit hover:!bg-gray-200`}
-            disabled={loading}
+            disabled={loading.isOpen}
             onClick={handleClickChangePassword}
             variant="contained"
           >
-            {loading ? (
+            {loading.isOpen ? (
               <CircularProgress size={20} className="!text-black" />
             ) : (
               "Change Password"

@@ -63,6 +63,11 @@ const PROFILE_MENU_OPTIONS = [
     path: paths.get("PROFILE").PATH,
   },
   {
+    icon: "Table",
+    title: paths.get("JOBS_MANAGEMENT").LABEL,
+    path: paths.get("JOBS_MANAGEMENT").PATH,
+  },
+  {
     icon: "Settings",
     title: paths.get("ACCOUNT").LABEL,
     path: paths.get("ACCOUNT").PATH,

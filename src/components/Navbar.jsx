@@ -125,7 +125,7 @@ const Navbar = () => {
                 {/* Profile Menu */}
                 {isProfileMenuOpen && (
                   <Stack
-                    className={`absolute bg-white gap-2 mt-1 px-2 py-2 right-0 shadow top-12 w-[180px]`}
+                    className={`absolute bg-white gap-2 mt-1 px-2 py-2 right-0 shadow top-12 w-[200px]`}
                   >
                     {/* TODO: Show user name and email */}
                     {/* <Divider /> */}
