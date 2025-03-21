@@ -1,4 +1,3 @@
-import Icon from "../constants/Icon";
 import { JOB_TYPES } from "../constants/jobTypes";
 import paths from "../routes/paths";
 

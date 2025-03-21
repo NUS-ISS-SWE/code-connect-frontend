@@ -14,6 +14,7 @@ import Navbar from "../components/Navbar";
 
 import { updatePassword } from "../api/UserApi";
 import Icon from "../constants/Icon";
+import styles from "../constants/styles";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import { fetchToken, LOGIN_TOKEN_KEY } from "../utils/authUtils";
 
@@ -35,7 +36,7 @@ const AccountPage = () => {
   const [errors, setErrors] = useState({});
   const [formInputs, setFormInputs] = useState(INITIAL_STATE);
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState({});
 
   const handleChangeInput = (key) => (evt) => {
     setErrors((prevState) => {
@@ -46,7 +47,11 @@ const AccountPage = () => {
     setFormInputs({ ...formInputs, [key]: evt.target.value });
   };
 
-  const handleClickSave = async (e) => {
+  const handleToggleShowPassword = (key) => () => {
+    setShowPassword({ ...showPassword, [key]: !showPassword[key] });
+  };
+
+  const handleClickChangePassword = async (e) => {
     setLoading(true);
     e.preventDefault();
 
@@ -133,138 +138,151 @@ const AccountPage = () => {
     <Stack className="bg-whiteflex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
 
-      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[70vw]">
-        <Typography variant="h5" sx={{ textAlign: "left" }}>
-          Change Password
-        </Typography>
+      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-12 w-[70vw]">
+        <Stack className="space-y-4 w-full">
+          <Stack className="space-y-2 w-full">
+            <Typography variant="h5" sx={{ textAlign: "left" }}>
+              Change Password
+            </Typography>
 
-        <Divider flexItem />
+            <Divider flexItem />
+          </Stack>
 
-        <Stack className="flex justify-start py-4 space-y-5 w-full">
-          <TextField
-            className="mb-0 !w-[50%]"
-            color="primary"
-            disabled={loading}
-            error={!!errors.currentPassword}
-            fullWidth
-            helperText={errors.currentPassword}
-            inputRef={fieldRefs.currentPassword}
-            label="Current Password*"
-            onChange={handleChangeInput("currentPassword")}
-            type={showPassword ? "text" : "password"}
-            size="small"
-            value={formInputs.currentPassword}
-            variant="outlined"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment className="!ml-0 !text-gray-400" position="end">
-                  <Icon name={"Lock"} size={"1.3em"} />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment className="!ml-0" position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    className="!text-gray-400"
-                    disabled={loading}
-                    edge="end"
-                    onClick={() => setShowPassword((prev) => !prev)}
+          <Stack className="flex justify-start py-4 space-y-5 w-full">
+            <TextField
+              className="mb-0 !w-[50%]"
+              color="primary"
+              disabled={loading}
+              error={!!errors.currentPassword}
+              fullWidth
+              helperText={errors.currentPassword}
+              inputRef={fieldRefs.currentPassword}
+              label="Current Password*"
+              onChange={handleChangeInput("currentPassword")}
+              type={showPassword.currentPassword ? "text" : "password"}
+              size="small"
+              value={formInputs.currentPassword}
+              variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment
+                    className="!ml-0 !text-gray-400"
+                    position="end"
                   >
-                    {showPassword ? (
-                      <Icon name={"EyeOff"} />
-                    ) : (
-                      <Icon name={"Eye"} />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
+                    <Icon name={"Lock"} size={"1.3em"} />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment className="!ml-0" position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      className="!text-gray-400"
+                      disabled={loading}
+                      edge="end"
+                      onClick={handleToggleShowPassword("currentPassword")}
+                    >
+                      {showPassword.currentPassword ? (
+                        <Icon name={"EyeOff"} />
+                      ) : (
+                        <Icon name={"Eye"} />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-          <TextField
-            className="mb-0 !w-[50%]"
-            color="primary"
-            disabled={loading}
-            error={!!errors.password}
-            fullWidth
-            helperText={errors.password}
-            inputRef={fieldRefs.password}
-            label="New Password*"
-            onChange={handleChangeInput("password")}
-            type={showPassword ? "text" : "password"}
-            size="small"
-            value={formInputs.password}
-            variant="outlined"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment className="!ml-0 !text-gray-400" position="end">
-                  <Icon name={"Lock"} size={"1.3em"} />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment className="!ml-0" position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    className="!text-gray-400"
-                    disabled={loading}
-                    edge="end"
-                    onClick={() => setShowPassword((prev) => !prev)}
+            <TextField
+              className="mb-0 !w-[50%]"
+              color="primary"
+              disabled={loading}
+              error={!!errors.password}
+              fullWidth
+              helperText={errors.password}
+              inputRef={fieldRefs.password}
+              label="New Password*"
+              onChange={handleChangeInput("password")}
+              type={showPassword.password ? "text" : "password"}
+              size="small"
+              value={formInputs.password}
+              variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment
+                    className="!ml-0 !text-gray-400"
+                    position="end"
                   >
-                    {showPassword ? (
-                      <Icon name={"EyeOff"} />
-                    ) : (
-                      <Icon name={"Eye"} />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
+                    <Icon name={"Lock"} size={"1.3em"} />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment className="!ml-0" position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      className="!text-gray-400"
+                      disabled={loading}
+                      edge="end"
+                      onClick={handleToggleShowPassword("password")}
+                    >
+                      {showPassword.password ? (
+                        <Icon name={"EyeOff"} />
+                      ) : (
+                        <Icon name={"Eye"} />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-          <TextField
-            className="mb-0 !w-[50%]"
-            color="primary"
-            disabled={loading}
-            error={!!errors.confirmPassword}
-            fullWidth
-            helperText={errors.confirmPassword}
-            inputRef={fieldRefs.confirmPassword}
-            label="Re-type New Password*"
-            onChange={handleChangeInput("confirmPassword")}
-            type={showPassword ? "text" : "password"}
-            size="small"
-            value={formInputs.confirmPassword}
-            variant="outlined"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment className="!ml-0 !text-gray-400" position="end">
-                  <Icon name={"Lock"} size={"1.3em"} />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment className="!ml-0" position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    className="!text-gray-400"
-                    disabled={loading}
-                    edge="end"
-                    onClick={() => setShowPassword((prev) => !prev)}
+            <TextField
+              className="mb-0 !w-[50%]"
+              color="primary"
+              disabled={loading}
+              error={!!errors.confirmPassword}
+              fullWidth
+              helperText={errors.confirmPassword}
+              inputRef={fieldRefs.confirmPassword}
+              label="Re-type New Password*"
+              onChange={handleChangeInput("confirmPassword")}
+              type={showPassword.confirmPassword ? "text" : "password"}
+              size="small"
+              value={formInputs.confirmPassword}
+              variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment
+                    className="!ml-0 !text-gray-400"
+                    position="end"
                   >
-                    {showPassword ? (
-                      <Icon name={"EyeOff"} />
-                    ) : (
-                      <Icon name={"Eye"} />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
+                    <Icon name={"Lock"} size={"1.3em"} />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment className="!ml-0" position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      className="!text-gray-400"
+                      disabled={loading}
+                      edge="end"
+                      onClick={handleToggleShowPassword("confirmPassword")}
+                    >
+                      {showPassword.confirmPassword ? (
+                        <Icon name={"EyeOff"} />
+                      ) : (
+                        <Icon name={"Eye"} />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Stack>
 
           <Button
-            className="!bg-gray-100 !border !border-gray-300 !border-solid !capitalize !duration-500 !ease-in-out !font-semibold !px-3 !py-2 !shadow-none !text-sm !text-black !tracking-normal !transition-all w-fit hover:!bg-gray-200"
+            className={`${styles.buttonStyles} !bg-gray-100 !font-semibold !text-black w-fit hover:!bg-gray-200`}
             disabled={loading}
-            onClick={handleClickSave}
+            onClick={handleClickChangePassword}
             variant="contained"
           >
             {loading ? (
@@ -274,7 +292,18 @@ const AccountPage = () => {
             )}
           </Button>
         </Stack>
+
+        {/* <Stack className="space-y-4 w-full">
+          <Stack className="space-y-2 w-full">
+            <Typography variant="h5" sx={{ textAlign: "left" }}>
+              New Section
+            </Typography>
+
+            <Divider flexItem />
+          </Stack>
+        </Stack> */}
       </Stack>
+
       <Footer />
     </Stack>
   );
