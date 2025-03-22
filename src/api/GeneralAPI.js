@@ -1,9 +1,7 @@
 import { apiWrapper } from "../utils/apiUtils";
 
-const GetDataByIdAPI = async (id, uri, dispatch) => {
+const GetAPI = async (url, dispatch) => {
   try {
-    const url = `/${uri}/${id}`;
-
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -62,7 +60,7 @@ const UpdateAPI = async (formData, uri, dispatch) => {
 };
 
 export {
-  GetDataByIdAPI,
+  GetAPI,
   CreateAPI,
   UpdateAPI,
 };

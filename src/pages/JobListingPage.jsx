@@ -12,8 +12,9 @@ import {
 import { intervalToDuration } from "date-fns";
 import { SelectPicker } from "rsuite";
 import { Link, useSearchParams } from "react-router-dom";
-import Footer from "../components/Footer.jsx";
-import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
+import { GetAPI } from "../api/GeneralAPI";
 
 import dummy from "../assets/dummy/index.js";
 import Icon from "../constants/Icon.jsx";
@@ -140,10 +141,10 @@ const JobListingPage = () => {
   };
 
   const fetchSearchResults = async (searchTerm, searchFilters) => {
-    // TODO: Fetch search results from API
+    const { data, error } = await GetAPI("jobpostings", dispatch);
 
     // Load dummy data for now; replace with API call later
-    const data = dummy.jobListings;
+    //const data = dummy.jobListings;
     // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
     const filteredJobs = filterJobs(data, searchTerm, searchFilters);
 
