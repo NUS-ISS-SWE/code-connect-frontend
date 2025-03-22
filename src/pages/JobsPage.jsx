@@ -141,12 +141,12 @@ const JobsPage = () => {
   };
 
   const fetchSearchResults = async (searchTerm, searchFilters) => {
+    // Fetch search results from API
     const { data, error } = await GetAPI("jobpostings", dispatch);
+    const jobsData = await data.json();
 
-    // Load dummy data for now; replace with API call later
-    const data = dummy.jobListings;
     // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
-    const filteredJobs = filterJobs(data, searchTerm, searchFilters);
+    const filteredJobs = filterJobs(jobsData, searchTerm, searchFilters);
 
     // Store returned API data in filteredJobs state
     setFilteredJobs(filteredJobs);
@@ -157,7 +157,7 @@ const JobsPage = () => {
 
   // Filter jobs based on search term and search filters
   const filterJobs = (jobs, searchTerm, searchFilters) => {
-    return jobs.filter((job) => {
+    return (Array.isArray(jobs) ? jobs : []).filter((job) => {
       const jobTitle =
         searchTerm === "" ||
         job.jobTitle.toLowerCase().includes(searchTerm.toLowerCase());
@@ -348,7 +348,7 @@ const JobsPage = () => {
                 <Box className="flex flex-1 items-start justify-start px-2  space-x-3">
                   <img
                     alt={item.jobTitle}
-                    src={item.thumbnail}
+                    src={item?.thumbnail ?? dummy.jobListings[0].thumbnail}
                     style={{
                       height: "auto",
                       width: "48px",
@@ -365,6 +365,7 @@ const JobsPage = () => {
                     <Typography
                       className="!font-regular !text-lg lg:!text-xl text-start !text-primary hover:underline"
                       component={Link}
+                      to={paths.get("GETJOB").PATH.replace(":id", item.id)}
                     >
                       {item.jobTitle}
                     </Typography>
@@ -382,10 +383,8 @@ const JobsPage = () => {
                     {item.location}
                   </Typography>
 
-                  <Icon name={"Dot"} size={"1em"} />
-
                   <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-                    {`Posted ${item.postedDate}`}
+                    {`Posted ${item.postedDate ? new Date(item.postedDate).toLocaleDateString() : ""}`}
                     {/* {`Posted ${renderIntervalDuration(
                     item.postedDate,
                     intervalToDuration
