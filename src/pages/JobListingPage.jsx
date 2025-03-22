@@ -12,14 +12,14 @@ import {
 import { intervalToDuration } from "date-fns";
 import { SelectPicker } from "rsuite";
 import { Link, useSearchParams } from "react-router-dom";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+import Footer from "../components/Footer.jsx";
+import Navbar from "../components/Navbar.jsx";
 
 import dummy from "../assets/dummy/index.js";
 import Icon from "../constants/Icon.jsx";
 import styles from "../constants/styles.jsx";
 import useContent from "../hooks/useContent.js";
-import { useGlobalContext } from "../hooks/useGlobalContext";
+import { useGlobalContext } from "../hooks/useGlobalContext.js";
 import useKeyPress from "../hooks/useKeyPress.js";
 import { renderIntervalDuration } from "../utils/stringUtils.js";
 import {
@@ -30,7 +30,7 @@ import {
 } from "../utils/optionUtils.js";
 import paths from "../routes/paths.js";
 
-const JobsPage = () => {
+const JobListingPage = () => {
   const { state, dispatch } = useGlobalContext();
   const { loading } = state;
 
@@ -428,4 +428,4 @@ const JobsPage = () => {
   );
 };
 
-export default JobsPage;
+export default JobListingPage;

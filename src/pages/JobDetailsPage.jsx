@@ -13,7 +13,7 @@ import EditJob from "../components/jobPageComponents/EditJob";
 import ViewJob from "../components/jobPageComponents/ViewJob";
 import { GetDataByIdAPI } from "../api/GeneralAPI";
 
-const JobPage = () => {
+const JobDetailsPage = () => {
   const { state, dispatch } = useGlobalContext();
   const { setUser, user } = useAuthContext();
   const { id } = useParams(); // Get profile ID from URL
@@ -83,4 +83,4 @@ const JobPage = () => {
   );
 };
 
-export default JobPage;
+export default JobDetailsPage;
