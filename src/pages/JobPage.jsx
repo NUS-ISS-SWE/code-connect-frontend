@@ -11,7 +11,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import EditJob from "../components/jobPageComponents/EditJob";
 import ViewJob from "../components/jobPageComponents/ViewJob";
-import { GetDataByIdAPI } from "../api/GeneralAPI";
+import { GetAPI } from "../api/GeneralAPI";
 
 const JobPage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -40,7 +40,7 @@ const JobPage = () => {
   
   const fetchJob = async () => {
     try {
-      const { data, error } = await GetDataByIdAPI(id, uri, dispatch);
+      const { data, error } = await GetAPI(`/${uri}/${id}`, dispatch);
       if (error) throw new Error(error);
 
       const jobData = await data.json();
