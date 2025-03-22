@@ -12,7 +12,7 @@ import Navbar from "../components/Navbar";
 import ProfilePictureUpload from "../components/profilePageComponents/ProfilePictureUpload";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { GetDataByIdAPI } from "../api/GeneralAPI";
+import { GetAPI } from "../api/GeneralAPI";
 
 const ProfilePage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -63,7 +63,7 @@ const ProfilePage = () => {
 
   const fetchProfile = async () => {
     try {
-      const { data, error } = await GetDataByIdAPI(id, uri, dispatch);
+      const { data, error } = await GetAPI(`/${uri}/${id}`, dispatch);
       if (error) throw new Error(error);
 
       const profileData = await data.json();
