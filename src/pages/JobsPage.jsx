@@ -190,15 +190,12 @@ const JobsPage = () => {
   const extractSalaryRange = (salaryRange) => {
     if (!salaryRange) return [0, Infinity];
 
-    const salaryNumbers = salaryRange
-      .replaceAll("$", "")
-      .replaceAll(",", "")
-      .split("-");
+    const salaryNumbers = salaryRange.replace(/[$,]/g, "").split("-");
 
     if (!salaryNumbers || salaryNumbers.length < 2) return [0, Infinity];
 
-    const minSalary = parseInt(salaryNumbers[0].replace(/,/g, ""), 10);
-    const maxSalary = parseInt(salaryNumbers[1].replace(/,/g, ""), 10);
+    const minSalary = parseInt(salaryNumbers[0], 10);
+    const maxSalary = parseInt(salaryNumbers[1], 10);
 
     return [minSalary, maxSalary];
   };
@@ -207,7 +204,7 @@ const JobsPage = () => {
     <Stack className="bg-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
       <Box
-        className={`bg-cover bg-fixed bg-right-bottom bg-no-repeat flex h-[260px] items-center justify-center w-full`}
+        className={`bg-cover bg-fixed bg-right-bottom bg-no-repeat flex h-[300px] items-center justify-center w-full`}
         sx={{
           backgroundImage: `url(${content.jobs.head.background})`,
         }}
@@ -278,6 +275,7 @@ const JobsPage = () => {
               data={JOB_TYPES_FILTER_OPTIONS}
               onChange={handleFilterChange("jobType")}
               placeholder="Job Type"
+              searchable={false}
               style={{ width: 110 }}
               value={searchFilters?.jobType}
             />
@@ -287,6 +285,7 @@ const JobsPage = () => {
               data={LOCATION_FILTER_OPTIONS}
               onChange={handleFilterChange("location")}
               placeholder="Location"
+              searchable={false}
               style={{ width: 110 }}
               value={searchFilters?.location}
             />

@@ -102,18 +102,18 @@ const SignupPage = () => {
   };
 
   const RegisterAndLoginUser = async () => {
-      const { data, error, status } = await registerUser(formInputs, dispatch);
+    const { data, error, status } = await registerUser(formInputs, dispatch);
 
-      if (!error) {
-        handleLoginUser();
-      }
-  }
+    if (!error) {
+      handleLoginUser();
+    }
+  };
 
   const handleLoginUser = async () => {
     const { data, message, status } = await loginUser(formInputs, dispatch);
 
     if (status === 200) {
-      login(LOGIN_TOKEN_KEY, data.accessToken);
+      login(LOGIN_TOKEN_KEY, data.accessToken, formInputs.username);
 
       dispatch({
         type: "SHOW_TOAST",
@@ -139,14 +139,18 @@ const SignupPage = () => {
 
   const ShowModal = (show) => {
     setShowModal(show);
-  }
+  };
 
   return (
     <Box
       className="bg-white flex h-[100vh] items-center justify-center relative w-[100vw]"
       component="div"
     >
-      <TermsAndConditionsModal open={showModal} onClose={() => ShowModal(false)} onAccept={() => RegisterAndLoginUser(true)} />
+      <TermsAndConditionsModal
+        open={showModal}
+        onClose={() => ShowModal(false)}
+        onAccept={() => RegisterAndLoginUser(true)}
+      />
       {/* Logo */}
       <Box className="flex items-center">
         <Link to="/">

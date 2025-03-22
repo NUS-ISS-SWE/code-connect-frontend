@@ -56,6 +56,24 @@ const NAV_OPTIONS = [
   { title: paths.get("JOBS").LABEL, path: paths.get("JOBS").PATH },
 ];
 
+const PROFILE_MENU_OPTIONS = [
+  {
+    icon: "UserLine",
+    title: paths.get("PROFILE").LABEL,
+    path: paths.get("PROFILE").PATH,
+  },
+  {
+    icon: "Table",
+    title: paths.get("JOBS_MANAGEMENT").LABEL,
+    path: paths.get("JOBS_MANAGEMENT").PATH,
+  },
+  {
+    icon: "Settings",
+    title: paths.get("ACCOUNT").LABEL,
+    path: paths.get("ACCOUNT").PATH,
+  },
+];
+
 const SALARY_MIN_FILTER_OPTIONS = [
   {
     label: "$0",
@@ -186,6 +204,7 @@ export {
   JOB_TYPES_FILTER_OPTIONS,
   LOCATION_FILTER_OPTIONS,
   NAV_OPTIONS,
+  PROFILE_MENU_OPTIONS,
   SALARY_MIN_FILTER_OPTIONS,
   SALARY_MAX_FILTER_OPTIONS,
 };

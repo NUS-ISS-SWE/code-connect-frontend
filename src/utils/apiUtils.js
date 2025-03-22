@@ -18,8 +18,9 @@ const apiWrapper = async ({
   try {
     const response = await fetch(`${endpoint}`, {
       method,
-      headers: headers || {
-        Authorization: `Bearer ${fetchToken(LOGIN_TOKEN_KEY)}`,
+      headers: headers ?? {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${fetchToken(LOGIN_TOKEN_KEY).token}`,
       },
       body,
       signal,
@@ -60,6 +61,5 @@ const apiWrapper = async ({
     dispatch({ type: "SET_LOADING", payload: { isOpen: false } });
   }
 };
-
 
 export { apiWrapper, baseUrl };
