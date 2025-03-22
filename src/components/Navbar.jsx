@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   ClickAwayListener,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -14,7 +15,7 @@ import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon";
 import { useAuthContext } from "../hooks/useAuthContext";
 import paths from "../routes/paths";
-import { NAV_OPTIONS } from "../utils/optionUtils";
+import { NAV_OPTIONS, PROFILE_MENU_OPTIONS } from "../utils/optionUtils";
 
 const Navbar = () => {
   const { logout, user } = useAuthContext();
@@ -123,25 +124,33 @@ const Navbar = () => {
 
                 {/* Profile Menu */}
                 {isProfileMenuOpen && (
-                  <Box
-                    className={`absolute bg-white mt-0.5 shadow top-12 right-0`}
+                  <Stack
+                    className={`absolute bg-white gap-2 mt-1 px-2 py-2 right-0 shadow top-12 w-[200px]`}
                   >
-                    <Stack className={`!w-max`}>
+                    {/* TODO: Show user name and email */}
+                    {/* <Divider /> */}
+
+                    {PROFILE_MENU_OPTIONS.map((option, index) => (
                       <Box
-                        className="!capitalize !font-semibold gap-x-2 !justify-start !pb-3 !pl-5 !pr-5 !pt-3 !text-black !text-start !text-sm hover:!text-primary"
+                        className="!capitalize !duration-500 !ease-in-out flex !font-medium gap-x-2 items-center !justify-start px-3 py-2 rounded-sm !text-gray-700 !text-start !text-sm !transition-all hover:bg-gray-100 !no-underline"
                         component={Link}
-                        to={paths.get("PROFILE").PATH}
+                        key={index}
+                        to={option.path}
                       >
-                        View Profile
+                        <Icon name={option.icon} size={"1.2em"} />
+                        {option.title}
                       </Box>
-                      <Box
-                        className="!capitalize !font-semibold gap-x-2 !justify-start !pb-3 !pl-5 !pr-5 !pt-3 !text-black !text-start !text-sm hover:!text-primary"
-                        onClick={() => logout()}
-                      >
-                        Logout
-                      </Box>
-                    </Stack>
-                  </Box>
+                    ))}
+
+                    <Divider />
+
+                    <Box
+                      className="!capitalize !duration-500 !ease-in-out flex !font-medium gap-x-2 items-center !justify-start px-3 py-2 rounded-sm !text-gray-700 !text-start !text-sm !transition-all hover:bg-gray-100 !no-underline"
+                      onClick={() => logout()}
+                    >
+                      <Icon name={"Logout"} size={"1.2em"} /> Logout
+                    </Box>
+                  </Stack>
                 )}
               </IconButton>
             </ClickAwayListener>

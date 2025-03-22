@@ -11,6 +11,7 @@ import {
 import { Link } from "react-router-dom";
 
 import { loginUser, registerUser } from "../api/UserApi";
+import TermsAndConditionsModal from "../components/modals/TermsAndConditionsModal.jsx";
 import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon.jsx";
 import { ROLES } from "../constants/roles.js";
@@ -18,6 +19,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import paths from "../routes/paths.js";
 import { LOGIN_TOKEN_KEY } from "../utils/authUtils.js";
+import { useState } from "react";
 
 const SignupPage = () => {
   const { login } = useAuthContext();
@@ -31,6 +33,7 @@ const SignupPage = () => {
     confirmPassword: useRef(null),
   };
 
+  const [showModal, setShowModal] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [formInputs, setFormInputs] = useState({
@@ -85,11 +88,7 @@ const SignupPage = () => {
     const firstErrorField = validate();
 
     if (!firstErrorField) {
-      const { data, error, status } = await registerUser(formInputs, dispatch);
-
-      if (!error) {
-        handleLoginUser();
-      }
+      ShowModal(true);
     } else {
       if (fieldRefs[firstErrorField]) {
         fieldRefs[firstErrorField]?.current.scrollIntoView({
@@ -102,11 +101,19 @@ const SignupPage = () => {
     setLoading(false);
   };
 
+  const RegisterAndLoginUser = async () => {
+    const { data, error, status } = await registerUser(formInputs, dispatch);
+
+    if (!error) {
+      handleLoginUser();
+    }
+  };
+
   const handleLoginUser = async () => {
     const { data, message, status } = await loginUser(formInputs, dispatch);
 
     if (status === 200) {
-      login(LOGIN_TOKEN_KEY, data.accessToken);
+      login(LOGIN_TOKEN_KEY, data.accessToken, formInputs.username);
 
       dispatch({
         type: "SHOW_TOAST",
@@ -130,11 +137,20 @@ const SignupPage = () => {
     }
   };
 
+  const ShowModal = (show) => {
+    setShowModal(show);
+  };
+
   return (
     <Box
       className="bg-white flex h-[100vh] items-center justify-center relative w-[100vw]"
       component="div"
     >
+      <TermsAndConditionsModal
+        open={showModal}
+        onClose={() => ShowModal(false)}
+        onAccept={() => RegisterAndLoginUser(true)}
+      />
       {/* Logo */}
       <Box className="flex items-center">
         <Link to="/">
