@@ -54,6 +54,15 @@ const paths = new Map([
     },
   ],
   [
+    "JOBAPPLICATIONS",
+    {
+      ID: "_jobapplications",
+      LABEL: "Job Applications",
+      PATH: "/jobapplications",
+      IS_PROTECTED: false,
+    },
+  ],
+  [
     "JOBS_MANAGEMENT",
     {
       ID: "_jobs",
