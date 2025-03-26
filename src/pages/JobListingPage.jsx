@@ -12,6 +12,7 @@ import {
 import { intervalToDuration } from "date-fns";
 import { SelectPicker } from "rsuite";
 import { Link, useSearchParams } from "react-router-dom";
+
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
@@ -365,7 +366,7 @@ const JobListingPage = () => {
                     <Typography
                       className="!font-regular !text-lg lg:!text-xl text-start !text-primary hover:underline"
                       component={Link}
-                      to={paths.get("GETJOB").PATH.replace(":id", item.id)}
+                      to={paths.get("GETJOB").PATH.replace(":jobId", item.id)}
                     >
                       {item.jobTitle}
                     </Typography>

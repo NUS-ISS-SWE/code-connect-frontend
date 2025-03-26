@@ -47,7 +47,7 @@ const JobCreatePage = () => {
   //Account for thumbnail and numberApplied for viewing?
 
   return (
-    <Stack className="bg-gray-100 flex flex-1 items-start justify-start min-h-[100vh] w-full">
+    <Stack className="bg-gray-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
       <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[70vw]">
         <Typography variant="h4" sx={{ textAlign: "left" }}>
