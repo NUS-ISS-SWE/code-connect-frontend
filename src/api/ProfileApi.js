@@ -1,25 +1,31 @@
+import { GetAPI } from "./GeneralAPI";
 import { apiWrapper } from "../utils/apiUtils";
 
-const UploadProfilePicture = async (file, id, dispatch) => {
-const formData = new FormData();
-formData.append("file", file);
+const PATHNAME = "profiles";
 
-try {
+const UploadProfilePicture = async (file, id, dispatch) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
     const response = await apiWrapper({
       body: formData,
       dispatch,
       endpoint: `/profiles/${id}/profilePicture`, // API endpoint for image upload
-      headers: {
-      },
+      headers: {},
       method: "POST",
     });
 
-    return { data: response?.data?.profilePicture, error: "", status: response.status };
+    return {
+      data: response?.data?.profilePicture,
+      error: "",
+      status: response.status,
+    };
   } catch (error) {
     console.error("Error uploading profile picture:", error);
     return null;
-  } 
-}  
+  }
+};
 
 const DeleteResume = async ({ id }, dispatch) => {
   const response = await apiWrapper({
@@ -64,6 +70,10 @@ const RetrieveResume = async ({ id, fileName }, dispatch) => {
   }
 };
 
+const retrieveUserProfile = async (id, dispatch) => {
+  return await GetAPI(`/${PATHNAME}/${id}`, dispatch);
+};
+
 const UploadResumeAPI = async ({ id, formData }, dispatch) => {
   const response = await apiWrapper({
     body: formData,
@@ -78,6 +88,7 @@ const UploadResumeAPI = async ({ id, formData }, dispatch) => {
 export {
   DeleteResume,
   RetrieveResume,
+  retrieveUserProfile,
   UploadResumeAPI,
-  UploadProfilePicture
+  UploadProfilePicture,
 };

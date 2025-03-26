@@ -9,6 +9,7 @@ import PublicRoute from "./PublicRoute.jsx";
 const AccountPage = lazy(() => import("../pages/AccountPage.jsx"));
 const ErrorPage = lazy(() => import("../pages/ErrorPage.jsx"));
 const HomePage = lazy(() => import("../pages/HomePage.jsx"));
+const JobCreatePage = lazy(() => import("../pages/JobCreatePage.jsx"));
 const JobDetailsPage = lazy(() => import("../pages/JobDetailsPage.jsx"));
 const JobListingPage = lazy(() => import("../pages/JobListingPage.jsx"));
 const JobsManagementPage = lazy(() =>
@@ -49,7 +50,11 @@ const AppRoutes = () => {
             path={paths.get("JOBS_MANAGEMENT").PATH}
             element={<JobsManagementPage />}
           />
-          <Route path={paths.get("CREATEJOB").PATH} element={<JobDetailsPage />} />
+
+          <Route
+            path={paths.get("CREATEJOB").PATH}
+            element={<JobCreatePage />}
+          />
           <Route path={paths.get("GETJOB").PATH} element={<JobDetailsPage />} />
         </Route>
       </Routes>

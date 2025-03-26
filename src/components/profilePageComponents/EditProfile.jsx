@@ -5,16 +5,16 @@ import {
     Chip
   } from "@mui/material";
 
-  import {
-    UploadProfilePicture
-  } from "../../api/ProfileApi";
+  import UploadResume from "./UploadResume";
 
   import {
     CreateAPI,
     UpdateAPI,
   } from "../../api/GeneralAPI";
-
-  import UploadResume from "./UploadResume";
+  import {
+    UploadProfilePicture
+  } from "../../api/ProfileApi";
+  import paths from "../../routes/paths";
 
 const EditProfile = ({ formData, id, setFormData, setLoading, dispatch}) => {
   const [errors, setErrors] = useState({});

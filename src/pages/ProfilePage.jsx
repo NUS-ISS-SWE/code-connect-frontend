@@ -1,28 +1,25 @@
-import {
-  Divider,
-  Stack,
-  Tab,
-  Tabs,
-  Typography,
-} from "@mui/material";
-import Footer from "../components/Footer";
+import { Divider, Stack, Tab, Tabs, Typography } from "@mui/material";
+
 import EditProfile from "../components/profilePageComponents/EditProfile";
-import ViewProfile from "../components/profilePageComponents/ViewProfile";
+import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import ProfilePictureUpload from "../components/profilePageComponents/ProfilePictureUpload";
+import ViewProfile from "../components/profilePageComponents/ViewProfile";
+
+import { RetrieveResume, retrieveUserProfile } from "../api/ProfileApi";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { GetAPI } from "../api/GeneralAPI";
 
 const ProfilePage = () => {
   const { state, dispatch } = useGlobalContext();
+
   const { setUser, user } = useAuthContext();
   const { id } = useParams(); // Get profile ID from URL
+
   const [resume, setResume] = useState(null);
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tabIndex, setTabIndex] = useState(0);
-  const uri = "profiles";
 
   useEffect(() => {
     if (!id) {
@@ -62,26 +59,18 @@ const ProfilePage = () => {
   }, [user]);
 
   const fetchProfile = async () => {
-    try {
-      const { data, error } = await GetAPI(`/${uri}/${id}`, dispatch);
-      if (error) throw new Error(error);
+    const { data, status } = await retrieveUserProfile(id, dispatch);
 
-      const profileData = await data.json();
-
-      setFormData(profileData);
-      setUser({ ...user, ...profileData });
-    } catch (err) {
-      console.error("Error fetching profile:", err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    if (status === 200) {
+      setFormData(data);
+      setUser({ ...user, ...data });
     }
   };
 
   const fetchResume = async () => {
     dispatch({ type: "LOADING", payload: { isOpen: true } });
 
-    const { data } = await retrieveResume(
+    const { data } = await RetrieveResume(
       {
         id,
         fileName: user.resumeData?.resumeFileName, // pass uploaded resume file name from user data
@@ -128,11 +117,21 @@ const ProfilePage = () => {
         {/* Profile Section */}
         <Stack className="flex items-start justify-start py-4 space-y-4 w-full">
           {/* Profile Picture */}
-          <ProfilePictureUpload formData={formData} setFormData={setFormData} showSelectButton={tabIndex === 1 && id} />
+          <ProfilePictureUpload
+            formData={formData}
+            setFormData={setFormData}
+            showSelectButton={tabIndex === 1 && id}
+          />
           {id && tabIndex === 0 ? (
-            <ViewProfile formData={formData} resume={resume}/>
+            <ViewProfile formData={formData} resume={resume} />
           ) : (
-            <EditProfile formData={formData} id={id} setFormData={setFormData} setLoading={setLoading} dispatch={dispatch} />
+            <EditProfile
+              formData={formData}
+              id={id}
+              setFormData={setFormData}
+              setLoading={setLoading}
+              dispatch={dispatch}
+            />
           )}
         </Stack>
       </Stack>

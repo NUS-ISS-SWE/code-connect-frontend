@@ -1,34 +1,13 @@
 import { apiWrapper } from "../utils/apiUtils";
 
 const GetAPI = async (url, dispatch) => {
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        //Authorization: `Basic ${credentials}`, // Attach Basic Auth
-        //"Content-Type": "application/json",
-      },
-    });
+  const response = await apiWrapper({
+    dispatch,
+    endpoint: `${url}`,
+    method: "GET",
+  });
 
-    if (!response.ok) {
-      throw new Error(`Failed to get ${uri}`);
-    }
-
-    return { data: response, error: "", status: response.status };
-  } catch (error) {
-    console.error("Error:", error);
-
-    dispatch({
-      type: "SHOW_TOAST",
-      payload: {
-        message: String(error),
-        isOpen: true,
-        variant: "error",
-      },
-    });
-
-    return { data: null, error: error.message, status: 500 };
-  }
+  return response;
 };
 
 const CreateAPI = async (formData, uri, dispatch) => {
@@ -59,8 +38,4 @@ const UpdateAPI = async (formData, uri, dispatch) => {
   return response;
 };
 
-export {
-  GetAPI,
-  CreateAPI,
-  UpdateAPI,
-};
+export { GetAPI, CreateAPI, UpdateAPI };

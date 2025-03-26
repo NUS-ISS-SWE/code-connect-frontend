@@ -1,83 +1,77 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/jsx-no-undef */
-import {
-  Divider,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Divider, Stack, Typography } from "@mui/material";
+
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+import Tabs from "../components/common/Tabs";
+
+import { retrieveJob } from "../api/JobPostingsApi";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import EditJob from "../components/jobPageComponents/EditJob";
-import ViewJob from "../components/jobPageComponents/ViewJob";
-import { GetAPI } from "../api/GeneralAPI";
+import paths from "../routes/paths";
 
 const JobDetailsPage = () => {
   const { state, dispatch } = useGlobalContext();
   const { setUser, user } = useAuthContext();
-  const { id } = useParams(); // Get profile ID from URL
-  const [loading, setLoading] = useState(true);
-  const [date, setDate] = useState(new Date());
-  const fieldRefs = {
-    jobTitle: useRef(null),
-  };
-  const uri = "jobpostings";
-  const [formData, setFormData] = useState(null);
+
+  const { jobId } = useParams();
+
+  const [jobData, setJobData] = useState({});
+
+  const JOB_DETAILS_TAB_OPTIONS = [
+    {
+      path: `${paths.get("JOB").PATH}/${jobId}`,
+      title: paths.get("GETJOB").LABEL,
+      value: 0,
+    },
+
+    {
+      path: `${paths.get("JOB").PATH}/${jobId}/${paths.get("EDITJOB").PATH}`,
+      title: paths.get("EDITJOB").LABEL,
+      value: 1,
+    },
+  ];
 
   useEffect(() => {
-    if (!id) {
+    if (!jobId) {
       // If no ID is provided, show an empty form for creating a profile
-      setFormData({
+      setJobData({});
 
-      });
-      setLoading(false);
       return;
     }
 
     fetchJob();
-  }, [id]); // Runs when the ID changes
-  
+  }, [jobId]);
+
   const fetchJob = async () => {
-    try {
-      const { data, error } = await GetAPI(`/${uri}/${id}`, dispatch);
-      if (error) throw new Error(error);
+    const { data, status } = await retrieveJob(jobId, dispatch);
 
-      const jobData = await data.json();
-
-      setFormData(jobData);
-      setUser({ ...user, ...jobData });
-    } catch (err) {
-      console.error("Error fetching job:", err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    if (status === 200) {
+      setJobData(data);
     }
   };
 
   //Account for thumbnail and numberApplied for viewing?
 
   return (
-    <Stack className="bg-gray-100 flex flex-1 items-start justify-start min-h-[100vh] w-full">
+    <Stack className="bg-gray-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
+
       <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[70vw]">
-        <Typography variant="h4" sx={{ textAlign: "left" }}>
-        {id ? "View Job" : "Create Job"}
-      </Typography>
-      <Divider flexItem />
-        <Typography variant="h6" sx={{ textAlign: "left" }}>
-          <b>{formData?.jobTitle}</b>
-        </Typography>
-        <Typography variant="h8" sx={{ textAlign: "left" }}>
-          <b>Posted On:</b> {formData?.postedDate ? new Date(formData.postedDate).toLocaleDateString() : date.toLocaleDateString()}
-        </Typography>
-      <Divider flexItem />
-      {id ? (
-            <ViewJob formData={formData} />
-          ) : (
-<EditJob formData={formData} fieldRefs={fieldRefs} setFormData={setFormData} setLoading={setLoading} dispatch={dispatch} />
-          )}        
+        {/* Tabs !!!TODO: Only Admin and listing owner can view tab */}
+        {user && (
+          <Stack className="!border-b !border-gray-300 !border-solid w-[100%]">
+            <Tabs tabOptions={JOB_DETAILS_TAB_OPTIONS} />
+          </Stack>
+        )}
+
+        {/* Split Layout */}
+        <Box className="flex items-start justify-start space-x-4 w-full">
+          <Stack className="!border !border-gray-300 !border-solid flex-2 rounded-sm">
+            <Stack className="space-y-2">{jobData.jobTitle}</Stack>
+          </Stack>
+        </Box>
       </Stack>
+
       <Footer />
     </Stack>
   );

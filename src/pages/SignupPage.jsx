@@ -110,7 +110,7 @@ const SignupPage = () => {
   };
 
   const handleLoginUser = async () => {
-    const { data, message, status } = await loginUser(formInputs, dispatch);
+    const { data, error, status } = await loginUser(formInputs, dispatch);
 
     if (status === 200) {
       login(LOGIN_TOKEN_KEY, data.accessToken, formInputs.username);
@@ -129,7 +129,7 @@ const SignupPage = () => {
       dispatch({
         type: "SHOW_TOAST",
         payload: {
-          message: String(message),
+          message: String(error),
           isOpen: true,
           variant: "error",
         },

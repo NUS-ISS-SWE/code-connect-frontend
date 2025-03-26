@@ -72,7 +72,7 @@ const AccountPage = () => {
     // !!!TODO: username should be retrieve from fetch profile api
     const { username } = fetchToken(LOGIN_TOKEN_KEY);
 
-    const { data, message, status } = await updatePassword(
+    const { data, error, status } = await updatePassword(
       {
         username,
         password: formInputs.currentPassword,
@@ -96,7 +96,7 @@ const AccountPage = () => {
       dispatch({
         type: "SHOW_TOAST",
         payload: {
-          message: String(message),
+          message: String(error),
           isOpen: true,
           variant: "error",
         },
