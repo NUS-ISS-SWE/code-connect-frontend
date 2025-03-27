@@ -10,11 +10,11 @@ const GetAPI = async (url, dispatch) => {
   return response;
 };
 
-const CreateAPI = async (formData, uri, dispatch) => {
+const PostAPI = async (formData, uri, dispatch) => {
   const response = await apiWrapper({
     body: JSON.stringify(formData),
     dispatch,
-    endpoint: `/${uri}`,
+    endpoint: `${uri}`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -38,4 +38,4 @@ const UpdateAPI = async (formData, uri, dispatch) => {
   return response;
 };
 
-export { GetAPI, CreateAPI, UpdateAPI };
+export { GetAPI, PostAPI, UpdateAPI };

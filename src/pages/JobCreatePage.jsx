@@ -58,7 +58,7 @@ const JobCreatePage = () => {
           <b>{formData?.jobTitle}</b>
         </Typography>
         <Typography variant="h8" sx={{ textAlign: "left" }}>
-          <b>Posted On:</b>
+          <b>Created on: </b>
           {formData?.postedDate
             ? new Date(formData.postedDate).toLocaleDateString()
             : date.toLocaleDateString()}

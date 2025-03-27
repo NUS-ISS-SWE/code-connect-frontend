@@ -1,7 +1,11 @@
-import { GetAPI } from "./GeneralAPI";
+import { GetAPI, PostAPI } from "./GeneralAPI";
 import { apiWrapper } from "../utils/apiUtils";
 
 const PATHNAME = "profiles";
+
+const createProfile = async (formData, dispatch) => {
+  return await PostAPI(formData, `/${PATHNAME}`, dispatch);
+};
 
 const UploadProfilePicture = async (file, id, dispatch) => {
   const formData = new FormData();
@@ -11,7 +15,7 @@ const UploadProfilePicture = async (file, id, dispatch) => {
     const response = await apiWrapper({
       body: formData,
       dispatch,
-      endpoint: `/profiles/${id}/profilePicture`, // API endpoint for image upload
+      endpoint: `/${PATHNAME}/${id}/profilePicture`, // API endpoint for image upload
       headers: {},
       method: "POST",
     });
@@ -30,7 +34,7 @@ const UploadProfilePicture = async (file, id, dispatch) => {
 const DeleteResume = async ({ id }, dispatch) => {
   const response = await apiWrapper({
     dispatch,
-    endpoint: `/profiles/${id}/deleteResume`,
+    endpoint: `/${PATHNAME}/${id}/deleteResume`,
     method: "DELETE",
   });
 
@@ -39,7 +43,7 @@ const DeleteResume = async ({ id }, dispatch) => {
 
 const RetrieveResume = async ({ id, fileName }, dispatch) => {
   try {
-    const response = await fetch(`/profiles/${id}/resume`, {
+    const response = await fetch(`/${PATHNAME}/${id}/resume`, {
       method: "GET",
     });
 
@@ -78,7 +82,7 @@ const UploadResumeAPI = async ({ id, formData }, dispatch) => {
   const response = await apiWrapper({
     body: formData,
     dispatch,
-    endpoint: `/profiles/${id}/uploadResume`,
+    endpoint: `/${PATHNAME}/${id}/uploadResume`,
     method: "POST",
   });
 
@@ -86,6 +90,7 @@ const UploadResumeAPI = async ({ id, formData }, dispatch) => {
 };
 
 export {
+  createProfile,
   DeleteResume,
   RetrieveResume,
   retrieveUserProfile,
