@@ -14,6 +14,7 @@ import Navbar from "../components/Navbar";
 import Tabs from "../components/common/Tabs";
 
 import { retrieveJob } from "../api/JobPostingsApi";
+import dummyThumbnail from "../assets/dummy/dummy_icon_1.png";
 import Icon from "../constants/Icon";
 import styles from "../constants/styles";
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -167,7 +168,15 @@ const JobDetailsPage = () => {
             <Stack className="space-y-2">
               <Box className="flex items-center justify-start space-x-2">
                 {/* !!!TODO: Add company logo */}
-                <Box className="bg-gray-400 h-6 min-w-6 !rounded-xl" />
+                <Box className="bg-white !border !border-gray-300 !border-solid h-7 min-w-7 overflow-hidden w-7 !rounded-2xl">
+                  <img
+                    alt={jobData.companyName}
+                    src={jobData?.companyLogo ?? dummyThumbnail}
+                    style={{
+                      objectFit: "contain",
+                    }}
+                  />
+                </Box>
 
                 <Typography className="!font-semibold !text-sm">
                   {jobData.companyName}
@@ -185,6 +194,7 @@ const JobDetailsPage = () => {
               className={`${styles.buttonStyles} !bg-primary-main !font-semibold !text-white !w-full hover:!bg-primary-100`}
               disabled={loading.isOpen}
               component={Link}
+              to={user ? "" : paths.get("LOGIN").PATH}
               variant="contained"
             >
               {loading.isOpen ? (

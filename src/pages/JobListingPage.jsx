@@ -381,19 +381,16 @@ const JobListingPage = () => {
                   <Icon name={"Dot"} size={"1em"} />
 
                   <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-                    {item.location}
+                    {item.jobLocation}
                   </Typography>
 
+                  <Icon name={"Dot"} size={"1em"} />
+
                   <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-                    {`Posted ${
-                      item.postedDate
-                        ? new Date(item.postedDate).toLocaleDateString()
-                        : ""
-                    }`}
-                    {/* {`Posted ${renderIntervalDuration(
-                    item.postedDate,
-                    intervalToDuration
-                  )}`} */}
+                    {`Posted ${renderIntervalDuration(
+                      item.postedDate,
+                      intervalToDuration
+                    )}`}
                   </Typography>
                 </Box>
 
@@ -421,14 +418,15 @@ const JobListingPage = () => {
           </Box>
         )}
       </Stack>
-      <Button
+
+      {/* <Button
         className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !text-sm !text-white !tracking-normal !transition-all w-full hover:!bg-primary-100 !shadow-none"
         component={Link}
         to={paths.get("CREATEJOB").PATH}
         variant="contained"
       >
         {paths.get("CREATEJOB").LABEL}
-      </Button>
+      </Button> */}
       <Footer />
     </Stack>
   );
