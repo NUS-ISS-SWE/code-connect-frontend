@@ -15,18 +15,24 @@ import Navbar from "../components/Navbar";
 import { GetAPI } from "../api/GeneralAPI";
 import JobCard from "../components/jobPageComponents/JobCard";
 
+import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
+
+import { retrieveJobListings } from "../api/JobPostingsApi.js";
+import dummy from "../assets/dummy/index.js";
 import Icon from "../constants/Icon.jsx";
 import styles from "../constants/styles.jsx";
 import useContent from "../hooks/useContent.js";
 import { useGlobalContext } from "../hooks/useGlobalContext.js";
 import useKeyPress from "../hooks/useKeyPress.js";
+import paths from "../routes/paths.js";
 import {
   JOB_TYPES_FILTER_OPTIONS,
   LOCATION_FILTER_OPTIONS,
   SALARY_MAX_FILTER_OPTIONS,
   SALARY_MIN_FILTER_OPTIONS,
 } from "../utils/optionUtils.js";
-import paths from "../routes/paths.js";
+import { renderIntervalDuration } from "../utils/stringUtils.js";
 
 const JobListingPage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -139,17 +145,18 @@ const JobListingPage = () => {
 
   const fetchSearchResults = async (searchTerm, searchFilters) => {
     // Fetch search results from API
-    const { data, error } = await GetAPI("jobpostings", dispatch);
-    const jobsData = await data.json();
+    const { data, status } = await retrieveJobListings(dispatch);
 
-    // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
-    const filteredJobs = filterJobs(jobsData, searchTerm, searchFilters);
+    if (status === 200) {
+      // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
+      const filteredJobs = filterJobs(data, searchTerm, searchFilters);
 
-    // Store returned API data in filteredJobs state
-    setFilteredJobs(filteredJobs);
+      // Store returned API data in filteredJobs state
+      setFilteredJobs(filteredJobs);
 
-    // Update URL params with searchFilters or searchTerm change
-    updateUrlParams(searchTerm, searchFilters);
+      // Update URL params with searchFilters or searchTerm change
+      updateUrlParams(searchTerm, searchFilters);
+    }
   };
 
   // Filter jobs based on search term and search filters
@@ -348,14 +355,15 @@ const JobListingPage = () => {
           </Box>
         )}
       </Stack>
-      <Button
+
+      {/* <Button
         className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !text-sm !text-white !tracking-normal !transition-all w-full hover:!bg-primary-100 !shadow-none"
         component={Link}
         to={paths.get("CREATEJOB").PATH}
         variant="contained"
       >
         {paths.get("CREATEJOB").LABEL}
-      </Button>
+      </Button> */}
       <Footer />
     </Stack>
   );

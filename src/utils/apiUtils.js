@@ -62,4 +62,18 @@ const apiWrapper = async ({
   }
 };
 
-export { apiWrapper, baseUrl };
+const prepareFormDataForCreateAndEditJob = (data) => {
+  const { salaryRangeMin, salaryRangeMax, ...processedData } = data;
+
+  const postedDate = data["postedDate"] ?? new Date();
+  processedData["postedDate"] = postedDate.toISOString();
+
+  // Concat salary ranges into single string
+  processedData["salaryRange"] = `$${salaryRangeMin ?? 0}-$${
+    salaryRangeMax ?? Infinity
+  }`;
+
+  return processedData;
+};
+
+export { apiWrapper, baseUrl, prepareFormDataForCreateAndEditJob };

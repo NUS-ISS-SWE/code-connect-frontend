@@ -1,3 +1,4 @@
+import { JOB_LOCATION } from "../constants/jobLocation";
 import { JOB_TYPES } from "../constants/jobTypes";
 import paths from "../routes/paths";
 
@@ -15,39 +16,43 @@ const JOB_TYPES_FILTER_OPTIONS = [
     value: JOB_TYPES.get("contract").value,
   },
   {
+    label: JOB_TYPES.get("temporary").label,
+    value: JOB_TYPES.get("temporary").value,
+  },
+  {
     label: JOB_TYPES.get("internship").label,
     value: JOB_TYPES.get("internship").value,
   },
   {
-    label: JOB_TYPES.get("freelance").label,
-    value: JOB_TYPES.get("freelance").value,
+    label: JOB_TYPES.get("remote").label,
+    value: JOB_TYPES.get("remote").value,
   },
 ];
 
 const LOCATION_FILTER_OPTIONS = [
   {
-    label: "Remote",
-    value: "Remote",
+    label: JOB_LOCATION.get("remote").label,
+    value: JOB_LOCATION.get("remote").value,
   },
   {
-    label: "Central",
-    value: "Central",
+    label: JOB_LOCATION.get("central").label,
+    value: JOB_LOCATION.get("central").value,
   },
   {
-    label: "North",
-    value: "North",
+    label: JOB_LOCATION.get("north").label,
+    value: JOB_LOCATION.get("north").value,
   },
   {
-    label: "South",
-    value: "South",
+    label: JOB_LOCATION.get("south").label,
+    value: JOB_LOCATION.get("south").value,
   },
   {
-    label: "East",
-    value: "East",
+    label: JOB_LOCATION.get("east").label,
+    value: JOB_LOCATION.get("east").value,
   },
   {
-    label: "West",
-    value: "West",
+    label: JOB_LOCATION.get("west").label,
+    value: JOB_LOCATION.get("west").value,
   },
 ];
 
