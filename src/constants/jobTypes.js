@@ -21,10 +21,24 @@ const JOB_TYPES = new Map([
       },
     ],
     [
+      "temporary",
+      {
+        label: "Temporary",
+        value: "Temporary",
+      },
+    ],
+    [
       "internship",
       {
         label: "Internship",
         value: "Internship",
+      },
+    ],
+    [
+      "remote",
+      {
+        label: "Remote",
+        value: "Remote",
       },
     ],
     [
