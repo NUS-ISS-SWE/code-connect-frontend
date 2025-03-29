@@ -19,6 +19,9 @@ import Icon from "../constants/Icon";
 import styles from "../constants/styles";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
+import EditJob from "../components/jobPageComponents/EditJob";
+import ViewJob from "../components/jobPageComponents/ViewJob";
+import { GetAPI } from "../api/GeneralAPI";
 import paths from "../routes/paths";
 import { renderIntervalDuration } from "../utils/stringUtils";
 
