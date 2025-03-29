@@ -5,9 +5,11 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { intervalToDuration } from "date-fns";
 import dummy from "../../assets/dummy/index.js";
 import paths from "../../routes/paths.js";
 import Icon from "../../constants/Icon.jsx";
+import { renderIntervalDuration } from "../../utils/stringUtils.js";
 
 const JobCard = ({ item, index }) => {
     return (

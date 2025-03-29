@@ -10,11 +10,10 @@ import {
 } from "@mui/material";
 import { SelectPicker } from "rsuite";
 import { Link, useSearchParams } from "react-router-dom";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
-import { GetAPI } from "../api/GeneralAPI";
-import JobCard from "../components/jobPageComponents/JobCard";
 
+import { GetAPI } from "../api/GeneralAPI";
+
+import JobCard from "../components/jobPageComponents/JobCard";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
