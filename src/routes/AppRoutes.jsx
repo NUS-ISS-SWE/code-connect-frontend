@@ -55,6 +55,9 @@ const AppRoutes = () => {
             path={paths.get("CREATEJOB").PATH}
             element={<JobCreatePage />}
           />
+
+          <Route path={paths.get("EDITJOB").PATH} element={<JobCreatePage />} />
+
           <Route path={paths.get("GETJOB").PATH} element={<JobDetailsPage />} />
         </Route>
       </Routes>

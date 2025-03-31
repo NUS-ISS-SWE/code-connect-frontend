@@ -15,7 +15,8 @@ import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon";
 import { useAuthContext } from "../hooks/useAuthContext";
 import paths from "../routes/paths";
-import { NAV_OPTIONS, PROFILE_MENU_OPTIONS } from "../utils/optionUtils";
+import { NAV_OPTIONS, PROFILE_MENU_OPTIONS } from "../utils/navOptionsUtils";
+
 
 const Navbar = () => {
   const { logout, user } = useAuthContext();

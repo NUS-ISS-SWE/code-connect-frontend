@@ -21,6 +21,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import paths from "../routes/paths";
 import { renderIntervalDuration } from "../utils/stringUtils";
+import { JOB_DETAILS_TAB_OPTIONS } from "../utils/tabOptionsUtils";
 
 const JobDetailsPage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -31,20 +32,6 @@ const JobDetailsPage = () => {
   const { jobId } = useParams();
 
   const [jobData, setJobData] = useState({});
-
-  const JOB_DETAILS_TAB_OPTIONS = [
-    {
-      path: `${paths.get("JOB").PATH}/${jobId}`,
-      title: paths.get("GETJOB").LABEL,
-      value: 0,
-    },
-
-    {
-      path: `${paths.get("JOB").PATH}/${jobId}/${paths.get("EDITJOB").PATH}`,
-      title: paths.get("EDITJOB").LABEL,
-      value: 1,
-    },
-  ];
 
   useEffect(() => {
     if (!jobId) {
@@ -75,7 +62,7 @@ const JobDetailsPage = () => {
         {/* Tabs !!!TODO: Only Admin and listing owner can view tab */}
         {user && (
           <Stack className="!border-b !border-gray-300 !border-solid w-[100%]">
-            <Tabs tabOptions={JOB_DETAILS_TAB_OPTIONS} />
+            <Tabs tabOptions={JOB_DETAILS_TAB_OPTIONS(jobId)} />
           </Stack>
         )}
 

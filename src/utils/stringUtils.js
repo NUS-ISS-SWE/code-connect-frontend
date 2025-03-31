@@ -8,6 +8,24 @@ const addLeadingZero = (number) => {
 };
 
 /**
+ * Function to split salary range string into min and max values. E.g. "$5000-$6000" to [5000, 6000]
+ * @param {String} salaryRange
+ * @returns Processed array containing min and max values
+ */
+const extractSalaryRange = (salaryRange) => {
+  if (!salaryRange) return [0, Infinity];
+
+  const salaryNumbers = salaryRange.replace(/[$,]/g, "").split("-");
+
+  if (!salaryNumbers || salaryNumbers.length < 2) return [0, Infinity];
+
+  const minSalary = parseInt(salaryNumbers[0], 10);
+  const maxSalary = parseInt(salaryNumbers[1], 10);
+
+  return [minSalary, maxSalary];
+};
+
+/**
  * Regex function to remove last forward slash & everything before
  * @param {String} inputString
  * @returns Processed string
@@ -49,4 +67,9 @@ const renderIntervalDuration = (date, intervalToDuration) => {
   return `${years} ${months} ${days}`;
 };
 
-export { addLeadingZero, removeSlashAndPrefix, renderIntervalDuration };
+export {
+  addLeadingZero,
+  extractSalaryRange,
+  removeSlashAndPrefix,
+  renderIntervalDuration,
+};

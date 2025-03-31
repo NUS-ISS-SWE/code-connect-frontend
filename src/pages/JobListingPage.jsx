@@ -29,8 +29,11 @@ import {
   LOCATION_FILTER_OPTIONS,
   SALARY_MAX_FILTER_OPTIONS,
   SALARY_MIN_FILTER_OPTIONS,
-} from "../utils/optionUtils.js";
-import { renderIntervalDuration } from "../utils/stringUtils.js";
+} from "../utils/filterOptionsUtils.js";
+import {
+  extractSalaryRange,
+  renderIntervalDuration,
+} from "../utils/stringUtils.js";
 
 const JobListingPage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -188,19 +191,6 @@ const JobListingPage = () => {
         jobMinSalary <= maxFilter
       );
     });
-  };
-
-  const extractSalaryRange = (salaryRange) => {
-    if (!salaryRange) return [0, Infinity];
-
-    const salaryNumbers = salaryRange.replace(/[$,]/g, "").split("-");
-
-    if (!salaryNumbers || salaryNumbers.length < 2) return [0, Infinity];
-
-    const minSalary = parseInt(salaryNumbers[0], 10);
-    const maxSalary = parseInt(salaryNumbers[1], 10);
-
-    return [minSalary, maxSalary];
   };
 
   return (
