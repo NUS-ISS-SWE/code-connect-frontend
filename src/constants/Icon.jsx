@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { FaHome, FaCog } from "react-icons/fa";
+import { FaHome } from "react-icons/fa";
 import { IoIosArrowDropleftCircle } from "react-icons/io";
 import { MdEmail, MdPeopleAlt, MdSettings } from "react-icons/md";
 import {
@@ -19,6 +19,8 @@ import {
   RiMenuLine,
   RiShakeHandsFill,
   RiSearchLine,
+  RiSettings3Line,
+  RiTableView,
   RiToolsFill,
   RiUserFill,
   RiUserLine,
@@ -47,8 +49,9 @@ const ICONS_MAP = {
   Menu: RiMenuLine,
   People: MdPeopleAlt,
   Search: RiSearchLine,
-  Settings: FaCog,
+  Settings: RiSettings3Line,
   ShakeHands: RiShakeHandsFill,
+  Table: RiTableView,
   Tools: RiToolsFill,
   User: RiUserFill,
   UserLine: RiUserLine,

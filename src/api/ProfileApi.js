@@ -1,100 +1,49 @@
+import { GetAPI, PostAPI } from "./GeneralAPI";
 import { apiWrapper } from "../utils/apiUtils";
 
-const getProfileById = async ({ id }, dispatch) => {
-  try {
-    const url = `/profiles/${id}`;
-
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        //Authorization: `Basic ${credentials}`, // Attach Basic Auth
-        //"Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to get profile");
-    }
-
-    return { data: response, error: "", status: response.status };
-  } catch (error) {
-    console.error("Error:", error);
-
-    dispatch({
-      type: "SHOW_TOAST",
-      payload: {
-        message: String(error),
-        isOpen: true,
-        variant: "error",
-      },
-    });
-
-    return { data: null, error: error.message, status: 500 };
-  }
-};
+const PATHNAME = "profiles";
 
 const createProfile = async (formData, dispatch) => {
-  const response = await apiWrapper({
-    body: JSON.stringify(formData),
-    dispatch,
-    endpoint: "/profiles",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "POST",
-  });
-
-  return response;
+  return await PostAPI(formData, `/${PATHNAME}`, dispatch);
 };
 
-const uploadProfilePicture = async (file, id, dispatch) => {
-const formData = new FormData();
-formData.append("file", file);
+const UploadProfilePicture = async (file, id, dispatch) => {
+  const formData = new FormData();
+  formData.append("file", file);
 
-try {
+  try {
     const response = await apiWrapper({
       body: formData,
       dispatch,
-      endpoint: `/profiles/${id}/profilePicture`, // API endpoint for image upload
-      headers: {
-      },
+      endpoint: `/${PATHNAME}/${id}/profilePicture`, // API endpoint for image upload
+      headers: {},
       method: "POST",
     });
 
-    return { data: response?.data?.profilePicture, error: "", status: response.status };
+    return {
+      data: response?.data?.profilePicture,
+      error: "",
+      status: response.status,
+    };
   } catch (error) {
     console.error("Error uploading profile picture:", error);
     return null;
-  } 
-}  
-
-const updateProfile = async (formData, dispatch) => {
-  const response = await apiWrapper({
-    body: JSON.stringify(formData),
-    dispatch,
-    endpoint: `/profiles/${formData.id}`, // Update specific profile by ID
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "PUT", // Use PUT instead of POST for updates
-  });
-
-  return response;
+  }
 };
 
-const deleteResume = async ({ id }, dispatch) => {
+const DeleteResume = async ({ id }, dispatch) => {
   const response = await apiWrapper({
     dispatch,
-    endpoint: `/profiles/${id}/deleteResume`,
+    endpoint: `/${PATHNAME}/${id}/deleteResume`,
     method: "DELETE",
   });
 
   return response;
 };
 
-const retrieveResume = async ({ id, fileName }, dispatch) => {
+const RetrieveResume = async ({ id, fileName }, dispatch) => {
   try {
-    const response = await fetch(`/profiles/${id}/resume`, {
+    const response = await fetch(`/${PATHNAME}/${id}/resume`, {
       method: "GET",
     });
 
@@ -125,11 +74,15 @@ const retrieveResume = async ({ id, fileName }, dispatch) => {
   }
 };
 
-const uploadResume = async ({ id, formData }, dispatch) => {
+const retrieveUserProfile = async (id, dispatch) => {
+  return await GetAPI(`/${PATHNAME}/${id}`, dispatch);
+};
+
+const UploadResumeAPI = async ({ id, formData }, dispatch) => {
   const response = await apiWrapper({
     body: formData,
     dispatch,
-    endpoint: `/profiles/${id}/uploadResume`,
+    endpoint: `/${PATHNAME}/${id}/uploadResume`,
     method: "POST",
   });
 
@@ -137,11 +90,10 @@ const uploadResume = async ({ id, formData }, dispatch) => {
 };
 
 export {
-  deleteResume,
-  getProfileById,
-  updateProfile,
   createProfile,
-  retrieveResume,
-  uploadResume,
-  uploadProfilePicture
+  DeleteResume,
+  RetrieveResume,
+  retrieveUserProfile,
+  UploadResumeAPI,
+  UploadProfilePicture,
 };

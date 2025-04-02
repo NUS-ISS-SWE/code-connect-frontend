@@ -8,9 +8,9 @@ import {
 } from "@mui/material";
 
 import {
-  deleteResume,
-  retrieveResume,
-  uploadResume,
+  DeleteResume,
+  RetrieveResume,
+  UploadResumeAPI,
 } from "../../api/ProfileApi";
 import Icon from "../../constants/Icon";
 import { useAuthContext } from "../../hooks/useAuthContext";
@@ -39,7 +39,7 @@ const UploadResume = () => {
   const fetchResume = async () => {
     dispatch({ type: "LOADING", payload: { isOpen: true } });
 
-    const { data } = await retrieveResume(
+    const { data } = await RetrieveResume(
       { id, fileName: user.resumeData?.resumeFileName },
       dispatch
     );
@@ -54,7 +54,7 @@ const UploadResume = () => {
   const handleRemoveResume = async () => {
     dispatch({ type: "LOADING", payload: { isOpen: true } });
 
-    const { data } = await deleteResume({ id }, dispatch);
+    const { data } = await DeleteResume({ id }, dispatch);
 
     if (data) {
       setResume(null);
@@ -86,7 +86,7 @@ const UploadResume = () => {
       const formData = new FormData();
       formData.append("file", file || "");
 
-      const { data, error } = await uploadResume({ id, formData }, dispatch);
+      const { data, error } = await UploadResumeAPI({ id, formData }, dispatch);
 
       if (data) {
         setResume({

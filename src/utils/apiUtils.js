@@ -18,8 +18,9 @@ const apiWrapper = async ({
   try {
     const response = await fetch(`${endpoint}`, {
       method,
-      headers: headers || {
-        Authorization: `Bearer ${fetchToken(LOGIN_TOKEN_KEY)}`,
+      headers: headers ?? {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${fetchToken(LOGIN_TOKEN_KEY).token}`,
       },
       body,
       signal,
@@ -61,5 +62,18 @@ const apiWrapper = async ({
   }
 };
 
+const prepareFormDataForCreateAndEditJob = (data) => {
+  const { salaryRangeMin, salaryRangeMax, ...processedData } = data;
 
-export { apiWrapper, baseUrl };
+  const postedDate = data["postedDate"] ?? new Date();
+  processedData["postedDate"] = postedDate.toISOString();
+
+  // Concat salary ranges into single string
+  processedData["salaryRange"] = `$${salaryRangeMin ?? 0}-$${
+    salaryRangeMax ?? Infinity
+  }`;
+
+  return processedData;
+};
+
+export { apiWrapper, baseUrl, prepareFormDataForCreateAndEditJob };

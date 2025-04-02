@@ -9,6 +9,15 @@ const paths = new Map([
     },
   ],
   [
+    "ACCOUNT",
+    {
+      ID: "_account",
+      LABEL: "Account",
+      PATH: "/account",
+      IS_PROTECTED: true,
+    },
+  ],
+  [
     "ADMIN",
     {
       ID: "_admin",
@@ -45,20 +54,56 @@ const paths = new Map([
     },
   ],
   [
+    "JOBAPPLICATIONS",
+    {
+      ID: "_jobapplications",
+      LABEL: "Job Applications",
+      PATH: "/jobapplications",
+      IS_PROTECTED: false,
+    },
+  ],
+  [
+    "JOBS_MANAGEMENT",
+    {
+      ID: "_jobs",
+      LABEL: "Manage Jobs",
+      PATH: "/jobs-management",
+      IS_PROTECTED: true,
+    },
+  ],
+  [
     "CREATEJOB",
     {
       ID: "_createjob",
       LABEL: "Create Job",
       PATH: "/job/create",
-      IS_PROTECTED: false,
+      IS_PROTECTED: true,
+    },
+  ],
+  [
+    "EDITJOB",
+    {
+      ID: "_edit_job",
+      LABEL: "Edit",
+      PATH: "edit",
+      IS_PROTECTED: true,
     },
   ],
   [
     "GETJOB",
     {
       ID: "_getjob",
-      LABEL: "Get Job",
-      PATH: "/job/:id",
+      LABEL: "View",
+      PATH: "/job/:jobId",
+      IS_PROTECTED: false,
+    },
+  ],
+  [
+    "JOB",
+    {
+      ID: "_job",
+      LABEL: "Job",
+      PATH: "/job",
       IS_PROTECTED: false,
     },
   ],

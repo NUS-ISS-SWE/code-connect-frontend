@@ -1,7 +1,13 @@
 const LOGIN_TOKEN_KEY = "cc-token";
 
 const fetchToken = (key) => {
-  return localStorage.getItem(key);
+  if (localStorage.getItem(key) !== null) {
+    const { token, username } = JSON.parse(localStorage.getItem(key));
+
+    return { token, username };
+  } else {
+    return {};
+  }
 };
 
 const storeToken = (key, token) => {

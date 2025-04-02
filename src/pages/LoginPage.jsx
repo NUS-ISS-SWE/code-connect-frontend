@@ -81,7 +81,7 @@ const LoginPage = () => {
       const { data, error, status } = await loginUser(formInputs, dispatch);
 
       if (!error) {
-        login(LOGIN_TOKEN_KEY, data.accessToken);
+        login(LOGIN_TOKEN_KEY, data.accessToken, formInputs.username);
 
         dispatch({
           type: "SHOW_TOAST",

@@ -2,38 +2,44 @@ import {
   Box,
   Button,
   CircularProgress,
-  Divider,
   IconButton,
   InputAdornment,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import { intervalToDuration } from "date-fns";
 import { SelectPicker } from "rsuite";
 import { Link, useSearchParams } from "react-router-dom";
+
+import { GetAPI } from "../api/GeneralAPI";
+
+import JobCard from "../components/jobPageComponents/JobCard";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
+import { retrieveJobListings } from "../api/JobPostingsApi.js";
 import dummy from "../assets/dummy/index.js";
 import Icon from "../constants/Icon.jsx";
 import styles from "../constants/styles.jsx";
 import useContent from "../hooks/useContent.js";
-import { useGlobalContext } from "../hooks/useGlobalContext";
+import { useGlobalContext } from "../hooks/useGlobalContext.js";
 import useKeyPress from "../hooks/useKeyPress.js";
-import { renderIntervalDuration } from "../utils/stringUtils.js";
+import paths from "../routes/paths.js";
 import {
   JOB_TYPES_FILTER_OPTIONS,
   LOCATION_FILTER_OPTIONS,
+  SALARY_MAX_FILTER_OPTIONS,
+  SALARY_MIN_FILTER_OPTIONS,
 } from "../utils/optionUtils.js";
-import paths from "../routes/paths.js";
+import { renderIntervalDuration } from "../utils/stringUtils.js";
 
-const JobsPage = () => {
+const JobListingPage = () => {
   const { state, dispatch } = useGlobalContext();
   const { loading } = state;
 
   const content = useContent();
   const isEnterPressed = useKeyPress("Enter");
+  const searchInputRef = useRef(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Get initial values from URL
@@ -43,13 +49,20 @@ const JobsPage = () => {
       : decodeURIComponent(searchParams.get("search"));
   const initialJobType = searchParams.get("jobType") || "";
   const initialLocation = searchParams.get("location") || "";
-  const initialSalary = searchParams.get("salary") || "";
+  const initialSalaryMin = searchParams.get("salaryMin") || "";
+  const initialSalaryMax =
+    searchParams.get("salaryMax") === "Infinity"
+      ? Infinity
+      : parseInt(searchParams.get("salaryMax"), 10)
+      ? searchParams.get("salaryMax")
+      : "";
 
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [searchFilters, setSearchFilters] = useState({
     jobType: initialJobType,
     location: initialLocation,
-    salary: initialSalary,
+    salaryMin: initialSalaryMin,
+    salaryMax: initialSalaryMax,
   });
   const [searchTerm, setSearchTerm] = useState(initialSearch);
 
@@ -62,7 +75,8 @@ const JobsPage = () => {
 
     if (searchFilters?.jobType) params.jobType = searchFilters.jobType;
     if (searchFilters?.location) params.location = searchFilters.location;
-    if (searchFilters?.salary) params.salary = searchFilters.salary;
+    if (searchFilters.salaryMin) params.salaryMin = searchFilters.salaryMin;
+    if (searchFilters.salaryMax) params.salaryMax = searchFilters.salaryMax;
 
     setSearchParams(params);
   };
@@ -103,6 +117,16 @@ const JobsPage = () => {
     setSearchFilters({ ...searchFilters, [type]: value || "" });
   };
 
+  const handleClearFilters = () => {
+    // Reset searchFilters state
+    setSearchFilters({
+      jobType: "",
+      location: "",
+      salaryMin: "",
+      salaryMax: "",
+    });
+  };
+
   // Call fetch search results API on click of search
   const handleTriggerSearch = () => {
     const searchQuery = searchTerm.trim();
@@ -119,40 +143,72 @@ const JobsPage = () => {
   };
 
   const fetchSearchResults = async (searchTerm, searchFilters) => {
-    // TODO: Fetch search results from API
+    // Fetch search results from API
+    const { data, status } = await retrieveJobListings(dispatch);
 
-    // Load dummy data for now; replace with API call later
-    const data = dummy.jobListings;
-    // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
-    const filteredJobs = filterJobs(data, searchTerm, searchFilters);
+    if (status === 200) {
+      // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
+      const filteredJobs = filterJobs(data, searchTerm, searchFilters);
 
-    // Store returned API data in filteredJobs state
-    setFilteredJobs(filteredJobs);
+      // Store returned API data in filteredJobs state
+      setFilteredJobs(filteredJobs);
 
-    // Update URL params with searchFilters or searchTerm change
-    updateUrlParams(searchTerm, searchFilters);
+      // Update URL params with searchFilters or searchTerm change
+      updateUrlParams(searchTerm, searchFilters);
+    }
   };
 
   // Filter jobs based on search term and search filters
   const filterJobs = (jobs, searchTerm, searchFilters) => {
-    return jobs.filter(
-      (job) =>
-        (searchFilters.jobType === "" ||
-          job.jobType === searchFilters.jobType) &&
-        (searchFilters.location === "" ||
-          job.location.includes(searchFilters.location)) &&
-        (searchFilters.salary === "" ||
-          job.salary.includes(searchFilters.salary)) &&
-        (searchTerm === "" ||
-          job.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+    return (Array.isArray(jobs) ? jobs : []).filter((job) => {
+      const jobTitle =
+        searchTerm === "" ||
+        job.jobTitle.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const jobType =
+        searchFilters.jobType === "" || job.jobType === searchFilters.jobType;
+
+      const jobLocation =
+        searchFilters.location === "" ||
+        job.location.includes(searchFilters.location);
+
+      const minFilter = searchFilters.salaryMin
+        ? parseInt(searchFilters.salaryMin, 10)
+        : 0;
+      const maxFilter =
+        searchFilters.salaryMax && searchFilters.salaryMax !== Infinity
+          ? parseInt(searchFilters.salaryMax, 10)
+          : Infinity;
+      const [jobMinSalary, jobMaxSalary] = extractSalaryRange(job.salaryRange);
+
+      return (
+        jobTitle &&
+        jobType &&
+        jobLocation &&
+        jobMaxSalary >= minFilter &&
+        jobMinSalary <= maxFilter
+      );
+    });
+  };
+
+  const extractSalaryRange = (salaryRange) => {
+    if (!salaryRange) return [0, Infinity];
+
+    const salaryNumbers = salaryRange.replace(/[$,]/g, "").split("-");
+
+    if (!salaryNumbers || salaryNumbers.length < 2) return [0, Infinity];
+
+    const minSalary = parseInt(salaryNumbers[0], 10);
+    const maxSalary = parseInt(salaryNumbers[1], 10);
+
+    return [minSalary, maxSalary];
   };
 
   return (
     <Stack className="bg-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
       <Box
-        className={`bg-cover bg-fixed bg-right-bottom bg-no-repeat flex h-[360px] items-center justify-center w-full`}
+        className={`bg-cover bg-fixed bg-right-bottom bg-no-repeat flex h-[300px] items-center justify-center w-full`}
         sx={{
           backgroundImage: `url(${content.jobs.head.background})`,
         }}
@@ -169,7 +225,7 @@ const JobsPage = () => {
           {/* Searchbar */}
           <Box className="flex justify-start space-x-2 w-full">
             <TextField
-              className="bg-white rounded-sm w-full"
+              className="bg-white rounded-md w-full"
               color="primary"
               disabled={loading.isOpen}
               fullWidth
@@ -199,6 +255,7 @@ const JobsPage = () => {
                   </InputAdornment>
                 ),
               }}
+              inputRef={searchInputRef}
             />
 
             <Button
@@ -222,6 +279,7 @@ const JobsPage = () => {
               data={JOB_TYPES_FILTER_OPTIONS}
               onChange={handleFilterChange("jobType")}
               placeholder="Job Type"
+              searchable={false}
               style={{ width: 110 }}
               value={searchFilters?.jobType}
             />
@@ -231,11 +289,44 @@ const JobsPage = () => {
               data={LOCATION_FILTER_OPTIONS}
               onChange={handleFilterChange("location")}
               placeholder="Location"
+              searchable={false}
               style={{ width: 110 }}
               value={searchFilters?.location}
             />
 
-            {/* Salary Filter */}
+            {/* Salary Min Filter */}
+            <SelectPicker
+              data={SALARY_MIN_FILTER_OPTIONS}
+              disabledItemValues={SALARY_MIN_FILTER_OPTIONS.filter(
+                (f) => parseInt(f.value) >= parseInt(searchFilters?.salaryMax)
+              ).map((e) => e.value)}
+              onChange={handleFilterChange("salaryMin")}
+              placeholder="Monthly Salary (Min)"
+              searchable={false}
+              style={{ width: 200 }}
+              value={searchFilters?.salaryMin}
+            />
+
+            {/* Salary Max Filter */}
+            <SelectPicker
+              data={SALARY_MAX_FILTER_OPTIONS}
+              disabledItemValues={SALARY_MAX_FILTER_OPTIONS.filter(
+                (f) => parseInt(f.value) <= parseInt(searchFilters?.salaryMin)
+              ).map((e) => e.value)}
+              onChange={handleFilterChange("salaryMax")}
+              placeholder="Monthly Salary (Max)"
+              searchable={false}
+              style={{ width: 200 }}
+              value={searchFilters?.salaryMax}
+            />
+
+            <Typography
+              component={Button}
+              className="!capitalize !font-medium !text-xs lg:!text-sm text-start !text-white"
+              onClick={handleClearFilters}
+            >
+              Reset all filters
+            </Typography>
           </Box>
         </Stack>
       </Box>
@@ -252,72 +343,7 @@ const JobsPage = () => {
         {filteredJobs?.length > 0 ? (
           filteredJobs?.map((item, index) => {
             return (
-              <Stack
-                className="!bg-white !border !border-gray-300 !border-solid py-2 rounded-md space-y-2 w-full"
-                key={index}
-              >
-                <Box className="flex flex-1 items-start justify-start px-2  space-x-3">
-                  <img
-                    alt={item.jobTitle}
-                    src={item.thumbnail}
-                    style={{
-                      height: "auto",
-                      width: "48px",
-                    }}
-                  />
-
-                  <Stack>
-                    <Typography
-                      className="!font-regular !text-sm lg:!text-sm text-start !text-gray-700 hover:underline"
-                      component={Link}
-                    >
-                      {item.companyName}
-                    </Typography>
-                    <Typography
-                      className="!font-regular !text-lg lg:!text-xl text-start !text-primary hover:underline"
-                      component={Link}
-                    >
-                      {item.jobTitle}
-                    </Typography>
-                  </Stack>
-                </Box>
-
-                <Box className="flex flex-1 items-center justify-start px-2  space-x-1 !text-gray-700">
-                  <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-                    {item.jobType}
-                  </Typography>
-
-                  <Icon name={"Dot"} size={"1em"} />
-
-                  <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-                    {item.location}
-                  </Typography>
-
-                  <Icon name={"Dot"} size={"1em"} />
-
-                  <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-                    {`Posted ${item.postedDate}`}
-                    {/* {`Posted ${renderIntervalDuration(
-                    item.postedDate,
-                    intervalToDuration
-                  )}`} */}
-                  </Typography>
-                </Box>
-
-                <Divider flexItem />
-
-                <Box className="flex flex-1 items-start justify-start px-2  space-x-1">
-                  <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-                    {`${item.numberApplied} applied`}
-                  </Typography>
-
-                  <Icon name={"Dot"} size={"1em"} />
-
-                  <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-primary">
-                    {item.salaryRange}
-                  </Typography>
-                </Box>
-              </Stack>
+              <JobCard item={item} index={index}/>
             );
           })
         ) : (
@@ -328,16 +354,18 @@ const JobsPage = () => {
           </Box>
         )}
       </Stack>
-      <Button
-              className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !text-sm !text-white !tracking-normal !transition-all w-full hover:!bg-primary-100 !shadow-none"
-              component={Link}
-              to={paths.get("CREATEJOB").PATH}
-              variant="contained">
-              {paths.get("CREATEJOB").LABEL}
-      </Button>
+
+      {/* <Button
+        className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !text-sm !text-white !tracking-normal !transition-all w-full hover:!bg-primary-100 !shadow-none"
+        component={Link}
+        to={paths.get("CREATEJOB").PATH}
+        variant="contained"
+      >
+        {paths.get("CREATEJOB").LABEL}
+      </Button> */}
       <Footer />
     </Stack>
   );
 };
 
-export default JobsPage;
+export default JobListingPage;

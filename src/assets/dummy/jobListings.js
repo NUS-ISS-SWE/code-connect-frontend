@@ -11,7 +11,7 @@ const jobListings = [
     postedDate: "2024-02-01",
     companyName: "Google",
     jobTitle: "Software Engineer",
-    salaryRange: "$120,000 - $150,000",
+    salaryRange: "$10,000-$14,999",
     numberApplied: 35,
   },
   {
@@ -21,7 +21,7 @@ const jobListings = [
     postedDate: "2024-02-03",
     companyName: "Meta",
     jobTitle: "Frontend Developer",
-    salaryRange: "$80,000 - $100,000",
+    salaryRange: "$8,000-$8,999",
     numberApplied: 20,
   },
   {
@@ -31,7 +31,7 @@ const jobListings = [
     postedDate: "2024-02-05",
     companyName: "Netflix",
     jobTitle: "Backend Engineer",
-    salaryRange: "$110,000 - $140,000",
+    salaryRange: "$20,000-$24,999",
     numberApplied: 50,
   },
   {
@@ -41,7 +41,7 @@ const jobListings = [
     postedDate: "2024-02-07",
     companyName: "Tesla",
     jobTitle: "Data Scientist",
-    salaryRange: "$100,000 - $130,000",
+    salaryRange: "$15,000-$19,999",
     numberApplied: 15,
   },
   {
@@ -51,7 +51,7 @@ const jobListings = [
     postedDate: "2024-02-08",
     companyName: "Amazon",
     jobTitle: "Cloud Engineer",
-    salaryRange: "$115,000 - $145,000",
+    salaryRange: "$20,000-$24,999",
     numberApplied: 40,
   },
   {
@@ -61,7 +61,7 @@ const jobListings = [
     postedDate: "2024-02-10",
     companyName: "Microsoft",
     jobTitle: "Software Engineering Intern",
-    salaryRange: "$25 - $40/hour",
+    salaryRange: "$6,000-$6,999",
     numberApplied: 80,
   },
   {
@@ -71,7 +71,7 @@ const jobListings = [
     postedDate: "2024-02-12",
     companyName: "HubSpot",
     jobTitle: "UI/UX Designer",
-    salaryRange: "$90,000 - $120,000",
+    salaryRange: "$9,000-$9,999",
     numberApplied: 25,
   },
   {
@@ -81,7 +81,7 @@ const jobListings = [
     postedDate: "2024-02-14",
     companyName: "Spotify",
     jobTitle: "DevOps Engineer",
-    salaryRange: "$105,000 - $135,000",
+    salaryRange: "$7,000-$7,999",
     numberApplied: 30,
   },
   {
@@ -91,7 +91,7 @@ const jobListings = [
     postedDate: "2024-02-16",
     companyName: "Salesforce",
     jobTitle: "Technical Support Specialist",
-    salaryRange: "$70,000 - $90,000",
+    salaryRange: "$6,000-$6,999",
     numberApplied: 10,
   },
   {
@@ -101,7 +101,7 @@ const jobListings = [
     postedDate: "2024-02-18",
     companyName: "Snap Inc.",
     jobTitle: "Machine Learning Engineer",
-    salaryRange: "$130,000 - $160,000",
+    salaryRange: "$10,000-$14,999",
     numberApplied: 22,
   },
   {
@@ -111,7 +111,7 @@ const jobListings = [
     postedDate: "2024-02-06",
     companyName: "MedTech",
     jobTitle: "Software Developer",
-    salaryRange: "$85,000 - $105,000",
+    salaryRange: "$6,000-$6,999",
     numberApplied: 12,
   },
   {
@@ -121,7 +121,7 @@ const jobListings = [
     postedDate: "2024-02-07",
     companyName: "GreenTech",
     jobTitle: "Sustainability Consultant",
-    salaryRange: "$70,000 - $88,000",
+    salaryRange: "$6,000-$6,999",
     numberApplied: 17,
   },
   {
@@ -131,7 +131,7 @@ const jobListings = [
     postedDate: "2024-01-30",
     companyName: "HealthAI",
     jobTitle: "AI Researcher",
-    salaryRange: "$100,000 - $130,000",
+    salaryRange: "$9,000-$9,999",
     numberApplied: 23,
   },
   {
@@ -141,7 +141,7 @@ const jobListings = [
     postedDate: "2024-02-02",
     companyName: "SoundWave",
     jobTitle: "Audio Engineer",
-    salaryRange: "$55,000 - $75,000",
+    salaryRange: "$7,000-$7,999",
     numberApplied: 9,
   },
   {
@@ -151,7 +151,7 @@ const jobListings = [
     postedDate: "2024-02-03",
     companyName: "AeroSpaceX",
     jobTitle: "Aerospace Engineer Intern",
-    salaryRange: "$25 - $35/hr",
+    salaryRange: "$7,000-$7,999",
     numberApplied: 11,
   },
   {
@@ -161,7 +161,7 @@ const jobListings = [
     postedDate: "2024-02-01",
     companyName: "GameTech",
     jobTitle: "Game Developer",
-    salaryRange: "$80,000 - $100,000",
+    salaryRange: "$8,000-$8,999",
     numberApplied: 16,
   },
   {
@@ -171,7 +171,7 @@ const jobListings = [
     postedDate: "2024-01-27",
     companyName: "BuildSoft",
     jobTitle: "Construction Engineer",
-    salaryRange: "$78,000 - $92,000",
+    salaryRange: "$6,000-$6,999",
     numberApplied: 14,
   },
   {
@@ -181,7 +181,7 @@ const jobListings = [
     postedDate: "2024-02-04",
     companyName: "QuantumX",
     jobTitle: "Quantum Computing Researcher",
-    salaryRange: "$110,000 - $150,000",
+    salaryRange: "$20,000-$24,999",
     numberApplied: 5,
   },
   {
@@ -191,7 +191,7 @@ const jobListings = [
     postedDate: "2024-01-31",
     companyName: "CyberDyn",
     jobTitle: "Network Security Engineer",
-    salaryRange: "$88,000 - $108,000",
+    salaryRange: "$20,000-$24,999",
     numberApplied: 21,
   },
   {
@@ -201,7 +201,7 @@ const jobListings = [
     postedDate: "2024-02-02",
     companyName: "FinSoft",
     jobTitle: "Financial Analyst",
-    salaryRange: "$65,000 - $85,000",
+    salaryRange: "$7,000-$7,999",
     numberApplied: 13,
   },
 ];

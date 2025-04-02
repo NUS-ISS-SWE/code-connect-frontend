@@ -19,22 +19,23 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const initializeAuth = async () => {
-    const token = fetchToken(LOGIN_TOKEN_KEY);
+    const storageData = fetchToken(LOGIN_TOKEN_KEY);
 
-    if (token) {
+    if (storageData?.token) {
       // TODO: Verify if token is valid with backend or check expiration
       // const isValid = await verifyToken(token);
       // isValid ? login(LOGIN_TOKEN_KEY, token) : logout();
 
-      login(LOGIN_TOKEN_KEY, token);
+      login(LOGIN_TOKEN_KEY, storageData?.token, storageData?.username);
     }
   };
 
-  const login = (key, token) => {
+  const login = (key, token, username) => {
     setUser((prevState) => ({ ...prevState, token }));
     setIsAuthenticated(true);
 
     storeToken(key, token);
+    storeToken(LOGIN_TOKEN_KEY, JSON.stringify({ token, username }));
   };
 
   const logout = () => {

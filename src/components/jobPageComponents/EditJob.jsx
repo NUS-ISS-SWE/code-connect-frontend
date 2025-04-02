@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   Button,
   Stack,
@@ -5,166 +6,208 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel
+  InputLabel,
+  Box,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-import { createJob, updateJob } from "../../api/JobApi";
+import { createJob } from "../../api/JobPostingsApi";
+import styles from "../../constants/styles";
+import {
+  JOB_TYPES_FILTER_OPTIONS,
+  LOCATION_FILTER_OPTIONS,
+} from "../../utils/optionUtils";
+import paths from "../../routes/paths";
 
-const EditJob = ({formData, fieldRefs, setFormData, setLoading, dispatch }) => {
+const EditJob = ({ formData, fieldRefs, setFormData, dispatch }) => {
+  let navigate = useNavigate();
+
   const [errors, setErrors] = useState({});
-  const [date, setDate] = useState(new Date());
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const handleChange = (event) => {
+    setFormData({ ...formData, [event.target.name]: event.target.value });
   };
 
-    const createUpdateJob = async () => {
-      setLoading(true);
-  
-      formData.postedDate = date.toISOString();
-      const { data, error } = await createJob({ ...formData }, dispatch);
-  
-    if (error) {
-      console.error(`Error creating job:`, error);
-      return;
-    }
-  
-    dispatch({
-      type: "SHOW_TOAST",
-      payload: {
-        message: `Job created successfully`,
-        isOpen: true,
-        variant: "success",
-      },
-    });
-  
-      setLoading(false);
-    };
+  const createUpdateJob = async () => {
+    const { data, status } = await createJob(formData, dispatch);
 
-return (
-<Stack className="flex items-start justify-start py-4 space-y-4 w-full">
-    <TextField
-      size="small"
-      fullWidth
-      label="Company Name"
-      name="companyName"
-      error={!!errors.companyName}
-      helperText={errors.companyName}
-      inputRef={fieldRefs.companyName}
-      value={formData?.companyName}
-      onChange={handleChange}
-    />
-    <TextField
-      size="large"
-      fullWidth
-      label="Company Description"
-      name="companyDescription"
-      error={!!errors.companyDescription}
-      helperText={errors.companyDescription}
-      inputRef={fieldRefs.companyDescription}
-      value={formData?.companyDescription}
-      onChange={handleChange}
-    />
-    <TextField
-      size="small"
-      fullWidth
-      label="Salary Range"
-      name="salaryRange"
-      error={!!errors.salaryRange}
-      helperText={errors.salaryRange}
-      inputRef={fieldRefs.salaryRange}
-      value={formData?.salaryRange}
-      onChange={handleChange}
-    />
-    <TextField
-      size="small"
-      fullWidth
-      label="Job Title"
-      name="jobTitle"
-      error={!!errors.jobTitle}
-      helperText={errors.jobTitle}
-      inputRef={fieldRefs.jobTitle}
-      value={formData?.jobTitle}
-      onChange={handleChange}
-    />
-    <FormControl fullWidth size="small" error={!!errors.jobType}>
-      <InputLabel id="job-type-label">Job Type</InputLabel>
-      <Select
-        labelId="job-type-label"
-        name="jobType"
-        value={formData?.jobType}
+    if (status === 200) {
+      navigate(`${paths.get("JOB").PATH}/${data.id}`);
+
+      dispatch({
+        type: "SHOW_TOAST",
+        payload: {
+          message: `Job created successfully`,
+          isOpen: true,
+          variant: "success",
+        },
+      });
+    }
+  };
+
+  return (
+    <Stack className="flex items-start justify-start py-4 space-y-6 w-full">
+      <TextField
+        size="small"
+        fullWidth
+        label="Job Title"
+        name="jobTitle"
+        error={!!errors.jobTitle}
+        helperText={errors.jobTitle}
+        inputRef={fieldRefs.jobTitle}
+        value={formData?.jobTitle}
         onChange={handleChange}
-        inputRef={fieldRefs.jobType}
+      />
+
+      <TextField
+        error={!!errors.jobDescription}
+        fullWidth
+        helperText={errors.jobDescription}
+        inputRef={fieldRefs.jobDescription}
+        label="Job Description"
+        multiline
+        name="jobDescription"
+        onChange={handleChange}
+        rows={3}
+        size="small"
+        value={formData?.jobDescription}
+      />
+
+      <FormControl fullWidth size="small" error={!!errors.jobType}>
+        <InputLabel className="bg-white" id="job-type-label">
+          Job Type
+        </InputLabel>
+        <Select
+          inputRef={fieldRefs.jobType}
+          labelId="job-type-label"
+          name="jobType"
+          onChange={handleChange}
+          value={formData?.jobType ?? ""}
+        >
+          {JOB_TYPES_FILTER_OPTIONS.map((type, index) => (
+            <MenuItem key={index} value={type.value}>
+              {type.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      <FormControl fullWidth size="small" error={!!errors.jobLocation}>
+        <InputLabel className="bg-white" id="job-location-label">
+          Job Location
+        </InputLabel>
+        <Select
+          inputRef={fieldRefs.jobLocation}
+          labelId="job-location-label"
+          name="jobLocation"
+          onChange={handleChange}
+          value={formData?.jobLocation ?? ""}
+        >
+          {LOCATION_FILTER_OPTIONS.map((location, index) => (
+            <MenuItem key={index} value={location.value}>
+              {location.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      <Box className="flex items-start justify-start space-x-2 w-full">
+        <TextField
+          size="small"
+          fullWidth
+          label="Salary Range (Min)"
+          name="salaryRangeMin"
+          error={!!errors.salaryRangeMin}
+          helperText={errors.salaryRangeMin}
+          inputRef={fieldRefs.salaryRangeMin}
+          value={formData?.salaryRange}
+          onChange={handleChange}
+        />
+
+        <TextField
+          size="small"
+          fullWidth
+          label="Salary Range (Max)"
+          name="salaryRangeMax"
+          error={!!errors.salaryRangeMin}
+          helperText={errors.salaryRangeMin}
+          inputRef={fieldRefs.salaryRangeMin}
+          value={formData?.salaryRange}
+          onChange={handleChange}
+        />
+      </Box>
+
+      <TextField
+        size="small"
+        fullWidth
+        label="Company Name"
+        name="companyName"
+        error={!!errors.companyName}
+        helperText={errors.companyName}
+        inputRef={fieldRefs.companyName}
+        value={formData?.companyName}
+        onChange={handleChange}
+      />
+
+      <TextField
+        error={!!errors.companyDescription}
+        fullWidth
+        helperText={errors.companyDescription}
+        inputRef={fieldRefs.companyDescription}
+        label="Company Description"
+        multiline
+        name="companyDescription"
+        onChange={handleChange}
+        rows={3}
+        size="small"
+        value={formData?.companyDescription}
+      />
+
+      <TextField
+        size="small"
+        fullWidth
+        label="Required Skills"
+        name="requiredSkills"
+        error={!!errors.requiredSkills}
+        helperText={errors.requiredSkills}
+        inputRef={fieldRefs.requiredSkills}
+        value={formData?.requiredSkills}
+        onChange={handleChange}
+      />
+
+      <TextField
+        size="small"
+        fullWidth
+        label="Preferred Skills"
+        name="preferredSkills"
+        error={!!errors.preferredSkills}
+        helperText={errors.preferredSkills}
+        inputRef={fieldRefs.preferredSkills}
+        value={formData?.preferredSkills}
+        onChange={handleChange}
+      />
+
+      <TextField
+        size="small"
+        fullWidth
+        label="Required Certifications"
+        name="requiredCertifications"
+        error={!!errors.requiredCertifications}
+        helperText={errors.requiredCertifications}
+        inputRef={fieldRefs.requiredCertifications}
+        value={formData?.requiredCertifications}
+        onChange={handleChange}
+      />
+
+      <Button
+        className={`${styles.buttonStyles} !bg-primary-main !font-semibold self-end !text-white !w-fit hover:!bg-primary-100`}
+        variant="contained"
+        onClick={createUpdateJob}
       >
-        {["Full-time", "Part-time", "Contract", "Temporary", "Internship", "Remote"].map((jobType) => (
-          <MenuItem key={jobType} value={jobType}>
-            {jobType}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-    <TextField
-      size="small"
-      fullWidth
-      label="Location"
-      name="jobLocation"
-      error={!!errors.jobLocation}
-      helperText={errors.jobLocation}
-      inputRef={fieldRefs.jobLocation}
-      value={formData?.jobLocation}
-      onChange={handleChange}
-    />
-    <TextField
-      size="large"
-      fullWidth
-      label="Job Description"
-      name="jobDescription"
-      error={!!errors.jobDescription}
-      helperText={errors.jobDescription}
-      inputRef={fieldRefs.jobDescription}
-      value={formData?.jobDescription}
-      onChange={handleChange}
-    />
-    <TextField
-      size="small"
-      fullWidth
-      label="Required Skills"
-      name="requiredSkills"
-      error={!!errors.requiredSkills}
-      helperText={errors.requiredSkills}
-      inputRef={fieldRefs.requiredSkills}
-      value={formData?.requiredSkills}
-      onChange={handleChange}
-    />
-    <TextField
-      size="small"
-      fullWidth
-      label="Preferred Skills"
-      name="preferredSkills"
-      error={!!errors.preferredSkills}
-      helperText={errors.preferredSkills}
-      inputRef={fieldRefs.preferredSkills}
-      value={formData?.preferredSkills}
-      onChange={handleChange}
-    />
-    <TextField
-      size="small"
-      fullWidth
-      label="Required Certifications"
-      name="requiredCertifications"
-      error={!!errors.requiredCertifications}
-      helperText={errors.requiredCertifications}
-      inputRef={fieldRefs.requiredCertifications}
-      value={formData?.requiredCertifications}
-      onChange={handleChange}
-    />
-    <Button
-      variant="contained"
-      color="primary"
-      onClick={createUpdateJob}>
-      Create Job
-    </Button>
-  </Stack>
-)
+        Create Job
+      </Button>
+    </Stack>
+  );
 };
 
 export default EditJob;
