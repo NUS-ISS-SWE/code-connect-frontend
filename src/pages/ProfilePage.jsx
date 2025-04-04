@@ -9,6 +9,7 @@ import ViewProfile from "../components/profilePageComponents/ViewProfile";
 import { RetrieveResume, retrieveUserProfile } from "../api/ProfileApi";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
+import { GetAPI } from "../api/GeneralAPI";
 
 const ProfilePage = () => {
   const { state, dispatch } = useGlobalContext();

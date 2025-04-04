@@ -12,6 +12,7 @@ const HomePage = lazy(() => import("../pages/HomePage.jsx"));
 const JobCreatePage = lazy(() => import("../pages/JobCreatePage.jsx"));
 const JobDetailsPage = lazy(() => import("../pages/JobDetailsPage.jsx"));
 const JobListingPage = lazy(() => import("../pages/JobListingPage.jsx"));
+const JobApplicationsPage = lazy(() => import("../pages/JobApplicationsPage.jsx"));
 const JobsManagementPage = lazy(() =>
   import("../pages/JobsManagementPage.jsx")
 );
@@ -30,6 +31,8 @@ const AppRoutes = () => {
           <Route path={paths.get("HOME").PATH} element={<HomePage />} />
 
           <Route path={paths.get("JOBS").PATH} element={<JobListingPage />} />
+
+          <Route path={paths.get("JOBAPPLICATIONS").PATH} element={<JobApplicationsPage />} />
 
           <Route path={paths.get("LOGIN").PATH} element={<LoginPage />} />
 

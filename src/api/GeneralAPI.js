@@ -6,7 +6,6 @@ const GetAPI = async (url, dispatch) => {
     endpoint: `${url}`,
     method: "GET",
   });
-
   return response;
 };
 
