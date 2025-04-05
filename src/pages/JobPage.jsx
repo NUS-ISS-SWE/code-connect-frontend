@@ -1,5 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-/* eslint-disable react/jsx-no-undef */
 import { Divider, Stack, Typography } from "@mui/material";
 
 import EditJob from "../components/jobPageComponents/EditJob";
@@ -11,7 +11,7 @@ import { retrieveJob } from "../api/JobPostingsApi";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 
-const JobCreatePage = () => {
+const JobPage = () => {
   const { state, dispatch } = useGlobalContext();
   const { setUser, user } = useAuthContext();
 
@@ -24,6 +24,15 @@ const JobCreatePage = () => {
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchJob = async () => {
+    const { data, status } = await retrieveJob(jobId, dispatch);
+
+    if (status === 200) {
+      setFormData(data);
+      setUser({ ...user, ...data });
+    }
+  };
+
   useEffect(() => {
     if (!jobId) {
       // If no ID is provided, show an empty form for creating a profile
@@ -35,14 +44,7 @@ const JobCreatePage = () => {
     fetchJob();
   }, [jobId]); // Runs when the ID changes
 
-  const fetchJob = async () => {
-    const { data, status } = await retrieveJob(jobId, dispatch);
 
-    if (status === 200) {
-      setFormData(data);
-      setUser({ ...user, ...data });
-    }
-  };
 
   //Account for thumbnail and numberApplied for viewing?
 
@@ -54,7 +56,7 @@ const JobCreatePage = () => {
           {jobId ? "View Job" : "Create Job"}
         </Typography>
         <Divider flexItem />
-        <Typography variant="h6" sx={{ textAlign: "left" }}>
+        <Typography variant="h6" className="text-align" sx={{ textAlign: "left" }}>
           <b>{formData?.jobTitle}</b>
         </Typography>
         <Typography variant="h8" sx={{ textAlign: "left" }}>
@@ -81,4 +83,4 @@ const JobCreatePage = () => {
   );
 };
 
-export default JobCreatePage;
+export default JobPage;
