@@ -52,14 +52,14 @@ const JobPage = () => {
     <Stack className="bg-gray-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
       <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[70vw]">
-        <Typography variant="h4" sx={{ textAlign: "left" }}>
-          {jobId ? "View Job" : "Create Job"}
+      <Typography variant="h4" className="text-left">
+      {jobId ? "View Job" : "Create Job"}
         </Typography>
         <Divider flexItem />
-        <Typography variant="h6" className="text-align" sx={{ textAlign: "left" }}>
+        <Typography variant="h6" className="text-left">
           <b>{formData?.jobTitle}</b>
         </Typography>
-        <Typography variant="h8" sx={{ textAlign: "left" }}>
+        <Typography variant="h8" className="text-left">
           <b>Created on: </b>
           {formData?.postedDate
             ? new Date(formData.postedDate).toLocaleDateString()
