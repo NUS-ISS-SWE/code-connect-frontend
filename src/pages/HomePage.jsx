@@ -6,11 +6,9 @@ import Navbar from "../components/Navbar";
 
 import Icon from "../constants/Icon";
 import useContent from "../hooks/useContent";
-import { useGlobalContext } from "../hooks/useGlobalContext";
 
 const HomePage = () => {
   const content = useContent();
-  const { state, dispatch } = useGlobalContext();
 
   return (
     <Stack className="bg-white flex flex-1 items-start justify-start min-h-[100vh] w-full">

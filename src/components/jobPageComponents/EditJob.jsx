@@ -22,7 +22,7 @@ import paths from "../../routes/paths";
 const EditJob = ({ formData, fieldRefs, setFormData, dispatch }) => {
   let navigate = useNavigate();
 
-  const [errors, setErrors] = useState({});
+  const [errors] = useState({});
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });

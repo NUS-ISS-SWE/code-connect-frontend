@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 
 import {
   Box,
@@ -10,8 +11,9 @@ import dummy from "../../assets/dummy/index.js";
 import paths from "../../routes/paths.js";
 import Icon from "../../constants/Icon.jsx";
 import { renderIntervalDuration } from "../../utils/stringUtils.js";
+import { Link } from "react-router-dom";
 
-const JobCard = ({ item, index }) => {
+const JobCard = ({ item, index}) => {
     return (
       <Stack
       className="!bg-white !border !border-gray-300 !border-solid py-2 rounded-md space-y-2 w-full"
@@ -82,4 +84,4 @@ const JobCard = ({ item, index }) => {
     )
 }
 
-export default JobCard
+export default JobCard;

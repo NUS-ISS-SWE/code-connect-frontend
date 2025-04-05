@@ -16,7 +16,7 @@ import { useGlobalContext } from "../hooks/useGlobalContext";
 import paths from "../routes/paths";
 
 const JobsManagementPage = () => {
-  const { state, dispatch } = useGlobalContext();
+  const { state } = useGlobalContext();
   const { loading } = state;
 
   return (
