@@ -16,12 +16,8 @@ import Tabs from "../components/common/Tabs";
 import { retrieveJob } from "../api/JobPostingsApi";
 import dummyThumbnail from "../assets/dummy/dummy_icon_1.png";
 import Icon from "../constants/Icon";
-import styles from "../constants/styles";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import EditJob from "../components/jobPageComponents/EditJob";
-import ViewJob from "../components/jobPageComponents/ViewJob";
-import { GetAPI } from "../api/GeneralAPI";
 import paths from "../routes/paths";
 import { renderIntervalDuration } from "../utils/stringUtils";
 import { JOB_DETAILS_TAB_OPTIONS } from "../utils/tabOptionsUtils";
@@ -61,7 +57,7 @@ const JobDetailsPage = () => {
     <Stack className="bg-gray-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
 
-      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-6 w-[70vw]">
+      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-6 w-[95vw] lg:w-[70vw]">
         {/* Tabs !!!TODO: Only Admin and listing owner can view tab */}
         {user && (
           <Stack className="!border-b !border-gray-300 !border-solid w-[100%]">
@@ -73,7 +69,14 @@ const JobDetailsPage = () => {
         <Box className="flex items-start justify-start space-x-4 w-full">
           {/* Left Layout */}
           <Stack className="!border !border-gray-300 !border-solid !flex-[2] !rounded-md">
-            <Stack className="px-3 py-2 space-y-1">
+            <Stack className="px-3 py-3 space-y-1">
+              <Typography className="!font-medium !text-gray-400 !text-xs">
+                {`Posted ${renderIntervalDuration(
+                  jobData.postedDate,
+                  intervalToDuration
+                )}`}
+              </Typography>
+
               <Typography className="!font-semibold text-left !text-3xl">
                 {jobData.jobTitle}
               </Typography>
@@ -95,18 +98,11 @@ const JobDetailsPage = () => {
                   {jobData.salaryRange}
                 </Typography>
               </Box>
-
-              <Typography className="!font-medium !text-gray-400 !text-xs">
-                {`Posted ${renderIntervalDuration(
-                  jobData.postedDate,
-                  intervalToDuration
-                )}`}
-              </Typography>
             </Stack>
 
             <Divider />
 
-            <Stack className="px-3 py-2 space-y-1">
+            <Stack className="px-3 py-3 space-y-1">
               <Typography className="!font-semibold !text-sm">
                 Job Description
               </Typography>
@@ -181,10 +177,14 @@ const JobDetailsPage = () => {
             </Stack>
 
             <Button
-              className={`${styles.buttonStyles} !bg-primary-main !font-semibold !text-white !w-full hover:!bg-primary-100`}
+              className="btn btn-primary !w-full"
               disabled={loading.isOpen}
               component={Link}
-              to={user ? "" : paths.get("LOGIN").PATH}
+              to={
+                user
+                  ? `${paths.get("JOB").PATH}/${jobId}/apply`
+                  : paths.get("LOGIN").PATH // !!!TODO: Open a modal asking if user wants to login instead of directing stright to login page
+              }
               variant="contained"
             >
               {loading.isOpen ? (

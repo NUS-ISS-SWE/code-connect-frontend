@@ -46,7 +46,7 @@ const JobCreatePage = () => {
     formData && (
       <Stack className="bg-gray-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
         <Navbar />
-        <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[70vw]">
+        <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[95vw] lg:w-[70vw]">
           {/* Tabs !!!TODO: Only Admin and listing owner can view tab */}
           {user && jobId && (
             <Stack className="!border-b !border-gray-300 !border-solid w-[100%]">

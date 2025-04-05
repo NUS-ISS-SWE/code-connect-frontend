@@ -12,7 +12,6 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { createJob } from "../../api/JobPostingsApi";
-import styles from "../../constants/styles";
 import paths from "../../routes/paths";
 import {
   JOB_TYPES_FILTER_OPTIONS,
@@ -112,7 +111,7 @@ const EditJob = ({ formData, fieldRefs, setFormData, dispatch }) => {
         </Select>
       </FormControl>
 
-      <Box className="flex items-start justify-start space-x-2 w-full">
+      <Box className="flex flex-col lg:flex-row items-start justify-start gap-6 lg:gap-2 w-full">
         <TextField
           error={!!errors.salaryRangeMin}
           fullWidth
@@ -205,27 +204,18 @@ const EditJob = ({ formData, fieldRefs, setFormData, dispatch }) => {
       {jobId ? (
         <Box className="flex items-center justify-end space-x-1 w-full">
           <Button
-            className={`${styles.buttonStyles} !bg-gray-100 !font-semibold !text-error !w-fit hover:!bg-gray-200`}
-            variant="contained"
+            className="btn btn-secondary !text-error"
             // onClick={deleteJob}
           >
             Delete
           </Button>
 
-          <Button
-            className={`${styles.buttonStyles} !bg-primary-main !font-semibold !text-white !w-fit hover:!bg-primary-100`}
-            variant="contained"
-            onClick={createUpdateJob}
-          >
+          <Button className="btn btn-primary" onClick={createUpdateJob}>
             Save
           </Button>
         </Box>
       ) : (
-        <Button
-          className={`${styles.buttonStyles} !bg-primary-main !font-semibold self-end !text-white !w-fit hover:!bg-primary-100`}
-          variant="contained"
-          onClick={createUpdateJob}
-        >
+        <Button className="btn btn-primary self-end" onClick={createUpdateJob}>
           Create Job
         </Button>
       )}

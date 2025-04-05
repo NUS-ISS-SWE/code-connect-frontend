@@ -9,10 +9,13 @@ import PublicRoute from "./PublicRoute.jsx";
 const AccountPage = lazy(() => import("../pages/AccountPage.jsx"));
 const ErrorPage = lazy(() => import("../pages/ErrorPage.jsx"));
 const HomePage = lazy(() => import("../pages/HomePage.jsx"));
+const JobApplyPage = lazy(() => import("../pages/JobApplyPage.jsx"));
 const JobCreatePage = lazy(() => import("../pages/JobCreatePage.jsx"));
 const JobDetailsPage = lazy(() => import("../pages/JobDetailsPage.jsx"));
 const JobListingPage = lazy(() => import("../pages/JobListingPage.jsx"));
-const JobApplicationsPage = lazy(() => import("../pages/JobApplicationsPage.jsx"));
+const JobApplicationsPage = lazy(() =>
+  import("../pages/JobApplicationsPage.jsx")
+);
 const JobsManagementPage = lazy(() =>
   import("../pages/JobsManagementPage.jsx")
 );
@@ -32,7 +35,10 @@ const AppRoutes = () => {
 
           <Route path={paths.get("JOBS").PATH} element={<JobListingPage />} />
 
-          <Route path={paths.get("JOBAPPLICATIONS").PATH} element={<JobApplicationsPage />} />
+          <Route
+            path={paths.get("JOBAPPLICATIONS").PATH}
+            element={<JobApplicationsPage />}
+          />
 
           <Route path={paths.get("LOGIN").PATH} element={<LoginPage />} />
 
@@ -52,6 +58,11 @@ const AppRoutes = () => {
           <Route
             path={paths.get("JOBS_MANAGEMENT").PATH}
             element={<JobsManagementPage />}
+          />
+
+          <Route
+            path={paths.get("APPLY_JOB").PATH}
+            element={<JobApplyPage />}
           />
 
           <Route

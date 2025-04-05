@@ -3,10 +3,6 @@ import paths from "../routes/paths";
 const NAV_OPTIONS = [
   { title: paths.get("HOME").LABEL, path: paths.get("HOME").PATH },
   { title: paths.get("JOBS").LABEL, path: paths.get("JOBS").PATH },
-  {
-    title: paths.get("JOBAPPLICATIONS").LABEL,
-    path: paths.get("JOBAPPLICATIONS").PATH,
-  },
 ];
 
 const PROFILE_MENU_OPTIONS = [
@@ -19,6 +15,11 @@ const PROFILE_MENU_OPTIONS = [
     icon: "Table",
     title: paths.get("JOBS_MANAGEMENT").LABEL,
     path: paths.get("JOBS_MANAGEMENT").PATH,
+  },
+  {
+    icon: "Archive",
+    title: paths.get("JOBAPPLICATIONS").LABEL,
+    path: paths.get("JOBAPPLICATIONS").PATH,
   },
   {
     icon: "Settings",

@@ -6,6 +6,9 @@ export default {
       colors: {
         primary: {
           DEFAULT: "#1976D2",
+          100: "#176ABD",
+          200: "#145EA8",
+          300: "#125393",
         },
         success: {
           DEFAULT: "#5BBF7A",
