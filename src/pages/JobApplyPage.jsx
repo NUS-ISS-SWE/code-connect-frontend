@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { intervalToDuration } from "date-fns";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";

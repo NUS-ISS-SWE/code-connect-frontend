@@ -66,7 +66,7 @@ const JobDetailsPage = () => {
         )}
 
         {/* Split Layout */}
-        <Box className="flex items-start justify-start space-x-4 w-full">
+        <Box className="flex flex-col lg:flex-row items-start justify-start gap-4 w-full">
           {/* Left Layout */}
           <Stack className="!border !border-gray-300 !border-solid !flex-[2] !rounded-md">
             <Stack className="px-3 py-3 space-y-1">
