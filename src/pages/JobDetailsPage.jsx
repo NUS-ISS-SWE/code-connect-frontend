@@ -114,7 +114,7 @@ const JobDetailsPage = () => {
 
             <Divider />
 
-            <Stack className="px-3 py-2 space-y-1">
+            <Stack className="px-3 py-3 space-y-1">
               <Typography className="!font-semibold !text-sm">
                 Required Skills
               </Typography>
@@ -126,7 +126,7 @@ const JobDetailsPage = () => {
 
             <Divider />
 
-            <Stack className="px-3 py-2 space-y-1">
+            <Stack className="px-3 py-3 space-y-1">
               <Typography className="!font-semibold !text-sm">
                 Preferred Skills
               </Typography>
@@ -138,7 +138,7 @@ const JobDetailsPage = () => {
 
             <Divider />
 
-            <Stack className="px-3 py-2 space-y-1">
+            <Stack className="px-3 py-3 space-y-1">
               <Typography className="!font-semibold !text-sm">
                 Required Certifications
               </Typography>

@@ -109,9 +109,11 @@ const JobApplyPage = () => {
 
     if (!firstErrorField) {
       // TODO: Integrate with API to submit application
+      console.log("formData", formData);
+
       // const { data, status } = await submitApplication(formData, dispatch);
       // if (status === 200) {
-      // navigate(`${paths.get("JOBAPPLICATIONS").PATH}`);
+      navigate(`${paths.get("APPLY_JOB_SUCCESS").PATH}`);
       // }
     }
   };
@@ -132,6 +134,8 @@ const JobApplyPage = () => {
     else if (!sgPhonePattern.test(formData.phone))
       newErrors.phone = "Invalid phone number format";
 
+    if (!formData.resume) newErrors.resume = "This field is required!";
+
     setErrors(newErrors);
 
     // Return first key in error object
@@ -144,12 +148,31 @@ const JobApplyPage = () => {
 
       <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[95vw] lg:w-[70vw]">
         <Stack className="px-0 py-2 space-y-1">
-          <Typography className="!font-medium !text-gray-400 !text-xs">
-            {`Posted ${renderIntervalDuration(
-              jobData.postedDate,
-              intervalToDuration
-            )}`}
-          </Typography>
+          <Box className="flex items-center justify-start space-x-1">
+            {/* !!!TODO: Add company logo */}
+            <Box className="bg-white !border !border-gray-300 !border-solid h-4 min-w-4 overflow-hidden w-4 !rounded-2xl">
+              <img
+                alt={jobData.companyName}
+                src={jobData?.companyLogo ?? dummyThumbnail}
+                style={{
+                  objectFit: "contain",
+                }}
+              />
+            </Box>
+
+            <Typography className="!capitalize !font-semibold !text-xs">
+              {jobData.companyName}
+            </Typography>
+
+            <Icon name={"Dot"} size={"1em"} />
+
+            <Typography className="!font-medium !text-gray-400 !text-xs">
+              {`Posted ${renderIntervalDuration(
+                jobData.postedDate,
+                intervalToDuration
+              )}`}
+            </Typography>
+          </Box>
 
           <Typography className="!font-semibold text-left !text-3xl">
             {jobData.jobTitle}
@@ -253,26 +276,12 @@ const JobApplyPage = () => {
             onChange={handleChange}
           />
 
-          <TextField
-            error={!!errors.coverLetter}
-            fullWidth
-            helperText={errors.coverLetter}
-            inputRef={fieldRefs.coverLetter}
-            label="Cover letter"
-            multiline
-            name="coverLetter"
-            onChange={handleChange}
-            rows={4}
-            size="small"
-            value={formData?.coverLetter}
-          />
-
           {formData.resume ? (
             <Stack className="flex justify-start space-y-1 w-[100%]">
-              <Box className="bg-gray-100 flex items-center justify-start px-4 py-4 relative space-x-2 !text-sm text-gray-500 w-[100%]">
+              <Box className="bg-gray-100 border border-gray-300 flex items-center justify-start px-4 py-4 relative !rounded-md space-x-2 !text-sm text-gray-900 w-[100%]">
                 <Icon name="File" size={"1.1rem"} />
 
-                <Typography className={`flex-1 !text-sm text-gray-700`}>
+                <Typography className={`flex-1 !text-sm text-gray-600`}>
                   {`${formData.resume?.file?.name}`}
                 </Typography>
                 <IconButton
@@ -284,34 +293,41 @@ const JobApplyPage = () => {
               </Box>
             </Stack>
           ) : (
-            <Stack className="flex justify-start space-y-1 w-[100%]">
+            <Stack className="flex justify-start space-y-2 w-[100%]">
               <Box
-                className="!bg-white !border !border-gray-300 !border-solid  cursor-pointer !duration-500 !ease-in-out !font-normal !flex !gap-2 items-center !justify-start px-4 py-6 !rounded-md !shadow-none !text-sm !text-gray-900 !tracking-normal !transition-all w-[100%] hover:!border-gray-900"
+                className={`!bg-white !border ${
+                  errors.resume
+                    ? "border-error hover:border-error"
+                    : "border-gray-300 hover:border-gray-900"
+                } !border-solid  cursor-pointer !duration-500 !ease-in-out !font-normal !flex !gap-2 items-center !justify-start px-4 py-7 !rounded-md !shadow-none !text-sm !text-gray-900 !tracking-normal !transition-all w-[100%] `}
                 disabled={loading.isOpen}
                 component="label"
               >
-                <Stack className="flex flex-col items-center justify-start space-y-5 w-full">
-                  <Stack className="flex flex-col items-center justify-start space-y-2 w-full">
+                <Stack className="flex flex-col items-center justify-start space-y-4 w-full">
+                  <Stack className="flex flex-col items-center justify-start space-y-0 w-full">
                     <Typography className="!font-semibold !text-md text-gray-700">
-                      Upload Resume*
+                      Resume*
                     </Typography>
-
-                    <Button
-                      className="btn btn-secondary"
-                      disabled={loading.isOpen}
-                      component="label"
-                    >
-                      Choose File
-                      <input
-                        accept=".pdf"
-                        type="file"
-                        hidden
-                        onChange={handleAddResume}
-                      />
-                    </Button>
+                    <Typography className="!font-regular !text-sm text-gray-500">
+                      Upload your resume here
+                    </Typography>
                   </Stack>
 
-                  <Typography className={`!text-xs text-gray-600 `}>
+                  <Button
+                    className="btn btn-secondary"
+                    disabled={loading.isOpen}
+                    component="label"
+                  >
+                    Choose File
+                    <input
+                      accept=".pdf"
+                      type="file"
+                      hidden
+                      onChange={handleAddResume}
+                    />
+                  </Button>
+
+                  <Typography className={`!text-xs text-gray-500 `}>
                     Allowed types: pdf.
                   </Typography>
                 </Stack>
@@ -323,12 +339,29 @@ const JobApplyPage = () => {
                   onChange={handleAddResume}
                 />
               </Box>
+              <Typography className="!font-regular px-4 !text-xs text-error">
+                {errors.resume}
+              </Typography>
             </Stack>
           )}
+
+          <TextField
+            error={!!errors.coverLetter}
+            fullWidth
+            helperText={errors.coverLetter}
+            inputRef={fieldRefs.coverLetter}
+            label="Cover letter"
+            multiline
+            name="coverLetter"
+            onChange={handleChange}
+            rows={5}
+            size="small"
+            value={formData?.coverLetter}
+          />
         </Stack>
 
         <Button
-          className="btn btn-primary !px-6 self-end"
+          className="btn btn-primary !px-6 self-end !w-full lg:!w-fit"
           disabled={loading.isOpen}
           onClick={handleSubmitApplication}
         >

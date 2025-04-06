@@ -18,6 +18,15 @@ const paths = new Map([
     },
   ],
   [
+    "ACCOUNT_VERIFIED",
+    {
+      ID: "_verification_success",
+      LABEL: "",
+      PATH: "/verification-success",
+      IS_PROTECTED: false,
+    },
+  ],
+  [
     "ADMIN",
     {
       ID: "_admin",
@@ -86,6 +95,15 @@ const paths = new Map([
       ID: "_apply_job",
       LABEL: "Apply Job",
       PATH: "/job/:jobId/apply",
+      IS_PROTECTED: true,
+    },
+  ],
+  [
+    "APPLY_JOB_SUCCESS",
+    {
+      ID: "_apply_job_success",
+      LABEL: "",
+      PATH: "/job/application-success",
       IS_PROTECTED: true,
     },
   ],
