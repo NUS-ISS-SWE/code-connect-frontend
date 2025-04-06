@@ -24,30 +24,26 @@ import { JOB_DETAILS_TAB_OPTIONS } from "../utils/tabOptionsUtils";
 
 const JobDetailsPage = () => {
   const { state, dispatch } = useGlobalContext();
-  const { loading } = state;
+  const { jobDetails, loading } = state;
 
   const { user } = useAuthContext();
   let navigate = useNavigate();
   const { jobId } = useParams();
 
-  const [jobData, setJobData] = useState({});
-
   useEffect(() => {
-    if (!jobId) {
-      // If no ID is provided, show an empty form for creating a profile
-      setJobData({});
-
-      return;
+    if (!jobDetails || jobDetails?.id !== Number(jobId)) {
+      fetchJob();
     }
-
-    fetchJob();
-  }, [jobId]);
+  }, [jobDetails, jobId]);
 
   const fetchJob = async () => {
     const { data, status } = await retrieveJob(jobId, dispatch);
 
     if (status === 200) {
-      setJobData(data);
+      dispatch({
+        type: "JOB_DETAILS",
+        payload: data,
+      });
     } else {
       navigate(paths.get("HOME").PATH);
     }
@@ -72,30 +68,30 @@ const JobDetailsPage = () => {
             <Stack className="px-3 py-3 space-y-1">
               <Typography className="!font-medium !text-gray-400 !text-xs">
                 {`Posted ${renderIntervalDuration(
-                  jobData.postedDate,
+                  jobDetails?.postedDate,
                   intervalToDuration
                 )}`}
               </Typography>
 
               <Typography className="!font-semibold text-left !text-3xl">
-                {jobData.jobTitle}
+                {jobDetails?.jobTitle}
               </Typography>
 
               <Box className="flex items-center justify-start space-x-1">
                 <Typography className="!capitalize !font-medium !text-xs">
-                  {jobData.jobType}
+                  {jobDetails?.jobType}
                 </Typography>
 
                 <Icon name={"Dot"} size={"1em"} />
 
                 <Typography className="!capitalize !font-medium !text-xs">
-                  {jobData.jobLocation}
+                  {jobDetails?.jobLocation}
                 </Typography>
 
                 <Icon name={"Dot"} size={"1em"} />
 
                 <Typography className="!capitalize !font-medium !text-xs">
-                  {jobData.salaryRange}
+                  {jobDetails?.salaryRange}
                 </Typography>
               </Box>
             </Stack>
@@ -108,7 +104,7 @@ const JobDetailsPage = () => {
               </Typography>
 
               <Typography className="!font-medium !text-sm">
-                {jobData.jobDescription}
+                {jobDetails?.jobDescription}
               </Typography>
             </Stack>
 
@@ -120,7 +116,7 @@ const JobDetailsPage = () => {
               </Typography>
 
               <Typography className="!font-medium !text-sm">
-                {jobData.requiredSkills}
+                {jobDetails?.requiredSkills}
               </Typography>
             </Stack>
 
@@ -132,7 +128,7 @@ const JobDetailsPage = () => {
               </Typography>
 
               <Typography className="!font-medium !text-sm">
-                {jobData.preferredSkills}
+                {jobDetails?.preferredSkills}
               </Typography>
             </Stack>
 
@@ -144,7 +140,7 @@ const JobDetailsPage = () => {
               </Typography>
 
               <Typography className="!font-medium !text-sm">
-                {jobData.requiredCertifications}
+                {jobDetails?.requiredCertifications}
               </Typography>
             </Stack>
           </Stack>
@@ -156,8 +152,8 @@ const JobDetailsPage = () => {
                 {/* !!!TODO: Add company logo */}
                 <Box className="bg-white !border !border-gray-300 !border-solid h-7 min-w-7 overflow-hidden w-7 !rounded-2xl">
                   <img
-                    alt={jobData.companyName}
-                    src={jobData?.companyLogo ?? dummyThumbnail}
+                    alt={jobDetails?.companyName}
+                    src={jobDetails?.companyLogo ?? dummyThumbnail}
                     style={{
                       objectFit: "contain",
                     }}
@@ -165,14 +161,14 @@ const JobDetailsPage = () => {
                 </Box>
 
                 <Typography className="!font-semibold !text-sm">
-                  {jobData.companyName}
+                  {jobDetails?.companyName}
                 </Typography>
               </Box>
 
               <Divider />
 
               <Typography className="!font-medium !text-sm">
-                {jobData.companyDescription}
+                {jobDetails?.companyDescription}
               </Typography>
             </Stack>
 

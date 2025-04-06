@@ -13,6 +13,8 @@ import { JOB_DETAILS_TAB_OPTIONS } from "../utils/tabOptionsUtils";
 
 const JobCreatePage = () => {
   const { state, dispatch } = useGlobalContext();
+  const { jobDetails } = state;
+
   const { setUser, user } = useAuthContext();
 
   const { jobId } = useParams(); // Get profile ID from URL
@@ -26,17 +28,23 @@ const JobCreatePage = () => {
     if (!jobId) {
       // If no ID is provided, show an empty form for creating a profile
       setFormData({});
-    } else {
+    } else if (!jobDetails || jobDetails?.id !== Number(jobId)) {
       fetchJob();
+    } else {
+      setFormData(jobDetails);
     }
-  }, [jobId]); // Runs when the ID changes
+  }, [jobDetails, jobId]); // Runs when the ID changes
 
   const fetchJob = async () => {
     const { data, status } = await retrieveJob(jobId, dispatch);
 
     if (status === 200) {
       setFormData(data);
-      // setUser({ ...user, ...data });
+
+      dispatch({
+        type: "JOB_DETAILS",
+        payload: data,
+      });
     }
   };
 
@@ -82,7 +90,6 @@ const JobCreatePage = () => {
             formData={formData}
             fieldRefs={fieldRefs}
             setFormData={setFormData}
-            dispatch={dispatch}
           />
         </Stack>
         <Footer />

@@ -12,7 +12,7 @@ const apiWrapper = async ({
   method,
   signal,
 }) => {
-  dispatch({ type: "SET_LOADING", payload: { isOpen: true } });
+  dispatch({ type: "LOADING", payload: { isOpen: true } });
 
   try {
     const response = await fetch(`${endpoint}`, {
@@ -57,7 +57,7 @@ const apiWrapper = async ({
 
     return { data: err, error: errorMessage, status: err.status };
   } finally {
-    dispatch({ type: "SET_LOADING", payload: { isOpen: false } });
+    dispatch({ type: "LOADING", payload: { isOpen: false } });
   }
 };
 

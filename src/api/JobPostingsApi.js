@@ -9,7 +9,14 @@ const PATHNAME = "jobpostings";
 
 const createJob = async (formData, dispatch) => {
   const requestBody = prepareFormDataForCreateAndEditJob(formData);
-  return await PostAPI(requestBody, `/${PATHNAME}`, dispatch);
+  const { data, ...rest } = await PostAPI(
+    requestBody,
+    `/${PATHNAME}`,
+    dispatch
+  );
+
+  const processedData = unpackRetrieveJobData(data);
+  return { data: processedData, ...rest };
 };
 
 const retrieveJob = async (id, dispatch) => {

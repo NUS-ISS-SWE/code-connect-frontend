@@ -36,7 +36,7 @@ const JOB_APPLY_FIELDS = [
 
 const JobApplyPage = () => {
   const { state, dispatch } = useGlobalContext();
-  const { loading } = state;
+  const { jobDetails, loading } = state;
 
   const { user } = useAuthContext();
   let navigate = useNavigate();
@@ -46,7 +46,6 @@ const JobApplyPage = () => {
     Object.fromEntries(JOB_APPLY_FIELDS.map((key) => [key, user[key] ?? ""]))
   );
   const [errors, setErrors] = useState({});
-  const [jobData, setJobData] = useState({});
 
   const fieldRefs = {
     firstName: useRef(null),
@@ -60,21 +59,19 @@ const JobApplyPage = () => {
   };
 
   useEffect(() => {
-    if (!jobId) {
-      // If no ID is provided, show an empty form for creating a profile
-      setJobData({});
-
-      return;
+    if (!jobDetails || jobDetails?.id !== Number(jobId)) {
+      fetchJob();
     }
-
-    fetchJob();
-  }, [jobId]);
+  }, [jobDetails, jobId]);
 
   const fetchJob = async () => {
     const { data, status } = await retrieveJob(jobId, dispatch);
 
     if (status === 200) {
-      setJobData(data);
+      dispatch({
+        type: "JOB_DETAILS",
+        payload: data,
+      });
     } else {
       navigate(paths.get("HOME").PATH);
     }
@@ -152,8 +149,8 @@ const JobApplyPage = () => {
             {/* !!!TODO: Add company logo */}
             <Box className="bg-white !border !border-gray-300 !border-solid h-4 min-w-4 overflow-hidden w-4 !rounded-2xl">
               <img
-                alt={jobData.companyName}
-                src={jobData?.companyLogo ?? dummyThumbnail}
+                alt={jobDetails?.companyName}
+                src={jobDetails?.companyLogo ?? dummyThumbnail}
                 style={{
                   objectFit: "contain",
                 }}
@@ -161,38 +158,38 @@ const JobApplyPage = () => {
             </Box>
 
             <Typography className="!capitalize !font-semibold !text-xs">
-              {jobData.companyName}
+              {jobDetails?.companyName}
             </Typography>
 
             <Icon name={"Dot"} size={"1em"} />
 
             <Typography className="!font-medium !text-gray-400 !text-xs">
               {`Posted ${renderIntervalDuration(
-                jobData.postedDate,
+                jobDetails?.postedDate,
                 intervalToDuration
               )}`}
             </Typography>
           </Box>
 
           <Typography className="!font-semibold text-left !text-3xl">
-            {jobData.jobTitle}
+            {jobDetails?.jobTitle}
           </Typography>
 
           <Box className="flex items-center justify-start space-x-1">
             <Typography className="!capitalize !font-medium !text-xs">
-              {jobData.jobType}
+              {jobDetails?.jobType}
             </Typography>
 
             <Icon name={"Dot"} size={"1em"} />
 
             <Typography className="!capitalize !font-medium !text-xs">
-              {jobData.jobLocation}
+              {jobDetails?.jobLocation}
             </Typography>
 
             <Icon name={"Dot"} size={"1em"} />
 
             <Typography className="!capitalize !font-medium !text-xs">
-              {jobData.salaryRange}
+              {jobDetails?.salaryRange}
             </Typography>
           </Box>
         </Stack>

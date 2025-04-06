@@ -9,6 +9,7 @@ export const initialState = {
     isOpen: false,
     message: undefined,
   },
+  jobDetails: {},
   loading: { message: "", isOpen: false },
   showToast: { message: "", isOpen: false },
 };

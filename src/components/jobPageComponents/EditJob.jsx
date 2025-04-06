@@ -12,13 +12,17 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { createJob } from "../../api/JobPostingsApi";
+import { useGlobalContext } from "../../hooks/useGlobalContext";
 import paths from "../../routes/paths";
 import {
   JOB_TYPES_FILTER_OPTIONS,
   LOCATION_FILTER_OPTIONS,
 } from "../../utils/filterOptionsUtils";
 
-const EditJob = ({ formData, fieldRefs, setFormData, dispatch }) => {
+const EditJob = ({ formData, fieldRefs, setFormData }) => {
+  const { state, dispatch } = useGlobalContext();
+  const { loading } = state;
+
   let navigate = useNavigate();
   const { jobId } = useParams();
 
@@ -33,6 +37,11 @@ const EditJob = ({ formData, fieldRefs, setFormData, dispatch }) => {
 
     if (status === 200) {
       navigate(`${paths.get("JOB").PATH}/${data.id}`);
+
+      dispatch({
+        type: "JOB_DETAILS",
+        payload: data,
+      });
 
       dispatch({
         type: "SHOW_TOAST",
@@ -205,17 +214,26 @@ const EditJob = ({ formData, fieldRefs, setFormData, dispatch }) => {
         <Box className="flex items-center justify-end space-x-1 w-full">
           <Button
             className="btn btn-secondary !text-error"
+            disabled={loading.isOpen}
             // onClick={deleteJob}
           >
             Delete
           </Button>
 
-          <Button className="btn btn-primary" onClick={createUpdateJob}>
+          <Button
+            className="btn btn-primary"
+            disabled={loading.isOpen}
+            onClick={createUpdateJob}
+          >
             Save
           </Button>
         </Box>
       ) : (
-        <Button className="btn btn-primary self-end" onClick={createUpdateJob}>
+        <Button
+          className="btn btn-primary self-end"
+          disabled={loading.isOpen}
+          onClick={createUpdateJob}
+        >
           Create Job
         </Button>
       )}
