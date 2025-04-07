@@ -4,6 +4,7 @@ import {
   CircularProgress,
   IconButton,
   InputAdornment,
+  Skeleton,
   Stack,
   TextField,
   Typography,
@@ -151,8 +152,13 @@ const JobListingPage = () => {
       // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
       const filteredJobs = filterJobs(data, searchTerm, searchFilters);
 
-      // Store returned API data in filteredJobs state
-      setFilteredJobs(filteredJobs);
+      // Throttle API call to show loading spinner for 1.5 seconds
+      dispatch({ type: "LOADING", payload: { isOpen: true } });
+      setTimeout(() => {
+        // Store returned API data in filteredJobs state
+        setFilteredJobs(filteredJobs);
+        dispatch({ type: "LOADING", payload: { isOpen: false } });
+      }, 1500);
 
       // Update URL params with searchFilters or searchTerm change
       updateUrlParams(searchTerm, searchFilters);
@@ -170,8 +176,8 @@ const JobListingPage = () => {
         searchFilters.jobType === "" || job.jobType === searchFilters.jobType;
 
       const jobLocation =
-        searchFilters.location === "" ||
-        job.location.includes(searchFilters.location);
+        searchFilters.jobLocation === "" ||
+        job.jobLocation.includes(searchFilters.location);
 
       const minFilter = searchFilters.salaryMin
         ? parseInt(searchFilters.salaryMin, 10)
@@ -264,19 +270,20 @@ const JobListingPage = () => {
           <Box className="flex flex-col lg:flex-row flex-wrap justify-start space-x-0 lg:space-x-2 space-y-2 lg:space-y-0 w-full">
             {/* Job Type */}
             <SelectPicker
-              classPrefix="w-full lg:!w-[110px]"
+              classPrefix="cdcnt-picker lg:!w-[110px]"
               data={JOB_TYPES_FILTER_OPTIONS}
+              disabled={loading.isOpen}
               onChange={handleFilterChange("jobType")}
               placeholder="Job Type"
               searchable={false}
-              // style={{ width: 110 }}
               value={searchFilters?.jobType}
             />
 
             {/* Location */}
             <SelectPicker
-              classPrefix="w-full lg:!w-[110px]"
+              classPrefix="cdcnt-picker lg:!w-[110px]"
               data={LOCATION_FILTER_OPTIONS}
+              disabled={loading.isOpen}
               onChange={handleFilterChange("location")}
               placeholder="Location"
               searchable={false}
@@ -285,8 +292,9 @@ const JobListingPage = () => {
 
             {/* Salary Min Filter */}
             <SelectPicker
-              classPrefix="w-full lg:!w-[200px]"
+              classPrefix="cdcnt-picker lg:!w-[180px]"
               data={SALARY_MIN_FILTER_OPTIONS}
+              disabled={loading.isOpen}
               disabledItemValues={SALARY_MIN_FILTER_OPTIONS.filter(
                 (f) => parseInt(f.value) >= parseInt(searchFilters?.salaryMax)
               ).map((e) => e.value)}
@@ -298,8 +306,9 @@ const JobListingPage = () => {
 
             {/* Salary Max Filter */}
             <SelectPicker
-              classPrefix="w-full lg:!w-[200px]"
+              classPrefix="cdcnt-picker lg:!w-[180px]"
               data={SALARY_MAX_FILTER_OPTIONS}
+              disabled={loading.isOpen}
               disabledItemValues={SALARY_MAX_FILTER_OPTIONS.filter(
                 (f) => parseInt(f.value) <= parseInt(searchFilters?.salaryMin)
               ).map((e) => e.value)}
@@ -320,7 +329,7 @@ const JobListingPage = () => {
         </Stack>
       </Box>
 
-      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-7xl px-1 lg:px-0 py-6 !space-y-2 w-[95vw] lg:w-[70vw]">
+      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-7xl px-1 lg:px-0 py-6 space-y-2 w-[95vw] lg:w-[70vw]">
         <Typography className="!font-semibold !text-xs lg:!text-xs text-start !text-gray-900">
           {`${filteredJobs?.length} jobs - ${
             decodeURIComponent(searchParams.get("search")) === "null"
@@ -329,27 +338,37 @@ const JobListingPage = () => {
           }`}
         </Typography>
 
-        {filteredJobs?.length > 0 ? (
-          filteredJobs?.map((item, index) => {
-            return <JobCard item={item} index={index} key={index} />;
-          })
+        {!loading.isOpen ? (
+          filteredJobs?.length > 0 ? (
+            filteredJobs?.map((item, index) => {
+              return <JobCard item={item} index={index} key={index} />;
+            })
+          ) : (
+            <Box className="bg-gray-100 !border !border-gray-300 !border-solid py-2 flex items-center justify-start min-h-[70px] p-3 rounded-md w-full">
+              <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
+                No records found
+              </Typography>
+            </Box>
+          )
         ) : (
-          <Box className="bg-gray-100 !border !border-gray-300 !border-solid py-2 flex items-center justify-start min-h-[70px] p-3 rounded-md w-full">
-            <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-              No records found
-            </Typography>
-          </Box>
+          // Skeleton Loading
+          <Stack className="justify-start !mt-[-20px] w-full" spacing={-3}>
+            {Array.from(Array(5).keys()).map((e, n) => (
+              <Stack key={n} spacing={-3} className="h-fit w-full">
+                <Skeleton
+                  animation="wave"
+                  className="!bg-gray-100 !border !border-gray-300 !border-solid min-h-[140px] rounded-md w-full"
+                />
+                <Skeleton
+                  animation="wave"
+                  className="!bg-gray-100 !border !border-gray-300 !border-solid min-h-[36px] rounded-md w-full"
+                />
+              </Stack>
+            ))}
+          </Stack>
         )}
       </Stack>
 
-      {/* <Button
-        className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !text-sm !text-white !tracking-normal !transition-all w-full hover:!bg-primary-100 !shadow-none"
-        component={Link}
-        to={paths.get("CREATEJOB").PATH}
-        variant="contained"
-      >
-        {paths.get("CREATEJOB").LABEL}
-      </Button> */}
       <Footer />
     </Stack>
   );
