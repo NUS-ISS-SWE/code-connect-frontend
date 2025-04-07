@@ -344,7 +344,7 @@ const EditProfile = ({ formData, id, setFormData, setLoading, dispatch }) => {
       </Stack>
       {/* Upload Resume */}
       {id && <UploadResume />}
-      <Button variant="contained" color="primary" onClick={createUpdateProfile}>
+      <Button className="btn btn-primary" onClick={createUpdateProfile}>
         {id ? "Save Changes" : "Create Profile"}
       </Button>
     </Stack>

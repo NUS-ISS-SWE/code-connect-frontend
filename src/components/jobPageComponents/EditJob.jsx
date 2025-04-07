@@ -12,15 +12,19 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { createJob } from "../../api/JobPostingsApi";
-import styles from "../../constants/styles";
+import { useGlobalContext } from "../../hooks/useGlobalContext";
+import paths from "../../routes/paths";
 import {
   JOB_TYPES_FILTER_OPTIONS,
   LOCATION_FILTER_OPTIONS,
-} from "../../utils/optionUtils";
-import paths from "../../routes/paths";
+} from "../../utils/filterOptionsUtils";
 
-const EditJob = ({ formData, fieldRefs, setFormData, dispatch }) => {
+const EditJob = ({ formData, fieldRefs, setFormData }) => {
+  const { state, dispatch } = useGlobalContext();
+  const { loading } = state;
+
   let navigate = useNavigate();
+  const { jobId } = useParams();
 
   const [errors, setErrors] = useState({});
 
@@ -35,9 +39,14 @@ const EditJob = ({ formData, fieldRefs, setFormData, dispatch }) => {
       navigate(`${paths.get("JOB").PATH}/${data.id}`);
 
       dispatch({
+        type: "JOB_DETAILS",
+        payload: data,
+      });
+
+      dispatch({
         type: "SHOW_TOAST",
         payload: {
-          message: `Job created successfully`,
+          message: `Job ${jobId ? "saved" : "created"} successfully`,
           isOpen: true,
           variant: "success",
         },
@@ -111,29 +120,31 @@ const EditJob = ({ formData, fieldRefs, setFormData, dispatch }) => {
         </Select>
       </FormControl>
 
-      <Box className="flex items-start justify-start space-x-2 w-full">
+      <Box className="flex flex-col lg:flex-row items-start justify-start gap-6 lg:gap-2 w-full">
         <TextField
-          size="small"
-          fullWidth
-          label="Salary Range (Min)"
-          name="salaryRangeMin"
           error={!!errors.salaryRangeMin}
+          fullWidth
           helperText={errors.salaryRangeMin}
           inputRef={fieldRefs.salaryRangeMin}
-          value={formData?.salaryRange}
+          label="Salary Range (Min)"
+          name="salaryRangeMin"
           onChange={handleChange}
+          size="small"
+          type="number"
+          value={formData?.salaryRangeMin}
         />
 
         <TextField
-          size="small"
-          fullWidth
-          label="Salary Range (Max)"
-          name="salaryRangeMax"
           error={!!errors.salaryRangeMin}
+          fullWidth
           helperText={errors.salaryRangeMin}
           inputRef={fieldRefs.salaryRangeMin}
-          value={formData?.salaryRange}
+          label="Salary Range (Max)"
+          name="salaryRangeMax"
           onChange={handleChange}
+          size="small"
+          type="number"
+          value={formData?.salaryRangeMax}
         />
       </Box>
 
@@ -199,13 +210,33 @@ const EditJob = ({ formData, fieldRefs, setFormData, dispatch }) => {
         onChange={handleChange}
       />
 
-      <Button
-        className={`${styles.buttonStyles} !bg-primary-main !font-semibold self-end !text-white !w-fit hover:!bg-primary-100`}
-        variant="contained"
-        onClick={createUpdateJob}
-      >
-        Create Job
-      </Button>
+      {jobId ? (
+        <Box className="flex items-center justify-end space-x-1 w-full">
+          <Button
+            className="btn btn-secondary !text-error"
+            disabled={loading.isOpen}
+            // onClick={deleteJob}
+          >
+            Delete
+          </Button>
+
+          <Button
+            className="btn btn-primary"
+            disabled={loading.isOpen}
+            onClick={createUpdateJob}
+          >
+            Save
+          </Button>
+        </Box>
+      ) : (
+        <Button
+          className="btn btn-primary self-end"
+          disabled={loading.isOpen}
+          onClick={createUpdateJob}
+        >
+          Create Job
+        </Button>
+      )}
     </Stack>
   );
 };
