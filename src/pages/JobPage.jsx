@@ -1,12 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import { Divider, Stack, Typography } from "@mui/material";
+import { Divider, Stack, Typography, Box} from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import EditJob from "../components/jobPageComponents/EditJob";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Tabs from "../components/common/Tabs";
+import paths from "../routes/paths";
 
 import { retrieveJob } from "../api/JobPostingsApi";
 import Icon from "../constants/Icon";
@@ -16,27 +17,12 @@ import { JOB_DETAILS_TAB_OPTIONS } from "../utils/tabOptionsUtils";
 
 const JobPage = () => {
   const { state, dispatch } = useGlobalContext();
-  const { jobDetails } = state;
+  const { jobDetails, loading } = state;
+  let navigate = useNavigate();
+  const [formData, setFormData] = useState(undefined);
 
   const { setUser, user } = useAuthContext();
-
-  const { jobId } = useParams(); // Get profile ID from URL
-  const fieldRefs = {
-    jobTitle: useRef(null),
-  };
-
-  const [date, setDate] = useState(new Date());
-  const [formData, setFormData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const fetchJob = async () => {
-    const { data, status } = await retrieveJob(jobId, dispatch);
-
-    if (status === 200) {
-      setFormData(data);
-      setUser({ ...user, ...data });
-    }
-  };
+  const { jobId } = useParams(); // Get job ID from URL
 
   useEffect(() => {
     if (!jobId) {
@@ -50,20 +36,25 @@ const JobPage = () => {
   }, [jobDetails, jobId]); // Runs when the ID changes
 
 
+  const fetchJob = async () => {
+    const { data, status } = await retrieveJob(jobId, dispatch);
+
     if (status === 200) {
       setFormData(data);
-
+      setUser({ ...user, ...data });
       dispatch({
         type: "JOB_DETAILS",
         payload: data,
       });
+    } else {
+      navigate(paths.get("HOME").PATH);
     }
   };
 
   //Account for thumbnail and numberApplied for viewing?
 
   return (
-    formData && (
+    jobDetails && (
       <Stack className="bg-gray-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
         <Navbar />
         <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[95vw] lg:w-[70vw]">
@@ -76,13 +67,13 @@ const JobPage = () => {
 
           <Stack className="px-3 py-2 space-y-1">
             <Typography className="!font-semibold text-left !text-3xl">
-              {jobId ? formData?.jobTitle : "Create Job"}
+              {jobId ? jobDetails?.jobTitle : "Create Job"}
             </Typography>
 
             <Box className="flex items-center justify-start space-x-1">
               <Typography className="!font-medium !text-gray-900 !text-xs">
                 {`Created on: ${new Date(
-                  formData?.postedDate
+                  jobDetails?.postedDate
                 ).toLocaleDateString()}`}
               </Typography>
 
@@ -90,7 +81,7 @@ const JobPage = () => {
 
               <Typography className="!font-medium !text-gray-900 !text-xs">
                 {`Last edited: ${new Date(
-                  formData?.postedDate
+                  jobDetails?.postedDate
                 ).toLocaleDateString()}`}
               </Typography>
             </Box>
@@ -99,9 +90,9 @@ const JobPage = () => {
           <Divider flexItem />
 
           <EditJob
-            formData={formData}
-            fieldRefs={fieldRefs}
-            setFormData={setFormData}
+            formData={jobDetails}
+            //fieldRefs={fieldRefs}
+            //setFormData={setFormData}
           />
         </Stack>
         <Footer />

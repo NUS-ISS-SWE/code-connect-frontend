@@ -29,7 +29,6 @@ import {
 } from "../utils/filterOptionsUtils.js";
 import {
   extractSalaryRange,
-  renderIntervalDuration,
 } from "../utils/stringUtils.js";
 
 const JobListingPage = () => {

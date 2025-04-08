@@ -7,7 +7,6 @@ import paths from "../../routes/paths.js";
 import Icon from "../../constants/Icon.jsx";
 import { renderIntervalDuration } from "../../utils/stringUtils.js";
 import { Link } from "react-router-dom";
-import styles from "../../constants/styles";
 
 const JobCard = ({ item, index, alreadyApplied }) => {
   return (
@@ -77,7 +76,7 @@ const JobCard = ({ item, index, alreadyApplied }) => {
         </Typography>
       </Box>
       <Button
-        className={`${styles.buttonStyles} !bg-primary-main !font-semibold !text-white !w-[20%] hover:!bg-primary-100`}
+        className={`!bg-primary-main !font-semibold !text-white !w-[20%] hover:!bg-primary-100`}
         // disabled={loading.isOpen}
         component={Link}
         // TODO: change link to view job application page

@@ -48,7 +48,6 @@ const initialSalaryMax =
 
     // TODO: Integrate with API to get applied jobs
 
-    console.log(data);
     // // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
     // const filteredJobs = filterJobs(jobsData, searchTerm, searchFilters);
 
