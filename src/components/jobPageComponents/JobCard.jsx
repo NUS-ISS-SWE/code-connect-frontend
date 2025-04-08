@@ -9,11 +9,41 @@ import { renderIntervalDuration } from "../../utils/stringUtils.js";
 import { Link } from "react-router-dom";
 
 const JobCard = ({ item, index, alreadyApplied }) => {
+
+  const getPostedAndAppliedDates = (item, alreadyApplied) => {
+    const postedString = `Posted ${renderIntervalDuration(
+            item.postedDate,
+            intervalToDuration
+          )} ago`;
+
+    const appliedString = alreadyApplied ? `, applied ${renderIntervalDuration(
+            item.appliedDate, intervalToDuration)} ago` : "";
+
+    return postedString + appliedString;
+  }
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Submitted":
+        return "bg-gray-100 text-gray-800";
+      case "Interviewing":
+        return "bg-yellow-100 text-yellow-800";
+      case "Offered":
+        return "bg-green-100 text-green-800";
+      case "Rejected":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-blue-100 text-blue-800";
+    }
+  };
+
+  
+
   return (
-    <Stack
-      className="!bg-white !border !border-gray-300 !border-solid py-2 rounded-md space-y-2 w-full"
-      key={index}
-    >
+<Stack
+  className="!bg-white !border !border-gray-300 !border-solid py-2 rounded-md space-y-2 w-full relative"
+  key={index}
+>
       <Box className="flex flex-1 items-start justify-start px-2  space-x-3">
         <img
           alt={item.jobTitle}
@@ -23,6 +53,9 @@ const JobCard = ({ item, index, alreadyApplied }) => {
             width: "48px",
           }}
         />
+<Box className={`absolute top-2 right-2 text-xs font-semibold px-2 py-1 rounded ${getStatusColor(item.status)}`}>
+  {item?.status ?? "Submitted"}
+</Box>
 
         <Stack>
           <Typography
@@ -55,10 +88,7 @@ const JobCard = ({ item, index, alreadyApplied }) => {
         <Icon name={"Dot"} size={"1em"} />
 
         <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-          {`Posted ${renderIntervalDuration(
-            item.postedDate,
-            intervalToDuration
-          )}`}
+          {getPostedAndAppliedDates(item, alreadyApplied)}
         </Typography>
       </Box>
 
