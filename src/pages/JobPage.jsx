@@ -6,14 +6,18 @@ import { useParams } from "react-router-dom";
 import EditJob from "../components/jobPageComponents/EditJob";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import ViewJob from "../components/jobPageComponents/ViewJob";
+import Tabs from "../components/common/Tabs";
 
 import { retrieveJob } from "../api/JobPostingsApi";
+import Icon from "../constants/Icon";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
+import { JOB_DETAILS_TAB_OPTIONS } from "../utils/tabOptionsUtils";
 
 const JobPage = () => {
   const { state, dispatch } = useGlobalContext();
+  const { jobDetails } = state;
+
   const { setUser, user } = useAuthContext();
 
   const { jobId } = useParams(); // Get profile ID from URL
@@ -38,49 +42,71 @@ const JobPage = () => {
     if (!jobId) {
       // If no ID is provided, show an empty form for creating a profile
       setFormData({});
-      setLoading(false);
-      return;
+    } else if (!jobDetails || jobDetails?.id !== Number(jobId)) {
+      fetchJob();
+    } else {
+      setFormData(jobDetails);
     }
-
-    fetchJob();
-  }, [jobId]); // Runs when the ID changes
+  }, [jobDetails, jobId]); // Runs when the ID changes
 
 
+    if (status === 200) {
+      setFormData(data);
+
+      dispatch({
+        type: "JOB_DETAILS",
+        payload: data,
+      });
+    }
+  };
 
   //Account for thumbnail and numberApplied for viewing?
 
   return (
-    <Stack className="bg-gray-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
-      <Navbar />
-      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[70vw]">
-      <Typography variant="h4" className="text-left">
-      {jobId ? "View Job" : "Create Job"}
-        </Typography>
-        <Divider flexItem />
-        <Typography variant="h6" className="text-left">
-          <b>{formData?.jobTitle}</b>
-        </Typography>
-        <Typography variant="h8" className="text-left">
-          <b>Created on: </b>
-          {formData?.postedDate
-            ? new Date(formData.postedDate).toLocaleDateString()
-            : date.toLocaleDateString()}
-        </Typography>
-        <Divider flexItem />
-        {jobId ? (
-          <ViewJob jobData={formData} />
-        ) : (
+    formData && (
+      <Stack className="bg-gray-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
+        <Navbar />
+        <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[95vw] lg:w-[70vw]">
+          {/* Tabs !!!TODO: Only Admin and listing owner can view tab */}
+          {user && jobId && (
+            <Stack className="!border-b !border-gray-300 !border-solid w-[100%]">
+              <Tabs tabOptions={JOB_DETAILS_TAB_OPTIONS(jobId)} />
+            </Stack>
+          )}
+
+          <Stack className="px-3 py-2 space-y-1">
+            <Typography className="!font-semibold text-left !text-3xl">
+              {jobId ? formData?.jobTitle : "Create Job"}
+            </Typography>
+
+            <Box className="flex items-center justify-start space-x-1">
+              <Typography className="!font-medium !text-gray-900 !text-xs">
+                {`Created on: ${new Date(
+                  formData?.postedDate
+                ).toLocaleDateString()}`}
+              </Typography>
+
+              <Icon name={"Dot"} size={"1em"} />
+
+              <Typography className="!font-medium !text-gray-900 !text-xs">
+                {`Last edited: ${new Date(
+                  formData?.postedDate
+                ).toLocaleDateString()}`}
+              </Typography>
+            </Box>
+          </Stack>
+
+          <Divider flexItem />
+
           <EditJob
             formData={formData}
             fieldRefs={fieldRefs}
             setFormData={setFormData}
-            setLoading={setLoading}
-            dispatch={dispatch}
           />
-        )}
+        </Stack>
+        <Footer />
       </Stack>
-      <Footer />
-    </Stack>
+    )
   );
 };
 

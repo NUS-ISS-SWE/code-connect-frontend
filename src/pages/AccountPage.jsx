@@ -14,7 +14,6 @@ import Navbar from "../components/Navbar";
 
 import { updatePassword } from "../api/UserApi";
 import Icon from "../constants/Icon";
-import styles from "../constants/styles";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import { fetchToken, LOGIN_TOKEN_KEY } from "../utils/authUtils";
 
@@ -135,7 +134,7 @@ const AccountPage = () => {
     <Stack className="bg-whiteflex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
 
-      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-12 w-[70vw]">
+      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-12 w-[95vw] lg:w-[70vw]">
         <Stack className="space-y-4 w-full">
           <Stack className="space-y-2 w-full">
             <Typography className="!font-medium flex-1 text-left !text-2xl">
@@ -277,7 +276,7 @@ const AccountPage = () => {
           </Stack>
 
           <Button
-            className={`${styles.buttonStyles} !bg-gray-100 !font-semibold !text-black w-fit hover:!bg-gray-200`}
+            className='btn btn-primary'
             disabled={loading.isOpen}
             onClick={handleClickChangePassword}
             variant="contained"

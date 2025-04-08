@@ -1,6 +1,5 @@
-/* eslint-disable no-undef */
-
 import { fetchToken, removeToken, LOGIN_TOKEN_KEY } from "./authUtils.js";
+import { extractSalaryRange } from "./stringUtils.js";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -13,7 +12,7 @@ const apiWrapper = async ({
   method,
   signal,
 }) => {
-  dispatch({ type: "SET_LOADING", payload: { isOpen: true } });
+  dispatch({ type: "LOADING", payload: { isOpen: true } });
 
   try {
     const response = await fetch(`${endpoint}`, {
@@ -58,15 +57,15 @@ const apiWrapper = async ({
 
     return { data: err, error: errorMessage, status: err.status };
   } finally {
-    dispatch({ type: "SET_LOADING", payload: { isOpen: false } });
+    dispatch({ type: "LOADING", payload: { isOpen: false } });
   }
 };
 
 const prepareFormDataForCreateAndEditJob = (data) => {
   const { salaryRangeMin, salaryRangeMax, ...processedData } = data;
 
-  const postedDate = data["postedDate"] ?? new Date();
-  processedData["postedDate"] = postedDate.toISOString();
+  const postedDate = data["postedDate"] ?? new Date().toISOString();
+  processedData["postedDate"] = postedDate;
 
   // Concat salary ranges into single string
   processedData["salaryRange"] = `$${salaryRangeMin ?? 0}-$${
@@ -76,4 +75,22 @@ const prepareFormDataForCreateAndEditJob = (data) => {
   return processedData;
 };
 
-export { apiWrapper, baseUrl, prepareFormDataForCreateAndEditJob };
+const unpackRetrieveJobData = (data) => {
+  const processedData = { ...data };
+
+  // Include salary min and max values
+  const [salaryRangeMin, salaryRangeMax] = extractSalaryRange(
+    data?.salaryRange
+  );
+  processedData["salaryRangeMin"] = salaryRangeMin;
+  processedData["salaryRangeMax"] = salaryRangeMax;
+
+  return processedData;
+};
+
+export {
+  apiWrapper,
+  baseUrl,
+  prepareFormDataForCreateAndEditJob,
+  unpackRetrieveJobData,
+};
