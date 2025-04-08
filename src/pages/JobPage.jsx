@@ -1,28 +1,34 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import { Divider, Stack, Typography, Box} from "@mui/material";
+import { Divider, Stack, Typography, Box, Tabs, Tab} from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import EditJob from "../components/jobPageComponents/EditJob";
+import ViewJob from "../components/jobPageComponents/ViewJob";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import Tabs from "../components/common/Tabs";
 import paths from "../routes/paths";
 
 import { retrieveJob } from "../api/JobPostingsApi";
 import Icon from "../constants/Icon";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { JOB_DETAILS_TAB_OPTIONS } from "../utils/tabOptionsUtils";
 
 const JobPage = () => {
   const { state, dispatch } = useGlobalContext();
   const { jobDetails, loading } = state;
   let navigate = useNavigate();
   const [formData, setFormData] = useState(undefined);
-
+  const fieldRefs = {
+    jobTitle: useRef(null),
+  };
   const { setUser, user } = useAuthContext();
   const { jobId } = useParams(); // Get job ID from URL
+  const [tabIndex, setTabIndex] = useState(0); // <-- This tracks selected tab
+
+  const handleTabChange = (event, newValue) => {
+    setTabIndex(newValue);
+  };
 
   useEffect(() => {
     if (!jobId) {
@@ -61,7 +67,10 @@ const JobPage = () => {
           {/* Tabs !!!TODO: Only Admin and listing owner can view tab */}
           {user && jobId && (
             <Stack className="!border-b !border-gray-300 !border-solid w-[100%]">
-              <Tabs tabOptions={JOB_DETAILS_TAB_OPTIONS(jobId)} />
+          <Tabs value={tabIndex} onChange={handleTabChange}>
+            <Tab label="View" />
+            <Tab label="Edit" />
+          </Tabs>
             </Stack>
           )}
 
@@ -89,11 +98,15 @@ const JobPage = () => {
 
           <Divider flexItem />
 
-          <EditJob
+          {tabIndex === 0 ? (
+            <ViewJob jobDetails={jobDetails} />
+          ) : (
+            <EditJob
             formData={jobDetails}
-            //fieldRefs={fieldRefs}
-            //setFormData={setFormData}
+            fieldRefs={fieldRefs}
+            setFormData={setFormData}
           />
+          )}
         </Stack>
         <Footer />
       </Stack>
