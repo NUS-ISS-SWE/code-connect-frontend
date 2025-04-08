@@ -1,21 +1,17 @@
 /* eslint-disable react/prop-types */
 
-import {
-  Box,
-  Divider,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Divider, Stack, Typography, Button } from "@mui/material";
 import { intervalToDuration } from "date-fns";
 import dummy from "../../assets/dummy/index.js";
 import paths from "../../routes/paths.js";
 import Icon from "../../constants/Icon.jsx";
 import { renderIntervalDuration } from "../../utils/stringUtils.js";
 import { Link } from "react-router-dom";
+import styles from "../../constants/styles";
 
-const JobCard = ({ item, index}) => {
-    return (
-      <Stack
+const JobCard = ({ item, index, alreadyApplied }) => {
+  return (
+    <Stack
       className="!bg-white !border !border-gray-300 !border-solid py-2 rounded-md space-y-2 w-full"
       key={index}
     >
@@ -80,8 +76,18 @@ const JobCard = ({ item, index}) => {
           {item.salaryRange}
         </Typography>
       </Box>
+      <Button
+        className={`${styles.buttonStyles} !bg-primary-main !font-semibold !text-white !w-[20%] hover:!bg-primary-100`}
+        // disabled={loading.isOpen}
+        component={Link}
+        // TODO: change link to view job application page
+        //to={alreadyApplied ? paths.get("APPLY_JOB").PATH : paths.get("APPLY_JOB").PATH}
+        variant="contained"
+      >
+        {alreadyApplied ? "View Application" : "Apply Job"}
+      </Button>
     </Stack>
-    )
-}
+  );
+};
 
 export default JobCard;

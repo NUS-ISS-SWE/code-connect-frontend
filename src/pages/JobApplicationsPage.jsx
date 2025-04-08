@@ -45,13 +45,15 @@ const initialSalaryMax =
   const fetchSearchResults = async () => {
     // Fetch search results from API
     const { data } = await GetAPI("jobpostings", dispatch);
-    const jobsData = await data.json();
 
+    // TODO: Integrate with API to get applied jobs
+
+    console.log(data);
     // // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
     // const filteredJobs = filterJobs(jobsData, searchTerm, searchFilters);
 
     // Store returned API data in filteredJobs state
-    setFilteredJobs(jobsData);
+    setFilteredJobs(data);
 
     // Update URL params with searchFilters or searchTerm change
     //updateUrlParams(searchTerm, searchFilters);
@@ -74,7 +76,7 @@ const initialSalaryMax =
               {filteredJobs?.length > 0 ? (
                 filteredJobs?.map((item, index) => {
                   return (
-                    <JobCard item={item} index={index}/>
+                    <JobCard item={item} index={index} alreadyApplied={true} />
                   );
                 })
               ) : (
