@@ -12,6 +12,7 @@ import Navbar from "../components/Navbar.jsx";
 import { GetAPI } from "../api/GeneralAPI.js";
 import { useGlobalContext } from "../hooks/useGlobalContext.js";
 import JobCard from "../components/jobPageComponents/JobCard.jsx";
+import { extractSalaryRange } from "../utils/stringUtils.js";
 
 const JobApplicationsPage = () => {
   const {dispatch } = useGlobalContext();
@@ -58,6 +59,17 @@ const initialSalaryMax =
     //updateUrlParams(searchTerm, searchFilters);
   };
 
+  const getAverageJobSalary = (filteredJobs) => {
+    const totalAverageSalary = filteredJobs?.reduce((acc, job) => {
+      //Get the mid point of salary range for each job to use for average
+      const [ jobMinSalary, jobMaxSalary ] = extractSalaryRange(job.salaryRange);
+      return acc + (jobMinSalary + jobMaxSalary) / 2;
+    }, 0);
+  
+    //Then get the average of all jobs
+    return totalAverageSalary / filteredJobs.length;
+  };
+
   return (
     <Stack className="bg-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
@@ -72,7 +84,7 @@ const initialSalaryMax =
           Applied Jobs
         </Typography>
                 <Typography className="!font-semibold !text-xs lg:!text-xs text-start !text-gray-900">
-                  {`${filteredJobs?.length} jobs applied`}
+                  {`${filteredJobs?.length} jobs applied, average salary: $${getAverageJobSalary(filteredJobs)}`}
                 </Typography>
       <Divider/>
               {filteredJobs?.length > 0 ? (
