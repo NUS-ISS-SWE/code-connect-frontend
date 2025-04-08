@@ -72,6 +72,9 @@ const initialSalaryMax =
         <Typography className="!font-medium flex-1 text-left !text-2xl">
           Applied Jobs
         </Typography>
+                <Typography className="!font-semibold !text-xs lg:!text-xs text-start !text-gray-900">
+                  {`${filteredJobs?.length} jobs applied`}
+                </Typography>
       <Divider/>
               {filteredJobs?.length > 0 ? (
                 filteredJobs?.map((item, index) => {
