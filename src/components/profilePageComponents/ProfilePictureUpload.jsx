@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable react/prop-types */
+import  { useState } from "react";
 import { Avatar, Button, Stack, Typography } from "@mui/material";
 
 const ProfilePictureUpload = ({ formData, setFormData, showSelectButton }) => {
@@ -24,7 +25,7 @@ const ProfilePictureUpload = ({ formData, setFormData, showSelectButton }) => {
     <Stack spacing={2} alignItems="center">
       {/* Avatar Preview */}
       <label htmlFor="file-upload">
-        <Avatar sx={{ width: 100, height: 100, cursor: "pointer" }}
+        <Avatar className="w-[100px] h-[100px] cursor-pointer"
           alt="Profile Picture"
           src={
             preview // Show preview first (if user selects a new image)

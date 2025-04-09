@@ -16,8 +16,8 @@ const JobApplyPage = lazy(() => import("../pages/JobApplyPage.jsx"));
 const JobApplySuccessPage = lazy(() =>
   import("../pages/JobApplySuccessPage.jsx")
 );
-const JobCreatePage = lazy(() => import("../pages/JobCreatePage.jsx"));
-const JobDetailsPage = lazy(() => import("../pages/JobDetailsPage.jsx"));
+
+const JobPage = lazy(() => import("../pages/JobPage.jsx"));
 const JobListingPage = lazy(() => import("../pages/JobListingPage.jsx"));
 const JobApplicationsPage = lazy(() =>
   import("../pages/JobApplicationsPage.jsx")
@@ -41,7 +41,7 @@ const AppRoutes = () => {
           />
           <Route path={paths.get("ERROR").PATH} element={<ErrorPage />} />
           <Route path={paths.get("HOME").PATH} element={<HomePage />} />
-          <Route path={paths.get("GETJOB").PATH} element={<JobDetailsPage />} />
+          <Route path={paths.get("GETJOB").PATH} element={<JobPage />} />
           <Route path={paths.get("JOBS").PATH} element={<JobListingPage />} />
           <Route path={paths.get("LOGIN").PATH} element={<LoginPage />} />
           <Route path={paths.get("SIGNUP").PATH} element={<SignupPage />} />
@@ -79,10 +79,9 @@ const AppRoutes = () => {
 
           <Route
             path={paths.get("CREATEJOB").PATH}
-            element={<JobCreatePage />}
+            element={<JobPage />}
           />
-
-          <Route path={paths.get("EDITJOB").PATH} element={<JobCreatePage />} />
+          <Route path={paths.get("GETJOB").PATH} element={<JobPage />} />
         </Route>
       </Routes>
     </Suspense>

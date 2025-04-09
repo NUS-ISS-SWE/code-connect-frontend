@@ -1,28 +1,33 @@
-import { Box, Divider, Stack, Typography } from "@mui/material";
-
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
+import { Stack, Tabs, Tab } from "@mui/material";
+import { useEffect, useState, useRef } from "react";
+import { useParams } from "react-router-dom";
 import EditJob from "../components/jobPageComponents/EditJob";
+import ViewJob from "../components/jobPageComponents/ViewJob";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import Tabs from "../components/common/Tabs";
+import paths from "../routes/paths";
 
 import { retrieveJob } from "../api/JobPostingsApi";
-import Icon from "../constants/Icon";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { JOB_DETAILS_TAB_OPTIONS } from "../utils/tabOptionsUtils";
 
-const JobCreatePage = () => {
+const JobPage = () => {
   const { state, dispatch } = useGlobalContext();
-  const { jobDetails } = state;
-
-  const { setUser, user } = useAuthContext();
-
-  const { jobId } = useParams(); // Get profile ID from URL
+  const { jobDetails, loading } = state;
+  let navigate = useNavigate();
+  const [formData, setFormData] = useState(undefined);
   const fieldRefs = {
     jobTitle: useRef(null),
   };
+  const { setUser, user } = useAuthContext();
+  const { jobId } = useParams(); // Get job ID from URL
+  const [tabIndex, setTabIndex] = useState(0); // <-- This tracks selected tab
 
-  const [formData, setFormData] = useState(undefined);
+  const handleTabChange = (event, newValue) => {
+    setTabIndex(newValue);
+  };
 
   useEffect(() => {
     if (!jobId) {
@@ -40,57 +45,42 @@ const JobCreatePage = () => {
 
     if (status === 200) {
       setFormData(data);
-
+      setUser({ ...user, ...data });
       dispatch({
         type: "JOB_DETAILS",
         payload: data,
       });
+    } else {
+      navigate(paths.get("HOME").PATH);
     }
   };
 
   //Account for thumbnail and numberApplied for viewing?
 
   return (
-    formData && (
+    jobDetails && (
       <Stack className="bg-gray-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
         <Navbar />
         <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[95vw] lg:w-[70vw]">
           {/* Tabs !!!TODO: Only Admin and listing owner can view tab */}
           {user && jobId && (
             <Stack className="!border-b !border-gray-300 !border-solid w-[100%]">
-              <Tabs tabOptions={JOB_DETAILS_TAB_OPTIONS(jobId)} />
+              <Tabs value={tabIndex} onChange={handleTabChange}>
+                <Tab label="View" />
+                <Tab label="Edit" />
+              </Tabs>
             </Stack>
           )}
 
-          <Stack className="px-3 py-2 space-y-1">
-            <Typography className="!font-semibold text-left !text-3xl">
-              {jobId ? formData?.jobTitle : "Create Job"}
-            </Typography>
-
-            <Box className="flex items-center justify-start space-x-1">
-              <Typography className="!font-medium !text-gray-900 !text-xs">
-                {`Created on: ${new Date(
-                  formData?.postedDate
-                ).toLocaleDateString()}`}
-              </Typography>
-
-              <Icon name={"Dot"} size={"1em"} />
-
-              <Typography className="!font-medium !text-gray-900 !text-xs">
-                {`Last edited: ${new Date(
-                  formData?.postedDate
-                ).toLocaleDateString()}`}
-              </Typography>
-            </Box>
-          </Stack>
-
-          <Divider flexItem />
-
-          <EditJob
-            formData={formData}
-            fieldRefs={fieldRefs}
-            setFormData={setFormData}
-          />
+          {jobId && tabIndex === 0 ? (
+            <ViewJob jobDetails={jobDetails} />
+          ) : (
+            <EditJob
+              formData={formData}
+              fieldRefs={fieldRefs}
+              setFormData={setFormData}
+            />
+          )}
         </Stack>
         <Footer />
       </Stack>
@@ -98,4 +88,4 @@ const JobCreatePage = () => {
   );
 };
 
-export default JobCreatePage;
+export default JobPage;

@@ -59,7 +59,7 @@ const renderIntervalDuration = (date, intervalToDuration) => {
     : `${duration.months} month`;
 
   const days = !duration.days
-    ? "Less than a day"
+    ? "less than a day"
     : duration.days > 1
     ? `${duration.days} days`
     : `${duration.days} day`;

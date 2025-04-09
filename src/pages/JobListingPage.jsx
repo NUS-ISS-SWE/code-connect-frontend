@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/jsx-key */
 import {
   Box,
   Button,
@@ -9,16 +11,12 @@ import {
   Typography,
 } from "@mui/material";
 import { SelectPicker } from "rsuite";
-import { Link, useSearchParams } from "react-router-dom";
-
-import { GetAPI } from "../api/GeneralAPI";
-
+import {  useSearchParams } from "react-router-dom";
 import JobCard from "../components/jobPageComponents/JobCard";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
 import { retrieveJobListings } from "../api/JobPostingsApi.js";
-
 import Icon from "../constants/Icon.jsx";
 import useContent from "../hooks/useContent.js";
 import { useGlobalContext } from "../hooks/useGlobalContext.js";
@@ -31,7 +29,6 @@ import {
 } from "../utils/filterOptionsUtils.js";
 import {
   extractSalaryRange,
-  renderIntervalDuration,
 } from "../utils/stringUtils.js";
 
 const JobListingPage = () => {
@@ -97,7 +94,7 @@ const JobListingPage = () => {
     if (isEnterPressed) {
       handleTriggerSearch();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [isEnterPressed]);
 
   const handleChangeSearchInput = (evt) => {

@@ -1,22 +1,22 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/jsx-key */
 import {
   Box,
   Divider,
   Stack,
   Typography,
 } from "@mui/material";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import Footer from "../components/Footer.jsx";
 import Navbar from "../components/Navbar.jsx";
 import { GetAPI } from "../api/GeneralAPI.js";
-import useContent from "../hooks/useContent.js";
 import { useGlobalContext } from "../hooks/useGlobalContext.js";
-import useKeyPress from "../hooks/useKeyPress.js";
 import JobCard from "../components/jobPageComponents/JobCard.jsx";
+import { extractSalaryRange } from "../utils/stringUtils.js";
 
 const JobApplicationsPage = () => {
-  const { state, dispatch } = useGlobalContext();
-  const isEnterPressed = useKeyPress("Enter");
-  const [searchParams, setSearchParams] = useSearchParams();
+  const {dispatch } = useGlobalContext();
+  const [searchParams] = useSearchParams();
   const [filteredJobs, setFilteredJobs] = useState([]);
   const initialSearch =
   decodeURIComponent(searchParams.get("search")) === "null"
@@ -31,52 +31,43 @@ const initialSalaryMax =
     : parseInt(searchParams.get("salaryMax"), 10)
     ? searchParams.get("salaryMax")
     : "";
-  const [searchTerm, setSearchTerm] = useState(initialSearch);
-  const [searchFilters, setSearchFilters] = useState({
+  const [searchTerm] = useState(initialSearch);
+  const [searchFilters] = useState({
     jobType: initialJobType,
     location: initialLocation,
     salaryMin: initialSalaryMin,
     salaryMax: initialSalaryMax,
   });
 
-  // Effect hook listening to keyboard 'Enter' key
-  useEffect(() => {
-    if (isEnterPressed) {
-      handleTriggerSearch();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEnterPressed]);
-
   useEffect(() => {
     fetchSearchResults(searchTerm, searchFilters);
   }, []);
 
-  const fetchSearchResults = async (searchTerm, searchFilters) => {
+  const fetchSearchResults = async () => {
     // Fetch search results from API
-    const { data, error } = await GetAPI("jobpostings", dispatch);
-    const jobsData = await data.json();
+    const { data } = await GetAPI("jobpostings", dispatch);
+
+    // TODO: Integrate with API to get applied jobs
 
     // // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
     // const filteredJobs = filterJobs(jobsData, searchTerm, searchFilters);
 
     // Store returned API data in filteredJobs state
-    setFilteredJobs(jobsData);
+    setFilteredJobs(data);
 
     // Update URL params with searchFilters or searchTerm change
-    updateUrlParams(searchTerm, searchFilters);
+    //updateUrlParams(searchTerm, searchFilters);
   };
 
-  const extractSalaryRange = (salaryRange) => {
-    if (!salaryRange) return [0, Infinity];
-
-    const salaryNumbers = salaryRange.replace(/[$,]/g, "").split("-");
-
-    if (!salaryNumbers || salaryNumbers.length < 2) return [0, Infinity];
-
-    const minSalary = parseInt(salaryNumbers[0], 10);
-    const maxSalary = parseInt(salaryNumbers[1], 10);
-
-    return [minSalary, maxSalary];
+  const getAverageJobSalary = (filteredJobs) => {
+    const totalAverageSalary = filteredJobs?.reduce((acc, job) => {
+      //Get the mid point of salary range for each job to use for average
+      const [ jobMinSalary, jobMaxSalary ] = extractSalaryRange(job.salaryRange);
+      return acc + (jobMinSalary + jobMaxSalary) / 2;
+    }, 0);
+  
+    //Then get the average of all jobs
+    return totalAverageSalary / filteredJobs.length;
   };
 
   return (
@@ -92,11 +83,14 @@ const initialSalaryMax =
         <Typography className="!font-medium flex-1 text-left !text-2xl">
           Applied Jobs
         </Typography>
+                <Typography className="!font-semibold !text-xs lg:!text-xs text-start !text-gray-900">
+                  {`${filteredJobs?.length} jobs applied, average salary: $${getAverageJobSalary(filteredJobs)}`}
+                </Typography>
       <Divider/>
               {filteredJobs?.length > 0 ? (
                 filteredJobs?.map((item, index) => {
                   return (
-                    <JobCard item={item} index={index}/>
+                    <JobCard item={item} index={index} alreadyApplied={true} />
                   );
                 })
               ) : (
