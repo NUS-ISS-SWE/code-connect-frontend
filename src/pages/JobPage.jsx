@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import { Divider, Stack, Typography, Box, Tabs, Tab} from "@mui/material";
+import { Stack, Tabs, Tab } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import EditJob from "../components/jobPageComponents/EditJob";
@@ -10,7 +10,6 @@ import Navbar from "../components/Navbar";
 import paths from "../routes/paths";
 
 import { retrieveJob } from "../api/JobPostingsApi";
-import Icon from "../constants/Icon";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 
@@ -41,7 +40,6 @@ const JobPage = () => {
     }
   }, [jobDetails, jobId]); // Runs when the ID changes
 
-
   const fetchJob = async () => {
     const { data, status } = await retrieveJob(jobId, dispatch);
 
@@ -67,45 +65,21 @@ const JobPage = () => {
           {/* Tabs !!!TODO: Only Admin and listing owner can view tab */}
           {user && jobId && (
             <Stack className="!border-b !border-gray-300 !border-solid w-[100%]">
-          <Tabs value={tabIndex} onChange={handleTabChange}>
-            <Tab label="View" />
-            <Tab label="Edit" />
-          </Tabs>
+              <Tabs value={tabIndex} onChange={handleTabChange}>
+                <Tab label="View" />
+                <Tab label="Edit" />
+              </Tabs>
             </Stack>
           )}
 
-          <Stack className="px-3 py-2 space-y-1">
-            <Typography className="!font-semibold text-left !text-3xl">
-              {jobId ? jobDetails?.jobTitle : "Create Job"}
-            </Typography>
-
-            <Box className="flex items-center justify-start space-x-1">
-              <Typography className="!font-medium !text-gray-900 !text-xs">
-                {`Created on: ${new Date(
-                  jobDetails?.postedDate
-                ).toLocaleDateString()}`}
-              </Typography>
-
-              <Icon name={"Dot"} size={"1em"} />
-
-              <Typography className="!font-medium !text-gray-900 !text-xs">
-                {`Last edited: ${new Date(
-                  jobDetails?.postedDate
-                ).toLocaleDateString()}`}
-              </Typography>
-            </Box>
-          </Stack>
-
-          <Divider flexItem />
-
-          {tabIndex === 0 ? (
+          {jobId && tabIndex === 0 ? (
             <ViewJob jobDetails={jobDetails} />
           ) : (
             <EditJob
-            formData={jobDetails}
-            fieldRefs={fieldRefs}
-            setFormData={setFormData}
-          />
+              formData={formData}
+              fieldRefs={fieldRefs}
+              setFormData={setFormData}
+            />
           )}
         </Stack>
         <Footer />
