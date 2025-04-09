@@ -13,14 +13,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: "${params.BRANCH_NAME}",
-                    credentialsId: "${GIT_CREDENTIALS_ID}",
-                    url: 'https://github.com/NUS-ISS-SWE/code-connect-frontend.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 sh "docker build -t ${DOCKER_IMAGE}:latest ."
