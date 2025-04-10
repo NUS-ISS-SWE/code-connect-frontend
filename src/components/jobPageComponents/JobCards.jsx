@@ -2,7 +2,7 @@
 import { Box, Stack, Typography } from "@mui/material";
 import JobCard from "./JobCard";
 
-const JobCards = ({ filteredJobs, alreadyApplied, showStatusBox, hideApplyButton = false }) => {
+const JobCards = ({ filteredJobs, alreadyApplied, showStatusBox, hideApplyButton = false, onDelete }) => {
   return (
     <Stack className="flex justify-start mx-auto max-w-7xl px-2 lg:px-0 space-y-3 w-full">
       {filteredJobs?.length > 0 ? (
@@ -14,6 +14,7 @@ const JobCards = ({ filteredJobs, alreadyApplied, showStatusBox, hideApplyButton
             alreadyApplied={alreadyApplied}
             showStatusBox={showStatusBox}
             hideApplyButton={hideApplyButton}
+            onDelete={onDelete}
           />
         ))
       ) : (

@@ -14,13 +14,28 @@ import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 import paths from "../../routes/paths";
+import { deleteJobListing } from "../../api/JobPostingsApi.js";
 
 const JobsManagementPage = () => {
   const { state, dispatch } = useGlobalContext();
   const { loading } = state;
   const [filteredJobs, setFilteredJobs] = useState([]);
 
-  
+  const handleDeleteJob = async (jobId) => {
+    const { status } = await deleteJobListing(jobId, dispatch);
+    if (status === 204) {
+      setFilteredJobs((prev) => prev.filter((job) => job.id !== jobId));
+      dispatch({
+        type: "SHOW_TOAST",
+        payload: {
+          message: `Job deleted successfully`,
+          isOpen: true,
+          variant: "success",
+        },
+      });
+    }
+  };
+
   useEffect(() => {
     fetchSearchResults();
   }, []);
@@ -70,7 +85,7 @@ const JobsManagementPage = () => {
             <Typography className="!font-semibold !text-xs lg:!text-xs text-start !text-gray-900">
           {`${filteredJobs?.length} jobs`}
         </Typography>
-        <JobCards filteredJobs={filteredJobs} alreadyApplied={false} showStatusBox={false} hideApplyButton={true} />
+        <JobCards filteredJobs={filteredJobs} alreadyApplied={false} showStatusBox={false} hideApplyButton={true} onDelete={handleDeleteJob} />
           </Stack>
         </Stack>
       </Stack>
