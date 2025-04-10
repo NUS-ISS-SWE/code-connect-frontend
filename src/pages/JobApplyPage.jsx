@@ -100,7 +100,6 @@ const JobApplyPage = () => {
 
     if (!firstErrorField) {
       // TODO: Integrate with API to submit application
-      console.log("formData", formData);
 
       // const { data, status } = await submitApplication(formData, dispatch);
       // if (status === 200) {

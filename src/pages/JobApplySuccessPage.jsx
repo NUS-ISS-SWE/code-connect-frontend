@@ -1,4 +1,4 @@
-import { Typography, Box, Button, Stack } from "@mui/material";
+import { Typography, Button, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
 
 import Footer from "../components/Footer";

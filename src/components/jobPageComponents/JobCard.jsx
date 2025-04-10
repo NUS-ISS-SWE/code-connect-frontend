@@ -1,20 +1,48 @@
+/* eslint-disable react/prop-types */
 
-import {
-  Box,
-  Divider,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Divider, Stack, Typography, Button } from "@mui/material";
 import { intervalToDuration } from "date-fns";
 import dummy from "../../assets/dummy/index.js";
 import paths from "../../routes/paths.js";
 import Icon from "../../constants/Icon.jsx";
 import { renderIntervalDuration } from "../../utils/stringUtils.js";
+import { Link } from "react-router-dom";
 
-const JobCard = ({ item, index }) => {
-    return (
-      <Stack
-      className="!bg-white !border !border-gray-300 !border-solid py-2 rounded-md space-y-2 w-full"
+const JobCard = ({ item, index, alreadyApplied }) => {
+  const getPostedAndAppliedDates = (item, alreadyApplied) => {
+    const postedString = `Posted ${renderIntervalDuration(
+      item.postedDate,
+      intervalToDuration
+    )} ago`;
+
+    const appliedString = alreadyApplied
+      ? `, applied ${renderIntervalDuration(
+          item.appliedDate,
+          intervalToDuration
+        )} ago`
+      : "";
+
+    return postedString + appliedString;
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Submitted":
+        return "bg-gray-100 text-gray-800";
+      case "Interviewing":
+        return "bg-yellow-100 text-yellow-800";
+      case "Offered":
+        return "bg-green-100 text-green-800";
+      case "Rejected":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-blue-100 text-blue-800";
+    }
+  };
+
+  return (
+    <Stack
+      className="!bg-white !border !border-gray-300 !border-solid py-2 rounded-md space-y-2 w-full relative"
       key={index}
     >
       <Box className="flex flex-1 items-start justify-start px-2  space-x-3">
@@ -26,6 +54,13 @@ const JobCard = ({ item, index }) => {
             width: "48px",
           }}
         />
+        <Box
+          className={`absolute top-2 right-2 text-xs font-semibold px-2 py-1 rounded ${getStatusColor(
+            item.status
+          )}`}
+        >
+          {item?.status ?? "Submitted"}
+        </Box>
 
         <Stack>
           <Typography
@@ -44,7 +79,7 @@ const JobCard = ({ item, index }) => {
         </Stack>
       </Box>
 
-      <Box className="flex flex-1 items-center justify-start px-2  space-x-1 !text-gray-700">
+      <Box className="flex flex-1 items-center justify-start px-2 space-x-1 !text-gray-700">
         <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
           {item.jobType}
         </Typography>
@@ -58,28 +93,37 @@ const JobCard = ({ item, index }) => {
         <Icon name={"Dot"} size={"1em"} />
 
         <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-          {`Posted ${renderIntervalDuration(
-            item.postedDate,
-            intervalToDuration
-          )}`}
+          {getPostedAndAppliedDates(item, alreadyApplied)}
         </Typography>
       </Box>
 
       <Divider flexItem />
 
-      <Box className="flex flex-1 items-start justify-start px-2  space-x-1">
-        <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-          {`${item.numberApplied} applied`}
-        </Typography>
+      <Box className="flex flex-1 items-start justify-start px-2 w-full">
+        <Box className="flex flex-1 items-start justify-start space-x-1">
+          <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
+            {`${item.numberApplied} applied`}
+          </Typography>
 
-        <Icon name={"Dot"} size={"1em"} />
+          <Icon name={"Dot"} size={"1em"} />
 
-        <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-primary">
-          {item.salaryRange}
-        </Typography>
+          <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-primary">
+            {item.salaryRange}
+          </Typography>
+        </Box>
+        <Button
+          className="btn btn-primary"
+          // disabled={loading.isOpen}
+          component={Link}
+          // TODO: change link to view job application page
+          //to={alreadyApplied ? paths.get("APPLY_JOB").PATH : paths.get("APPLY_JOB").PATH}
+          variant="contained"
+        >
+          {alreadyApplied ? "View Application" : "Apply Job"}
+        </Button>
       </Box>
     </Stack>
-    )
-}
+  );
+};
 
-export default JobCard
+export default JobCard;

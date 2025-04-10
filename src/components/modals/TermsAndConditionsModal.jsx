@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable react/prop-types */
+import  { useState } from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Checkbox, FormControlLabel, Typography, Box } from "@mui/material";
 
 const TermsAndConditionsModal = ({ open, onClose, onAccept }) => {
@@ -12,18 +13,10 @@ const TermsAndConditionsModal = ({ open, onClose, onAccept }) => {
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>Terms and Conditions</DialogTitle>
       <DialogContent dividers>
-        <Box
-          sx={{
-            maxHeight: "300px",
-            overflowY: "auto",
-            padding: "10px",
-            border: "1px solid #ccc",
-            borderRadius: "5px",
-          }}
-        >
+        <Box className="max-h-[300px] overflow-y-auto p-[10px] border border-[#ccc] rounded-[5px]">
           <Typography variant="body2">
     <h2>1. Introduction</h2>
-    <p>Welcome to CodeConnect ("Website", "we", "our", or "us"). By accessing or using our website, you agree to comply with and be bound by these Terms and Conditions. If you do not agree, please do not use our website.</p>
+    <p>Welcome to CodeConnect (&quot;Website&quot;, &quot;we&quot;, &quot;our&quot;, or &quot;us&quot;). By accessing or using our website, you agree to comply with and be bound by these Terms and Conditions. If you do not agree, please do not use our website.</p>
 
     <h2>2. Use of the Website</h2>
     <p>You must be at least 18 years old to use this website. By using this site, you represent that you meet this age requirement.</p>
@@ -36,7 +29,7 @@ const TermsAndConditionsModal = ({ open, onClose, onAccept }) => {
     <p>If you post content on this website, you grant us a non-exclusive, royalty-free, worldwide license to use, reproduce, and distribute such content.</p>
 
     <h2>5. Disclaimers and Limitations of Liability</h2>
-    <p>This website is provided "as is" without warranties of any kind, either express or implied. We do not guarantee that the website will be error-free or uninterrupted.</p>
+    <p>This website is provided &quot;as is&quot; without warranties of any kind, either express or implied. We do not guarantee that the website will be error-free or uninterrupted.</p>
     <p>We are not responsible for any damages resulting from your use of this website.</p>
 
     <h2>6. Third-Party Links</h2>
