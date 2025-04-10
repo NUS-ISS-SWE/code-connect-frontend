@@ -11,17 +11,17 @@ import {
 import { intervalToDuration } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+import Footer from "../../components/Footer";
+import Navbar from "../../components/Navbar";
 
-import { retrieveJob } from "../api/JobPostingsApi";
+import { retrieveJob } from "../../api/JobPostingsApi";
 import dummyThumbnail from "../assets/dummy/dummy_icon_1.png";
-import Icon from "../constants/Icon";
+import Icon from "../../constants/Icon";
 
-import { useAuthContext } from "../hooks/useAuthContext";
-import { useGlobalContext } from "../hooks/useGlobalContext";
-import paths from "../routes/paths";
-import { renderIntervalDuration } from "../utils/stringUtils";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import { useGlobalContext } from "../../hooks/useGlobalContext";
+import paths from "../../routes/paths";
+import { renderIntervalDuration } from "../../utils/stringUtils";
 
 const JOB_APPLY_FIELDS = [
   "firstName",

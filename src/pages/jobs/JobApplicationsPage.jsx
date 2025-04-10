@@ -7,12 +7,12 @@ import {
   Typography,
 } from "@mui/material";
 import { useSearchParams } from "react-router-dom";
-import Footer from "../components/Footer.jsx";
-import Navbar from "../components/Navbar.jsx";
-import { GetAPI } from "../api/GeneralAPI.js";
-import { useGlobalContext } from "../hooks/useGlobalContext.js";
-import JobCard from "../components/jobPageComponents/JobCard.jsx";
-import { extractSalaryRange } from "../utils/stringUtils.js";
+import Footer from "../../components/Footer.jsx";
+import Navbar from "../../components/Navbar.jsx";
+import { GetAPI } from "../../api/GeneralAPI.js";
+import { useGlobalContext } from "../../hooks/useGlobalContext.js";
+import JobCard from "../../components/jobPageComponents/JobCard.jsx";
+import { extractSalaryRange } from "../../utils/stringUtils.js";
 
 const JobApplicationsPage = () => {
   const {dispatch } = useGlobalContext();
@@ -90,7 +90,7 @@ const initialSalaryMax =
               {filteredJobs?.length > 0 ? (
                 filteredJobs?.map((item, index) => {
                   return (
-                    <JobCard item={item} index={index} alreadyApplied={true} />
+                    <JobCard item={item} index={index} alreadyApplied={true} showStatusBox={true} />
                   );
                 })
               ) : (

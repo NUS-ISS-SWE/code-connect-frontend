@@ -12,24 +12,24 @@ import {
 } from "@mui/material";
 import { SelectPicker } from "rsuite";
 import {  useSearchParams } from "react-router-dom";
-import JobCard from "../components/jobPageComponents/JobCard";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+import JobCard from "../../components/jobPageComponents/JobCard.jsx";
+import Footer from "../../components/Footer.jsx";
+import Navbar from "../../components/Navbar.jsx";
 
-import { retrieveJobListings } from "../api/JobPostingsApi.js";
-import Icon from "../constants/Icon.jsx";
-import useContent from "../hooks/useContent.js";
-import { useGlobalContext } from "../hooks/useGlobalContext.js";
-import useKeyPress from "../hooks/useKeyPress.js";
+import { retrieveJobListings } from "../../api/JobPostingsApi.js";
+import Icon from "../../constants/Icon.jsx";
+import useContent from "../../hooks/useContent.js";
+import { useGlobalContext } from "../../hooks/useGlobalContext.js";
+import useKeyPress from "../../hooks/useKeyPress.js";
 import {
   JOB_TYPES_FILTER_OPTIONS,
   LOCATION_FILTER_OPTIONS,
   SALARY_MAX_FILTER_OPTIONS,
   SALARY_MIN_FILTER_OPTIONS,
-} from "../utils/filterOptionsUtils.js";
+} from "../../utils/filterOptionsUtils.js";
 import {
   extractSalaryRange,
-} from "../utils/stringUtils.js";
+} from "../../utils/stringUtils.js";
 
 const JobListingPage = () => {
   const { state, dispatch } = useGlobalContext();
