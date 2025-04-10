@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Box,
   Button,
@@ -15,7 +16,7 @@ import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
 
 import { retrieveJob } from "../../api/JobPostingsApi";
-import dummyThumbnail from "../assets/dummy/dummy_icon_1.png";
+import dummyThumbnail from "../../assets/dummy/index.js";
 import Icon from "../../constants/Icon";
 
 import { useAuthContext } from "../../hooks/useAuthContext";
@@ -58,12 +59,6 @@ const JobApplyPage = () => {
     coverLetter: useRef(null),
   };
 
-  useEffect(() => {
-    if (!jobDetails || jobDetails?.id !== Number(jobId)) {
-      fetchJob();
-    }
-  }, [jobDetails, jobId]);
-
   const fetchJob = async () => {
     const { data, status } = await retrieveJob(jobId, dispatch);
 
@@ -76,6 +71,12 @@ const JobApplyPage = () => {
       navigate(paths.get("HOME").PATH);
     }
   };
+
+  useEffect(() => {
+    if (!jobDetails || jobDetails?.id !== Number(jobId)) {
+      fetchJob();
+    }
+  }, [jobDetails, jobId]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

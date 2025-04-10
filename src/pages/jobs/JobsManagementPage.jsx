@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-key */
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Box,
   Button,
@@ -9,10 +9,9 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { GetAPI } from "../../api/GeneralAPI.js";
-
+import JobCards from "../../components/jobPageComponents/JobCards.jsx";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
-import JobCard from "../../components/jobPageComponents/JobCard";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 import paths from "../../routes/paths";
 
@@ -71,21 +70,7 @@ const JobsManagementPage = () => {
             <Typography className="!font-semibold !text-xs lg:!text-xs text-start !text-gray-900">
           {`${filteredJobs?.length} jobs`}
         </Typography>
-            <Stack className="flex justify-start mx-auto max-w-7xl px-2 lg:px-0 space-y-3 w-full">
-        {filteredJobs?.length > 0 ? (
-          filteredJobs?.map((item, index) => {
-            return (
-              <JobCard item={item} index={index} alreadyApplied={true} />
-            );
-          })
-        ) : (
-          <Box className="bg-gray-100 !border !border-gray-300 !border-solid py-2 flex items-center justify-start min-h-[70px] p-3 rounded-md w-full">
-            <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-              No records found
-            </Typography>
-          </Box>
-        )}
-  </Stack>
+        <JobCards filteredJobs={filteredJobs} alreadyApplied={false} showStatusBox={false} hideApplyButton={true} />
           </Stack>
         </Stack>
       </Stack>

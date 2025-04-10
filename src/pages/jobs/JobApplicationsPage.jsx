@@ -1,7 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/jsx-key */
 import {
-  Box,
   Divider,
   Stack,
   Typography,
@@ -11,7 +9,7 @@ import Footer from "../../components/Footer.jsx";
 import Navbar from "../../components/Navbar.jsx";
 import { GetAPI } from "../../api/GeneralAPI.js";
 import { useGlobalContext } from "../../hooks/useGlobalContext.js";
-import JobCard from "../../components/jobPageComponents/JobCard.jsx";
+import JobCards from "../../components/jobPageComponents/JobCards.jsx";
 import { extractSalaryRange } from "../../utils/stringUtils.js";
 
 const JobApplicationsPage = () => {
@@ -87,21 +85,8 @@ const initialSalaryMax =
                   {`${filteredJobs?.length} jobs applied, average salary: $${getAverageJobSalary(filteredJobs)}`}
                 </Typography>
       <Divider/>
-              {filteredJobs?.length > 0 ? (
-                filteredJobs?.map((item, index) => {
-                  return (
-                    <JobCard item={item} index={index} alreadyApplied={true} showStatusBox={true} />
-                  );
-                })
-              ) : (
-                <Box className="bg-gray-100 !border !border-gray-300 !border-solid py-2 flex items-center justify-start min-h-[70px] p-3 rounded-md w-full">
-                  <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-                    No records found
-                  </Typography>
-                </Box>
-              )}
+      <JobCards filteredJobs={filteredJobs} alreadyApplied={true} showStatusBox={true} />
         </Stack>
-      {/* </Box> */}
       <Footer />
     </Stack>
   );
