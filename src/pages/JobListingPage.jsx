@@ -12,7 +12,8 @@ import {
   Typography,
 } from "@mui/material";
 import { SelectPicker } from "rsuite";
-import {  useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+
 import JobCard from "../components/jobPageComponents/JobCard";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
@@ -28,9 +29,7 @@ import {
   SALARY_MAX_FILTER_OPTIONS,
   SALARY_MIN_FILTER_OPTIONS,
 } from "../utils/filterOptionsUtils.js";
-import {
-  extractSalaryRange,
-} from "../utils/stringUtils.js";
+import { extractSalaryRange } from "../utils/stringUtils.js";
 
 const JobListingPage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -80,11 +79,6 @@ const JobListingPage = () => {
     setSearchParams(params);
   };
 
-  // Call fetch search results API on intial render
-  useEffect(() => {
-    fetchSearchResults(searchTerm, searchFilters);
-  }, []);
-
   // Call fetch search results API on filter change
   useEffect(() => {
     fetchSearchResults(searchTerm, searchFilters);
@@ -95,7 +89,6 @@ const JobListingPage = () => {
     if (isEnterPressed) {
       handleTriggerSearch();
     }
-     
   }, [isEnterPressed]);
 
   const handleChangeSearchInput = (evt) => {

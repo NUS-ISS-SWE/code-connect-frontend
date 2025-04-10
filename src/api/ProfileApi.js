@@ -1,4 +1,4 @@
-import { GetAPI, PostAPI } from "./GeneralAPI";
+import { GetAPI, PostAPI, UpdateAPI } from "./GeneralAPI";
 import { apiWrapper } from "../utils/apiUtils";
 import { fetchToken, LOGIN_TOKEN_KEY } from "../utils/authUtils";
 
@@ -6,6 +6,10 @@ const PATHNAME = "profiles";
 
 const createProfile = async (formData, dispatch) => {
   return await PostAPI(formData, `/${PATHNAME}`, dispatch);
+};
+
+const updateProfile = async (formData, id, dispatch) => {
+  return await UpdateAPI({ ...formData, id }, PATHNAME, dispatch);
 };
 
 const UploadProfilePicture = async (file, id, dispatch) => {
@@ -98,6 +102,7 @@ export {
   DeleteResume,
   RetrieveResume,
   retrieveUserProfile,
+  updateProfile,
   UploadResumeAPI,
   UploadProfilePicture,
 };
