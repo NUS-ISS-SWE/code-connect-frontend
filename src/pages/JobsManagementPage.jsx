@@ -19,7 +19,7 @@ const JobsManagementPage = () => {
   const { loading } = state;
 
   return (
-    <Stack className="bg-whiteflex flex-1 items-start justify-start min-h-[100vh] w-full">
+    <Stack className="bg-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
 
       <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-12 w-[95vw] lg:w-[70vw]">

@@ -10,6 +10,13 @@ const useContent = () => {
       subheader:
         "Your account has been successfully verified. You can now log in and start exploring the platform.",
     },
+    completeProfile: {
+      action: "",
+      image: images.completeProfileImage,
+      header: "Complete Your Profile",
+      subheader:
+        "To get the most out of CodeConnect, please complete your profile.",
+    },
     home: {
       hero: {
         background: images.heroBackground,

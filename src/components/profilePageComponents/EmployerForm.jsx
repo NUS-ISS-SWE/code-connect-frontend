@@ -55,6 +55,10 @@ const EmployerForm = () => {
     }
   };
 
+  const handleOnClickSkip = () => {
+    navigate(paths.get("PROFILE").PATH);
+  };
+
   return (
     <Stack className="flex flex-1 items-start justify-start py-4 space-y-10 w-full">
       <Stack className="flex items-start justify-start space-y-6 w-full">
@@ -142,12 +146,25 @@ const EmployerForm = () => {
         />
       </Stack>
 
-      <Button
-        className="btn btn-primary self-end"
-        onClick={handleOnClickSubmit}
-      >
-        {id ? "Save" : "Submit"}
-      </Button>
+      <Box className="flex items-center justify-end space-x-2 w-full">
+        {!id && (
+          <Button
+            className="btn"
+            disabled={loading.isOpen}
+            onClick={handleOnClickSkip}
+          >
+            Skip this step
+          </Button>
+        )}
+
+        <Button
+          className="btn btn-primary"
+          disabled={loading.isOpen}
+          onClick={handleOnClickSubmit}
+        >
+          {id ? "Save" : "Continue"}
+        </Button>
+      </Box>
     </Stack>
   );
 };
