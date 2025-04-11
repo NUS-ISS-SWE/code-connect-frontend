@@ -29,7 +29,7 @@ const apiWrapper = async ({
       throw response;
     }
 
-    const jsonData = await response.json();
+    const jsonData = response.status == 204 ?  response : await response.json();
 
     return { data: jsonData, error: "", status: response.status };
   } catch (err) {

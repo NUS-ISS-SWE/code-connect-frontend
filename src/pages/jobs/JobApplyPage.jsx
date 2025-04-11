@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Box,
   Button,
@@ -11,17 +12,17 @@ import {
 import { intervalToDuration } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+import Footer from "../../components/Footer";
+import Navbar from "../../components/Navbar";
 
-import { retrieveJob } from "../api/JobPostingsApi";
-import dummyThumbnail from "../assets/dummy/dummy_icon_1.png";
-import Icon from "../constants/Icon";
+import { retrieveJob } from "../../api/JobPostingsApi";
+import dummyThumbnail from "../../assets/dummy/index.js";
+import Icon from "../../constants/Icon";
 
-import { useAuthContext } from "../hooks/useAuthContext";
-import { useGlobalContext } from "../hooks/useGlobalContext";
-import paths from "../routes/paths";
-import { renderIntervalDuration } from "../utils/stringUtils";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import { useGlobalContext } from "../../hooks/useGlobalContext";
+import paths from "../../routes/paths";
+import { renderIntervalDuration } from "../../utils/stringUtils";
 
 const JOB_APPLY_FIELDS = [
   "firstName",
@@ -58,12 +59,6 @@ const JobApplyPage = () => {
     coverLetter: useRef(null),
   };
 
-  useEffect(() => {
-    if (!jobDetails || jobDetails?.id !== Number(jobId)) {
-      fetchJob();
-    }
-  }, [jobDetails, jobId]);
-
   const fetchJob = async () => {
     const { data, status } = await retrieveJob(jobId, dispatch);
 
@@ -76,6 +71,12 @@ const JobApplyPage = () => {
       navigate(paths.get("HOME").PATH);
     }
   };
+
+  useEffect(() => {
+    if (!jobDetails || jobDetails?.id !== Number(jobId)) {
+      fetchJob();
+    }
+  }, [jobDetails, jobId]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

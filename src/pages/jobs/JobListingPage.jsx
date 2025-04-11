@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/jsx-key */
 import {
   Box,
   Button,
@@ -12,24 +11,24 @@ import {
 } from "@mui/material";
 import { SelectPicker } from "rsuite";
 import {  useSearchParams } from "react-router-dom";
-import JobCard from "../components/jobPageComponents/JobCard";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+import JobCards from "../../components/jobPageComponents/JobCards.jsx";
+import Footer from "../../components/Footer.jsx";
+import Navbar from "../../components/Navbar.jsx";
 
-import { retrieveJobListings } from "../api/JobPostingsApi.js";
-import Icon from "../constants/Icon.jsx";
-import useContent from "../hooks/useContent.js";
-import { useGlobalContext } from "../hooks/useGlobalContext.js";
-import useKeyPress from "../hooks/useKeyPress.js";
+import { retrieveJobListings } from "../../api/JobPostingsApi.js";
+import Icon from "../../constants/Icon.jsx";
+import useContent from "../../hooks/useContent.js";
+import { useGlobalContext } from "../../hooks/useGlobalContext.js";
+import useKeyPress from "../../hooks/useKeyPress.js";
 import {
   JOB_TYPES_FILTER_OPTIONS,
   LOCATION_FILTER_OPTIONS,
   SALARY_MAX_FILTER_OPTIONS,
   SALARY_MIN_FILTER_OPTIONS,
-} from "../utils/filterOptionsUtils.js";
+} from "../../utils/filterOptionsUtils.js";
 import {
   extractSalaryRange,
-} from "../utils/stringUtils.js";
+} from "../../utils/stringUtils.js";
 
 const JobListingPage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -325,18 +324,7 @@ const JobListingPage = () => {
               : decodeURIComponent(searchParams.get("search"))
           }`}
         </Typography>
-
-        {filteredJobs?.length > 0 ? (
-          filteredJobs?.map((item, index) => {
-            return <JobCard item={item} index={index} key={index} />;
-          })
-        ) : (
-          <Box className="bg-gray-100 !border !border-gray-300 !border-solid py-2 flex items-center justify-start min-h-[70px] p-3 rounded-md w-full">
-            <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-              No records found
-            </Typography>
-          </Box>
-        )}
+        <JobCards filteredJobs={filteredJobs} />
       </Stack>
 
       {/* <Button

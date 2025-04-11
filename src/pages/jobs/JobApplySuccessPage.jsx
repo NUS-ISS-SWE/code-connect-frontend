@@ -1,11 +1,11 @@
 import { Typography, Button, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
 
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+import Footer from "../../components/Footer";
+import Navbar from "../../components/Navbar";
 
-import useContent from "../hooks/useContent";
-import paths from "../routes/paths";
+import useContent from "../../hooks/useContent";
+import paths from "../../routes/paths";
 
 const JobApplySuccessPage = () => {
   const content = useContent();

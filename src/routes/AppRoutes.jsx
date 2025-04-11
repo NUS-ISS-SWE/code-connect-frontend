@@ -12,18 +12,18 @@ const AccountVerifiedPage = lazy(() =>
 );
 const ErrorPage = lazy(() => import("../pages/ErrorPage.jsx"));
 const HomePage = lazy(() => import("../pages/HomePage.jsx"));
-const JobApplyPage = lazy(() => import("../pages/JobApplyPage.jsx"));
+const JobApplyPage = lazy(() => import("../pages/jobs/JobApplyPage.jsx"));
 const JobApplySuccessPage = lazy(() =>
-  import("../pages/JobApplySuccessPage.jsx")
+  import("../pages/jobs/JobApplySuccessPage.jsx")
 );
 
-const JobPage = lazy(() => import("../pages/JobPage.jsx"));
-const JobListingPage = lazy(() => import("../pages/JobListingPage.jsx"));
+const JobPage = lazy(() => import("../pages/jobs/JobPage.jsx"));
+const JobListingPage = lazy(() => import("../pages/jobs/JobListingPage.jsx"));
 const JobApplicationsPage = lazy(() =>
-  import("../pages/JobApplicationsPage.jsx")
+  import("../pages/jobs/JobApplicationsPage.jsx")
 );
 const JobsManagementPage = lazy(() =>
-  import("../pages/JobsManagementPage.jsx")
+  import("../pages/jobs/JobsManagementPage.jsx")
 );
 const LoginPage = lazy(() => import("../pages/LoginPage.jsx"));
 const ProfilePage = lazy(() => import("../pages/ProfilePage.jsx"));

@@ -8,7 +8,8 @@ import Icon from "../../constants/Icon.jsx";
 import { renderIntervalDuration } from "../../utils/stringUtils.js";
 import { Link } from "react-router-dom";
 
-const JobCard = ({ item, index, alreadyApplied }) => {
+const JobCard = ({ item, index, alreadyApplied, showStatusBox, hideApplyButton = false, onDelete}) => {
+
   const getPostedAndAppliedDates = (item, alreadyApplied) => {
     const postedString = `Posted ${renderIntervalDuration(
       item.postedDate,
@@ -54,14 +55,13 @@ const JobCard = ({ item, index, alreadyApplied }) => {
             width: "48px",
           }}
         />
-        <Box
+        { showStatusBox && <Box
           className={`absolute top-2 right-2 text-xs font-semibold px-2 py-1 rounded ${getStatusColor(
             item.status
           )}`}
         >
           {item?.status ?? "Submitted"}
-        </Box>
-
+        </Box>}
         <Stack>
           <Typography
             className="!font-regular !text-sm lg:!text-sm text-start !text-gray-700 hover:underline"
@@ -111,16 +111,26 @@ const JobCard = ({ item, index, alreadyApplied }) => {
             {item.salaryRange}
           </Typography>
         </Box>
-        <Button
-          className="btn btn-primary"
-          // disabled={loading.isOpen}
-          component={Link}
-          // TODO: change link to view job application page
-          //to={alreadyApplied ? paths.get("APPLY_JOB").PATH : paths.get("APPLY_JOB").PATH}
-          variant="contained"
-        >
-          {alreadyApplied ? "View Application" : "Apply Job"}
-        </Button>
+        {hideApplyButton ? (
+          <Button
+        className="btn btn-secondary !text-error"        
+        variant="contained"
+        onClick={() => onDelete(item.id)}>
+        Delete Job
+      </Button>
+        ) : 
+        (<Button
+        className="btn btn-primary"
+        // disabled={loading.isOpen}
+        component={Link}
+        
+        // TODO: change link to view job application page
+        //to={alreadyApplied ? paths.get("APPLY_JOB").PATH : paths.get("APPLY_JOB").PATH}
+        variant="contained"
+      >
+        {alreadyApplied ? "View Application" : "Apply Job"}
+      </Button>)
+        }
       </Box>
     </Stack>
   );
