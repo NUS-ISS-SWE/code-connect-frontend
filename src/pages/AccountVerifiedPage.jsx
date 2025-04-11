@@ -1,5 +1,6 @@
 import { Typography, Box, Button, Stack } from "@mui/material";
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
@@ -9,6 +10,20 @@ import paths from "../routes/paths";
 
 const AccountVerifiedPage = () => {
   const content = useContent();
+
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const verificationToken = searchParams.get("token");
+
+    if (verificationToken) {
+      console.log("verificationToken", verificationToken);
+      // TODO: Call the API to activate the account using the token
+    } else {
+      // Handle the case where the parameters are not present
+      console.error("Verification token is missing or invalid.");
+    }
+  }, []);
 
   return (
     <Stack className="bg-whiteflex flex-1 items-start justify-start min-h-[100vh] w-full">
