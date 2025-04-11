@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Divider, Stack, Tab, Tabs, Typography } from "@mui/material";
 
 import EditProfile from "../components/profilePageComponents/EditProfile";
@@ -9,17 +10,16 @@ import ViewProfile from "../components/profilePageComponents/ViewProfile";
 import { RetrieveResume, retrieveUserProfile } from "../api/ProfileApi";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { GetAPI } from "../api/GeneralAPI";
 
 const ProfilePage = () => {
-  const { state, dispatch } = useGlobalContext();
+  const { dispatch } = useGlobalContext();
 
   const { setUser, user } = useAuthContext();
   const { id } = useParams(); // Get profile ID from URL
 
   const [resume, setResume] = useState(null);
   const [formData, setFormData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [ setLoading] = useState(true);
   const [tabIndex, setTabIndex] = useState(0);
 
   useEffect(() => {
@@ -100,7 +100,7 @@ const ProfilePage = () => {
     <Stack className="bg-whiteflex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
 
-      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[70vw]">
+      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[95vw] lg:w-[70vw]">
         <Typography className="!font-medium flex-1 text-left !text-2xl">
           {id ? "Profile" : "Create Profile"}
         </Typography>

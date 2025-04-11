@@ -70,6 +70,7 @@ const UploadResume = () => {
         payload: {
           message: "Resume deleted.",
           isOpen: true,
+          variant: "success",
         },
       });
     }
@@ -86,7 +87,7 @@ const UploadResume = () => {
       const formData = new FormData();
       formData.append("file", file || "");
 
-      const { data, error } = await UploadResumeAPI({ id, formData }, dispatch);
+      const { data } = await UploadResumeAPI({ id, formData }, dispatch);
 
       if (data) {
         setResume({

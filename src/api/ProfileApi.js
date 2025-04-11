@@ -1,5 +1,6 @@
 import { GetAPI, PostAPI } from "./GeneralAPI";
 import { apiWrapper } from "../utils/apiUtils";
+import { fetchToken, LOGIN_TOKEN_KEY } from "../utils/authUtils";
 
 const PATHNAME = "profiles";
 
@@ -83,6 +84,9 @@ const UploadResumeAPI = async ({ id, formData }, dispatch) => {
     body: formData,
     dispatch,
     endpoint: `/${PATHNAME}/${id}/uploadResume`,
+    headers: {
+      Authorization: `Bearer ${fetchToken(LOGIN_TOKEN_KEY).token}`,
+    },
     method: "POST",
   });
 

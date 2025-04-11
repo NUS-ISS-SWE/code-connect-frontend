@@ -22,7 +22,7 @@ import { LOGIN_TOKEN_KEY } from "../utils/authUtils.js";
 import { useState } from "react";
 
 const SignupPage = () => {
-  const { login } = useAuthContext();
+  const { login, user } = useAuthContext();
   const { state, dispatch } = useGlobalContext();
 
   const navigate = useNavigate();
@@ -43,6 +43,12 @@ const SignupPage = () => {
     role: ROLES.get("user").value,
   });
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      navigate(paths.get("PROFILE").PATH);
+    }
+  }, []);
 
   const handleChangeInput = (key) => (evt) => {
     setErrors((prevState) => {

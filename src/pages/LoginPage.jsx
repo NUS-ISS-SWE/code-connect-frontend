@@ -21,7 +21,7 @@ import paths from "../routes/paths.js";
 import { LOGIN_TOKEN_KEY } from "../utils/authUtils.js";
 
 const LoginPage = () => {
-  const { login } = useAuthContext();
+  const { login, user } = useAuthContext();
   const { state, dispatch } = useGlobalContext();
 
   const navigate = useNavigate();
@@ -39,6 +39,12 @@ const LoginPage = () => {
     role: ROLES.get("user").value,
   });
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      navigate(paths.get("PROFILE").PATH);
+    }
+  }, []);
 
   const handleChangeInput = (key) => (evt) => {
     setErrors((prevState) => {

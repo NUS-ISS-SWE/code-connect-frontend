@@ -7,7 +7,7 @@ import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { GlobalProvider } from "./contexts/GlobalContext.jsx";
 
 import 'rsuite/dist/rsuite.min.css';
-import "./index.css";
+import "./styles/index.css";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

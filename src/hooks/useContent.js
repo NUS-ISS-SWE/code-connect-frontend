@@ -3,6 +3,13 @@ import paths from "../routes/paths";
 
 const useContent = () => {
   const content = {
+    accountVerified: {
+      action: "Go to Login",
+      image: images.verifiedImage,
+      header: "Account Verified!",
+      subheader:
+        "Your account has been successfully verified. You can now log in and start exploring the platform.",
+    },
     home: {
       hero: {
         background: images.heroBackground,
@@ -53,6 +60,13 @@ const useContent = () => {
         subheader:
           "Browse curated job listings tailored to your skills and experience.",
       },
+    },
+    jobSuccess: {
+      action: "Back to Job Listings",
+      image: images.applySuccessImage,
+      header: "Application Submitted!",
+      subheader:
+        "Thank you for applying. We’ll be in touch if your profile is shortlisted.",
     },
   };
 
