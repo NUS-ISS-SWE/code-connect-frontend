@@ -27,3 +27,4 @@ dist-ssr
 *.sln
 *.sw?
 src/api/code-connect.code-workspace
+code-connect.code-workspace
