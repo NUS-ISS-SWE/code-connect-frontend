@@ -7,8 +7,8 @@ import { COMPANY_DETAILS } from "../../constants/companyDetails";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 import paths from "../../routes/paths";
 
-const EmployerForm = () => {
-  const fields = Array.from(COMPANY_DETAILS).map(([key, value]) => value.key);
+const EmployerForm = ({ onSuccess }) => {
+  const fields = Array.from(COMPANY_DETAILS).map(([key, value]) => key);
 
   const {
     state: { loading },
@@ -19,8 +19,14 @@ const EmployerForm = () => {
   const { id } = useParams();
 
   const [formData, setFormData] = useState(
-    Object.fromEntries(fields.map((key) => [key, ""]))
+    Object.fromEntries(
+      fields.map((key) => [
+        COMPANY_DETAILS.get(key).key,
+        COMPANY_DETAILS.get(key).type === "number" ? 0 : "",
+      ])
+    )
   );
+
   const [errors, setErrors] = useState({});
 
   const fieldRefs = Object.fromEntries(
@@ -33,10 +39,10 @@ const EmployerForm = () => {
     if (!formData.companyName)
       newErrors.companyName = "This field is required!";
 
-    if (!formData.companyEmail)
-      newErrors.companyEmail = "This field is required!";
-    else if (!/\S+@\S+\.\S+/.test(formData.companyEmail))
-      newErrors.companyEmail = "Invalid email format";
+    // if (!formData.companyEmail)
+    //   newErrors.companyEmail = "This field is required!";
+    // else if (!/\S+@\S+\.\S+/.test(formData.companyEmail))
+    //   newErrors.companyEmail = "Invalid email format";
 
     setErrors(newErrors);
 
@@ -51,7 +57,9 @@ const EmployerForm = () => {
     const firstErrorField = validate();
 
     if (!firstErrorField) {
+      console.log("formData", formData);
       // TODO: Integrate with API to create / update company profile
+      onSuccess();
     }
   };
 
@@ -90,9 +98,9 @@ const EmployerForm = () => {
           value={formData?.[COMPANY_DETAILS.get("companyDescription").key]}
         />
 
-        <Box className="flex flex-col lg:flex-row items-start justify-start gap-6 lg:gap-2 w-full">
-          {/* Company Email */}
-          <TextField
+        {/* <Box className="flex flex-col lg:flex-row items-start justify-start gap-6 lg:gap-2 w-full"> */}
+        {/* Company Email */}
+        {/* <TextField
             error={!!errors[COMPANY_DETAILS.get("companyEmail").key]}
             fullWidth
             helperText={errors[COMPANY_DETAILS.get("companyEmail").key]}
@@ -103,10 +111,10 @@ const EmployerForm = () => {
             size="small"
             type="email"
             value={formData?.[COMPANY_DETAILS.get("companyEmail").key]}
-          />
+          /> */}
 
-          {/* Company Phone */}
-          <TextField
+        {/* Company Phone */}
+        {/* <TextField
             error={!!errors[COMPANY_DETAILS.get("companyPhone").key]}
             fullWidth
             helperText={errors[COMPANY_DETAILS.get("companyPhone").key]}
@@ -116,21 +124,35 @@ const EmployerForm = () => {
             onChange={handleChange}
             size="small"
             value={formData?.[COMPANY_DETAILS.get("companyPhone").key]}
+          /> */}
+        {/* </Box> */}
+
+        <Box className="flex flex-col lg:flex-row items-start justify-start gap-6 lg:gap-2 w-full">
+          {/* Company Location */}
+          <TextField
+            error={!!errors[COMPANY_DETAILS.get("companyLocation").key]}
+            fullWidth
+            helperText={errors[COMPANY_DETAILS.get("companyLocation").key]}
+            inputRef={fieldRefs[COMPANY_DETAILS.get("companyLocation").key]}
+            label={COMPANY_DETAILS.get("companyLocation").label}
+            name={COMPANY_DETAILS.get("companyLocation").key}
+            onChange={handleChange}
+            size="small"
+            value={formData?.[COMPANY_DETAILS.get("companyLocation").key]}
+          />
+
+          <TextField
+            error={!!errors[COMPANY_DETAILS.get("companyIndustry").key]}
+            fullWidth
+            helperText={errors[COMPANY_DETAILS.get("companyIndustry").key]}
+            inputRef={fieldRefs[COMPANY_DETAILS.get("companyIndustry").key]}
+            label={COMPANY_DETAILS.get("companyIndustry").label}
+            name={COMPANY_DETAILS.get("companyIndustry").key}
+            onChange={handleChange}
+            size="small"
+            value={formData?.[COMPANY_DETAILS.get("companyIndustry").key]}
           />
         </Box>
-
-        {/* Company Location */}
-        <TextField
-          error={!!errors[COMPANY_DETAILS.get("companyLocation").key]}
-          fullWidth
-          helperText={errors[COMPANY_DETAILS.get("companyLocation").key]}
-          inputRef={fieldRefs[COMPANY_DETAILS.get("companyLocation").key]}
-          label={COMPANY_DETAILS.get("companyLocation").label}
-          name={COMPANY_DETAILS.get("companyLocation").key}
-          onChange={handleChange}
-          size="small"
-          value={formData?.[COMPANY_DETAILS.get("companyLocation").key]}
-        />
 
         {/* Company Size */}
         <TextField
@@ -142,12 +164,13 @@ const EmployerForm = () => {
           name={COMPANY_DETAILS.get("companySize").key}
           onChange={handleChange}
           size="small"
+          type="number"
           value={formData?.[COMPANY_DETAILS.get("companySize").key]}
         />
       </Stack>
 
       <Box className="flex items-center justify-end space-x-2 w-full">
-        {!id && (
+        {/* {!id && (
           <Button
             className="btn"
             disabled={loading.isOpen}
@@ -155,7 +178,7 @@ const EmployerForm = () => {
           >
             Skip this step
           </Button>
-        )}
+        )} */}
 
         <Button
           className="btn btn-primary"

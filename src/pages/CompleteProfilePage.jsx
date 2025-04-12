@@ -1,11 +1,19 @@
 import { Divider, Stack, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 import EmployerForm from "../components/profilePageComponents/EmployerForm";
 import Footer from "../components/Footer";
+
 import useContent from "../hooks/useContent";
+import paths from "../routes/paths";
 
 const CompleteProfilePage = () => {
   const content = useContent();
+  const navigate = useNavigate();
+
+  const handleOnSuccess = () => {
+    navigate(paths.get("PROFILE").PATH);
+  };
 
   return (
     <Stack className="bg-white flex h-full items-center justify-end min-h-[100vh] w-full">
@@ -23,7 +31,7 @@ const CompleteProfilePage = () => {
         {/* {user.role === ROLES.get("jobSeeker").value ? (
         <EmployeeForm onSubmit={handleSubmit} onSkip={handleSkip} />
         ) : ( */}
-        <EmployerForm />
+        <EmployerForm onSuccess={handleOnSuccess} />
         {/* )} */}
 
         <img

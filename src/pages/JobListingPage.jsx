@@ -148,7 +148,7 @@ const JobListingPage = () => {
         // Store returned API data in filteredJobs state
         setFilteredJobs(filteredJobs);
         dispatch({ type: "LOADING", payload: { isOpen: false } });
-      }, 1500);
+      }, 900);
 
       // Update URL params with searchFilters or searchTerm change
       updateUrlParams(searchTerm, searchFilters);
