@@ -1,31 +1,18 @@
 /* eslint-disable react/prop-types */
 import { Stack, TextField, Button, Box } from "@mui/material";
 import { createRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-import { COMPANY_DETAILS } from "../../constants/companyDetails";
+import { EMPLOYER_DETAILS } from "../../constants/employerDetails";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
-import paths from "../../routes/paths";
 
-const EmployerForm = ({ onSuccess }) => {
-  const fields = Array.from(COMPANY_DETAILS).map(([key, value]) => key);
-
+const EmployerForm = ({ fields, formData, onSkip, onSubmit, setFormData }) => {
   const {
     state: { loading },
     dispatch,
   } = useGlobalContext();
 
-  const navigate = useNavigate();
   const { id } = useParams();
-
-  const [formData, setFormData] = useState(
-    Object.fromEntries(
-      fields.map((key) => [
-        COMPANY_DETAILS.get(key).key,
-        COMPANY_DETAILS.get(key).type === "number" ? 0 : "",
-      ])
-    )
-  );
 
   const [errors, setErrors] = useState({});
 
@@ -57,14 +44,12 @@ const EmployerForm = ({ onSuccess }) => {
     const firstErrorField = validate();
 
     if (!firstErrorField) {
-      console.log("formData", formData);
-      // TODO: Integrate with API to create / update company profile
-      onSuccess();
+      onSubmit();
     }
   };
 
   const handleOnClickSkip = () => {
-    navigate(paths.get("PROFILE").PATH);
+    onSkip();
   };
 
   return (
@@ -72,100 +57,100 @@ const EmployerForm = ({ onSuccess }) => {
       <Stack className="flex items-start justify-start space-y-6 w-full">
         {/* Company Name */}
         <TextField
-          error={!!errors[COMPANY_DETAILS.get("companyName").key]}
+          error={!!errors[EMPLOYER_DETAILS.get("companyName").key]}
           fullWidth
-          helperText={errors[COMPANY_DETAILS.get("companyName").key]}
-          inputRef={fieldRefs[COMPANY_DETAILS.get("companyName").key]}
-          label={COMPANY_DETAILS.get("companyName").label}
-          name={COMPANY_DETAILS.get("companyName").key}
+          helperText={errors[EMPLOYER_DETAILS.get("companyName").key]}
+          inputRef={fieldRefs[EMPLOYER_DETAILS.get("companyName").key]}
+          label={EMPLOYER_DETAILS.get("companyName").label}
+          name={EMPLOYER_DETAILS.get("companyName").key}
           onChange={handleChange}
           size="small"
-          value={formData?.[COMPANY_DETAILS.get("companyName").key]}
+          value={formData?.[EMPLOYER_DETAILS.get("companyName").key]}
         />
 
         {/* Company Description */}
         <TextField
-          error={!!errors[COMPANY_DETAILS.get("companyDescription").key]}
+          error={!!errors[EMPLOYER_DETAILS.get("companyDescription").key]}
           fullWidth
-          helperText={errors[COMPANY_DETAILS.get("companyDescription").key]}
-          inputRef={fieldRefs[COMPANY_DETAILS.get("companyDescription").key]}
-          label={COMPANY_DETAILS.get("companyDescription").label}
+          helperText={errors[EMPLOYER_DETAILS.get("companyDescription").key]}
+          inputRef={fieldRefs[EMPLOYER_DETAILS.get("companyDescription").key]}
+          label={EMPLOYER_DETAILS.get("companyDescription").label}
           multiline
-          name={COMPANY_DETAILS.get("companyDescription").key}
+          name={EMPLOYER_DETAILS.get("companyDescription").key}
           onChange={handleChange}
           rows={3}
           size="small"
-          value={formData?.[COMPANY_DETAILS.get("companyDescription").key]}
+          value={formData?.[EMPLOYER_DETAILS.get("companyDescription").key]}
         />
 
         {/* <Box className="flex flex-col lg:flex-row items-start justify-start gap-6 lg:gap-2 w-full"> */}
         {/* Company Email */}
         {/* <TextField
-            error={!!errors[COMPANY_DETAILS.get("companyEmail").key]}
+            error={!!errors[EMPLOYER_DETAILS.get("companyEmail").key]}
             fullWidth
-            helperText={errors[COMPANY_DETAILS.get("companyEmail").key]}
-            inputRef={fieldRefs[COMPANY_DETAILS.get("companyEmail").key]}
-            label={COMPANY_DETAILS.get("companyEmail").label}
-            name={COMPANY_DETAILS.get("companyEmail").key}
+            helperText={errors[EMPLOYER_DETAILS.get("companyEmail").key]}
+            inputRef={fieldRefs[EMPLOYER_DETAILS.get("companyEmail").key]}
+            label={EMPLOYER_DETAILS.get("companyEmail").label}
+            name={EMPLOYER_DETAILS.get("companyEmail").key}
             onChange={handleChange}
             size="small"
             type="email"
-            value={formData?.[COMPANY_DETAILS.get("companyEmail").key]}
+            value={formData?.[EMPLOYER_DETAILS.get("companyEmail").key]}
           /> */}
 
         {/* Company Phone */}
         {/* <TextField
-            error={!!errors[COMPANY_DETAILS.get("companyPhone").key]}
+            error={!!errors[EMPLOYER_DETAILS.get("companyPhone").key]}
             fullWidth
-            helperText={errors[COMPANY_DETAILS.get("companyPhone").key]}
-            inputRef={fieldRefs[COMPANY_DETAILS.get("companyPhone").key]}
-            label={COMPANY_DETAILS.get("companyPhone").label}
-            name={COMPANY_DETAILS.get("companyPhone").key}
+            helperText={errors[EMPLOYER_DETAILS.get("companyPhone").key]}
+            inputRef={fieldRefs[EMPLOYER_DETAILS.get("companyPhone").key]}
+            label={EMPLOYER_DETAILS.get("companyPhone").label}
+            name={EMPLOYER_DETAILS.get("companyPhone").key}
             onChange={handleChange}
             size="small"
-            value={formData?.[COMPANY_DETAILS.get("companyPhone").key]}
+            value={formData?.[EMPLOYER_DETAILS.get("companyPhone").key]}
           /> */}
         {/* </Box> */}
 
         <Box className="flex flex-col lg:flex-row items-start justify-start gap-6 lg:gap-2 w-full">
           {/* Company Location */}
           <TextField
-            error={!!errors[COMPANY_DETAILS.get("companyLocation").key]}
+            error={!!errors[EMPLOYER_DETAILS.get("companyLocation").key]}
             fullWidth
-            helperText={errors[COMPANY_DETAILS.get("companyLocation").key]}
-            inputRef={fieldRefs[COMPANY_DETAILS.get("companyLocation").key]}
-            label={COMPANY_DETAILS.get("companyLocation").label}
-            name={COMPANY_DETAILS.get("companyLocation").key}
+            helperText={errors[EMPLOYER_DETAILS.get("companyLocation").key]}
+            inputRef={fieldRefs[EMPLOYER_DETAILS.get("companyLocation").key]}
+            label={EMPLOYER_DETAILS.get("companyLocation").label}
+            name={EMPLOYER_DETAILS.get("companyLocation").key}
             onChange={handleChange}
             size="small"
-            value={formData?.[COMPANY_DETAILS.get("companyLocation").key]}
+            value={formData?.[EMPLOYER_DETAILS.get("companyLocation").key]}
           />
 
           <TextField
-            error={!!errors[COMPANY_DETAILS.get("companyIndustry").key]}
+            error={!!errors[EMPLOYER_DETAILS.get("companyIndustry").key]}
             fullWidth
-            helperText={errors[COMPANY_DETAILS.get("companyIndustry").key]}
-            inputRef={fieldRefs[COMPANY_DETAILS.get("companyIndustry").key]}
-            label={COMPANY_DETAILS.get("companyIndustry").label}
-            name={COMPANY_DETAILS.get("companyIndustry").key}
+            helperText={errors[EMPLOYER_DETAILS.get("companyIndustry").key]}
+            inputRef={fieldRefs[EMPLOYER_DETAILS.get("companyIndustry").key]}
+            label={EMPLOYER_DETAILS.get("companyIndustry").label}
+            name={EMPLOYER_DETAILS.get("companyIndustry").key}
             onChange={handleChange}
             size="small"
-            value={formData?.[COMPANY_DETAILS.get("companyIndustry").key]}
+            value={formData?.[EMPLOYER_DETAILS.get("companyIndustry").key]}
           />
         </Box>
 
         {/* Company Size */}
         <TextField
-          error={!!errors[COMPANY_DETAILS.get("companySize").key]}
+          error={!!errors[EMPLOYER_DETAILS.get("companySize").key]}
           fullWidth
-          helperText={errors[COMPANY_DETAILS.get("companySize").key]}
-          inputRef={fieldRefs[COMPANY_DETAILS.get("companySize").key]}
-          label={COMPANY_DETAILS.get("companySize").label}
-          name={COMPANY_DETAILS.get("companySize").key}
+          helperText={errors[EMPLOYER_DETAILS.get("companySize").key]}
+          inputRef={fieldRefs[EMPLOYER_DETAILS.get("companySize").key]}
+          label={EMPLOYER_DETAILS.get("companySize").label}
+          name={EMPLOYER_DETAILS.get("companySize").key}
           onChange={handleChange}
           size="small"
           type="number"
-          value={formData?.[COMPANY_DETAILS.get("companySize").key]}
+          value={formData?.[EMPLOYER_DETAILS.get("companySize").key]}
         />
       </Stack>
 

@@ -1,17 +1,46 @@
 import { Divider, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
+import EmployeeForm from "../components/profilePageComponents/EmployeeForm";
 import EmployerForm from "../components/profilePageComponents/EmployerForm";
 import Footer from "../components/Footer";
 
+import { EMPLOYEE_DETAILS } from "../constants/employeeDetails";
+import { EMPLOYER_DETAILS } from "../constants/employerDetails";
+import { ROLES } from "../constants/roles";
+import { useAuthContext } from "../hooks/useAuthContext";
 import useContent from "../hooks/useContent";
 import paths from "../routes/paths";
 
 const CompleteProfilePage = () => {
+  const { user } = useAuthContext();
+
   const content = useContent();
   const navigate = useNavigate();
 
-  const handleOnSuccess = () => {
+  const detailsMap =
+    user?.role === ROLES.get("jobSeeker").value
+      ? EMPLOYEE_DETAILS
+      : EMPLOYER_DETAILS;
+
+  const fields = Array.from(detailsMap).map(([key, value]) => key);
+
+  const [formData, setFormData] = useState(
+    Object.fromEntries(
+      fields.map((key) => [
+        detailsMap.get(key).key,
+        detailsMap.get(key).type === "number" ? 0 : "",
+      ])
+    )
+  );
+
+  const handleOnSubmit = () => {
+    console.log("formData", formData);
+    // TODO: Integrate with API to create / update company profile
+    navigate(paths.get("PROFILE").PATH);
+  };
+
+  const handleOnSkip = () => {
     navigate(paths.get("PROFILE").PATH);
   };
 
@@ -28,11 +57,23 @@ const CompleteProfilePage = () => {
           </Typography>
         </Stack>
 
-        {/* {user.role === ROLES.get("jobSeeker").value ? (
-        <EmployeeForm onSubmit={handleSubmit} onSkip={handleSkip} />
-        ) : ( */}
-        <EmployerForm onSuccess={handleOnSuccess} />
-        {/* )} */}
+        {user?.role === ROLES.get("jobSeeker").value ? (
+          <EmployeeForm
+            fields={fields}
+            formData={formData}
+            onSkip={handleOnSkip}
+            onSubmit={handleOnSubmit}
+            setFormData={setFormData}
+          />
+        ) : (
+          <EmployerForm
+            fields={fields}
+            formData={formData}
+            onSkip={handleOnSkip}
+            onSubmit={handleOnSubmit}
+            setFormData={setFormData}
+          />
+        )}
 
         <img
           alt={content.completeProfile.header}

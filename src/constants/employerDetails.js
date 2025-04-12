@@ -1,4 +1,4 @@
-const COMPANY_DETAILS = new Map([
+const EMPLOYER_DETAILS = new Map([
   [
     "companyDescription",
     {
@@ -81,4 +81,4 @@ const COMPANY_DETAILS = new Map([
   ],
 ]);
 
-export { COMPANY_DETAILS };
+export { EMPLOYER_DETAILS };

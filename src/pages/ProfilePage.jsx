@@ -1,6 +1,6 @@
 import { Divider, Stack, Tab, Tabs, Typography } from "@mui/material";
 
-import EditProfile from "../components/profilePageComponents/EditProfile";
+import EmployeeForm from "../components/profilePageComponents/EmployeeForm";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import ProfilePictureUpload from "../components/profilePageComponents/ProfilePictureUpload";
@@ -9,7 +9,6 @@ import ViewProfile from "../components/profilePageComponents/ViewProfile";
 import { RetrieveResume, retrieveUserProfile } from "../api/ProfileApi";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { GetAPI } from "../api/GeneralAPI";
 
 const ProfilePage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -26,19 +25,18 @@ const ProfilePage = () => {
     if (!id) {
       // If no ID is provided, show an empty form for creating a profile
       setFormData({
+        aboutMe: "",
+        certifications: "",
+        currentCompany: "",
+        education: "",
+        email: "",
+        experience: "",
         fullName: "",
         jobTitle: "",
-        profilePicture: "",
-        currentCompany: "",
         location: "",
-        email: "",
         phone: "",
-        certifications: "",
-        skillSet: "",
-        aboutMe: "",
         programmingLanguages: "",
-        education: "",
-        experience: "",
+        skillSet: "",
       });
       setLoading(false);
       return;
@@ -126,7 +124,7 @@ const ProfilePage = () => {
           {id && tabIndex === 0 ? (
             <ViewProfile formData={formData} resume={resume} />
           ) : (
-            <EditProfile
+            <EmployeeForm
               formData={formData}
               id={id}
               setFormData={setFormData}
