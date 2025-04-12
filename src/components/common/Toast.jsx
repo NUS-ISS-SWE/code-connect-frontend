@@ -1,6 +1,7 @@
-import Icon from "../constants/Icon.jsx";
+import { IconButton, Snackbar } from "@mui/material";
+import Icon from "../../constants/Icon.jsx";
 
-import { useGlobalContext } from "../hooks/useGlobalContext";
+import { useGlobalContext } from "../../hooks/useGlobalContext.js";
 
 const Toast = () => {
   const { state, dispatch } = useGlobalContext();
@@ -26,20 +27,20 @@ const Toast = () => {
           color="inherit"
           onClick={handleCloseSnackbar}
         >
-          <Icon name="Close" />
+          <Icon name="Close" size={"1.1em"} />
         </IconButton>
       }
       anchorOrigin={{
-        vertical: "top",
+        vertical: "bottom",
         horizontal: "right",
       }}
       autoHideDuration={5000}
       ContentProps={{
         className: `${
           showToast.variant === "success"
-            ? "!bg-success !text-white"
+            ? "!bg-white !border-l-4 !border-success !border-solid !text-gray-900"
             : showToast.variant === "error"
-            ? "!bg-error !text-white"
+            ? "!bg-white !border-l-4 !border-error !border-solid !text-gray-900"
             : ""
         } `,
       }}

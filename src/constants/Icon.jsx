@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
-import { FaHome, FaCog } from "react-icons/fa";
+import { FaHome } from "react-icons/fa";
 import { IoIosArrowDropleftCircle } from "react-icons/io";
 import { MdEmail, MdPeopleAlt, MdSettings } from "react-icons/md";
 import {
   RiAddFill,
   RiAiGenerate2,
   RiAiGenerateText,
+  RiArchive2Line,
   RiArrowDownSFill,
   RiArrowRightSFill,
   RiBarChartFill,
@@ -18,15 +19,20 @@ import {
   RiLogoutBoxLine,
   RiMenuLine,
   RiShakeHandsFill,
+  RiSearchLine,
+  RiSettings3Line,
+  RiTableView,
   RiToolsFill,
   RiUserFill,
   RiUserLine,
 } from "react-icons/ri";
+import { RxDotFilled } from "react-icons/rx";
 
 const ICONS_MAP = {
   Add: RiAddFill,
   AiGenerate: RiAiGenerate2,
   AiGenerateText: RiAiGenerateText,
+  Archive: RiArchive2Line,
   ArrowDown: RiArrowDownSFill,
   ArrowLeftCircle: IoIosArrowDropleftCircle,
   ArrowRight: RiArrowRightSFill,
@@ -34,6 +40,7 @@ const ICONS_MAP = {
   Briefcase: RiBriefcase4Fill,
   Cog: MdSettings,
   Close: RiCloseFill,
+  Dot: RxDotFilled,
   Email: MdEmail,
   Eye: RiEyeLine,
   EyeOff: RiEyeOffLine,
@@ -43,8 +50,10 @@ const ICONS_MAP = {
   Logout: RiLogoutBoxLine,
   Menu: RiMenuLine,
   People: MdPeopleAlt,
-  Settings: FaCog,
+  Search: RiSearchLine,
+  Settings: RiSettings3Line,
   ShakeHands: RiShakeHandsFill,
+  Table: RiTableView,
   Tools: RiToolsFill,
   User: RiUserFill,
   UserLine: RiUserLine,

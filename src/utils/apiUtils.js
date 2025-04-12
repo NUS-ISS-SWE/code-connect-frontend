@@ -1,6 +1,5 @@
-/* eslint-disable no-undef */
-
 import { fetchToken, removeToken, LOGIN_TOKEN_KEY } from "./authUtils.js";
+import { extractSalaryRange } from "./stringUtils.js";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -13,23 +12,24 @@ const apiWrapper = async ({
   method,
   signal,
 }) => {
-  dispatch({ type: "SET_LOADING", payload: { isOpen: true } });
+  dispatch({ type: "LOADING", payload: { isOpen: true } });
 
   try {
     const response = await fetch(`${endpoint}`, {
       method,
-      headers: headers || {
-        Authorization: `Bearer ${fetchToken(LOGIN_TOKEN_KEY)}`,
+      headers: headers ?? {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${fetchToken(LOGIN_TOKEN_KEY).token}`,
       },
       body,
       signal,
     });
 
-    const jsonData = await response.json();
-
     if (!response.ok) {
-      throw jsonData;
+      throw response;
     }
+
+    const jsonData = response.status == 204 ?  response : await response.json();
 
     return { data: jsonData, error: "", status: response.status };
   } catch (err) {
@@ -57,8 +57,40 @@ const apiWrapper = async ({
 
     return { data: err, error: errorMessage, status: err.status };
   } finally {
-    dispatch({ type: "SET_LOADING", payload: { isOpen: false } });
+    dispatch({ type: "LOADING", payload: { isOpen: false } });
   }
 };
 
-export { apiWrapper, baseUrl };
+const prepareFormDataForCreateAndEditJob = (data) => {
+  const { salaryRangeMin, salaryRangeMax, ...processedData } = data;
+
+  const postedDate = data["postedDate"] ?? new Date().toISOString();
+  processedData["postedDate"] = postedDate;
+
+  // Concat salary ranges into single string
+  processedData["salaryRange"] = `$${salaryRangeMin ?? 0}-$${
+    salaryRangeMax ?? Infinity
+  }`;
+
+  return processedData;
+};
+
+const unpackRetrieveJobData = (data) => {
+  const processedData = { ...data };
+
+  // Include salary min and max values
+  const [salaryRangeMin, salaryRangeMax] = extractSalaryRange(
+    data?.salaryRange
+  );
+  processedData["salaryRangeMin"] = salaryRangeMin;
+  processedData["salaryRangeMax"] = salaryRangeMax;
+
+  return processedData;
+};
+
+export {
+  apiWrapper,
+  baseUrl,
+  prepareFormDataForCreateAndEditJob,
+  unpackRetrieveJobData,
+};

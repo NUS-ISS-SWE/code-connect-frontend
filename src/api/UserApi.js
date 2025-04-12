@@ -1,49 +1,12 @@
-import { apiWrapper } from "../utils/apiUtils";
+import { apiWrapper, baseUrl } from "../utils/apiUtils";
 
-const loginUser = async ({ username, password }, dispatch) => {
-  const credentials = btoa(`${username}:${password}`); // Encode in Base64
-
-  try {
-    const response = await fetch(`/api/v1/login`, {
-      method: "GET",
-      headers: {
-        Authorization: `Basic ${credentials}`, // Attach Basic Auth
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Login failed");
-    }
-
-    // const jsonData = await response.json();
-
-    // Dummy token for now
-    const dummyToken = "123";
-
-    return { data: { token: dummyToken }, error: "", status: response.status };
-  } catch (error) {
-    console.error("Error:", error);
-
-    dispatch({
-      type: "SHOW_TOAST",
-      payload: {
-        message: error,
-        isOpen: true,
-        variant: "error",
-      },
-    });
-    return { data: {}, error: error, status: {} };
-  }
-};
-
-const registerUser = async ({ username, password }, dispatch) => {
-  const formData = JSON.stringify({ username, password });
+const loginUser = async ({ username, password, role }, dispatch) => {
+  const requestBody = JSON.stringify({ username, password, role });
 
   const response = await apiWrapper({
-    body: formData,
+    body: requestBody,
     dispatch,
-    endpoint: `/api/v1/register`,
+    endpoint: `${baseUrl}/api/v1/login`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -53,4 +16,40 @@ const registerUser = async ({ username, password }, dispatch) => {
   return response;
 };
 
-export { loginUser, registerUser };
+const registerUser = async ({ username, password, role }, dispatch) => {
+  const requestBody = JSON.stringify({ username, password, role });
+
+  const response = await apiWrapper({
+    body: requestBody,
+    dispatch,
+    endpoint: `${baseUrl}/api/v1/register`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  return response;
+};
+
+const updatePassword = async (
+  { username, password, newPassword },
+  dispatch
+) => {
+  const requestBody = JSON.stringify({
+    username,
+    password,
+    newPassword,
+  });
+
+  const response = await apiWrapper({
+    body: requestBody,
+    dispatch,
+    endpoint: `${baseUrl}/api/v1/update-password`,
+    method: "POST",
+  });
+
+  return response;
+};
+
+export { loginUser, registerUser, updatePassword };

@@ -1,10 +1,6 @@
-/* eslint-disable no-undef */
-/* eslint-disable react/jsx-no-undef */
-import Loader from "./components/Loader.jsx";
+import Loader from "./components/common/Loader.jsx";
 import Router from "./router.jsx";
-import Toast from "./components/Toast.jsx";
-
-import "./App.css";
+import Toast from "./components/common/Toast.jsx";
 
 function App() {
   return (

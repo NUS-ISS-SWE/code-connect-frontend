@@ -9,6 +9,24 @@ const paths = new Map([
     },
   ],
   [
+    "ACCOUNT",
+    {
+      ID: "_account",
+      LABEL: "Account",
+      PATH: "/account",
+      IS_PROTECTED: true,
+    },
+  ],
+  [
+    "ACCOUNT_VERIFIED",
+    {
+      ID: "_verification_success",
+      LABEL: "",
+      PATH: "/verification-success",
+      IS_PROTECTED: false,
+    },
+  ],
+  [
     "ADMIN",
     {
       ID: "_admin",
@@ -41,6 +59,78 @@ const paths = new Map([
       ID: "_jobs",
       LABEL: "Jobs",
       PATH: "/jobs",
+      IS_PROTECTED: false,
+    },
+  ],
+  [
+    "JOBAPPLICATIONS",
+    {
+      ID: "_jobapplications",
+      LABEL: "Job Applications",
+      PATH: "/jobapplications",
+      IS_PROTECTED: false,
+    },
+  ],
+  [
+    "JOBS_MANAGEMENT",
+    {
+      ID: "_jobs",
+      LABEL: "Manage Jobs",
+      PATH: "/jobs-management",
+      IS_PROTECTED: true,
+    },
+  ],
+  [
+    "CREATEJOB",
+    {
+      ID: "_createjob",
+      LABEL: "Create Job",
+      PATH: "/job/create",
+      IS_PROTECTED: true,
+    },
+  ],
+  [
+    "APPLY_JOB",
+    {
+      ID: "_apply_job",
+      LABEL: "Apply Job",
+      PATH: "/job/:jobId/apply",
+      IS_PROTECTED: true,
+    },
+  ],
+  [
+    "APPLY_JOB_SUCCESS",
+    {
+      ID: "_apply_job_success",
+      LABEL: "",
+      PATH: "/job/application-success",
+      IS_PROTECTED: true,
+    },
+  ],
+  [
+    "EDITJOB",
+    {
+      ID: "_edit_job",
+      LABEL: "Edit",
+      PATH: "/job/:jobId/edit",
+      IS_PROTECTED: true,
+    },
+  ],
+  [
+    "GETJOB",
+    {
+      ID: "_getjob",
+      LABEL: "View",
+      PATH: "/job/:jobId",
+      IS_PROTECTED: false,
+    },
+  ],
+  [
+    "JOB",
+    {
+      ID: "_job",
+      LABEL: "Job",
+      PATH: "/job",
       IS_PROTECTED: false,
     },
   ],

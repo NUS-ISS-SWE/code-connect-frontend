@@ -1,17 +1,28 @@
-/* eslint-disable react/jsx-no-undef */
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
+import {
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Link } from "react-router-dom";
 
 import { loginUser, registerUser } from "../api/UserApi";
+import TermsAndConditionsModal from "../components/modals/TermsAndConditionsModal.jsx";
 import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon.jsx";
+import { ROLES } from "../constants/roles.js";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import paths from "../routes/paths.js";
 import { LOGIN_TOKEN_KEY } from "../utils/authUtils.js";
+import { useState } from "react";
 
 const SignupPage = () => {
-  const { login } = useAuthContext();
+  const { login, user } = useAuthContext();
   const { state, dispatch } = useGlobalContext();
 
   const navigate = useNavigate();
@@ -22,14 +33,22 @@ const SignupPage = () => {
     confirmPassword: useRef(null),
   };
 
+  const [showModal, setShowModal] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [formInputs, setFormInputs] = useState({
     email: "",
     password: "",
     confirmPassword: "",
+    role: ROLES.get("user").value,
   });
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      navigate(paths.get("PROFILE").PATH);
+    }
+  }, []);
 
   const handleChangeInput = (key) => (evt) => {
     setErrors((prevState) => {
@@ -75,11 +94,7 @@ const SignupPage = () => {
     const firstErrorField = validate();
 
     if (!firstErrorField) {
-      const { data, error, status } = await registerUser(formInputs, dispatch);
-
-      if (!error) {
-        handleLoginUser();
-      }
+      ShowModal(true);
     } else {
       if (fieldRefs[firstErrorField]) {
         fieldRefs[firstErrorField]?.current.scrollIntoView({
@@ -92,18 +107,26 @@ const SignupPage = () => {
     setLoading(false);
   };
 
+  const RegisterAndLoginUser = async () => {
+    const { data, error, status } = await registerUser(formInputs, dispatch);
+
+    if (!error) {
+      handleLoginUser();
+    }
+  };
+
   const handleLoginUser = async () => {
-    const { data, message, status } = await loginUser(formInputs, dispatch);
+    const { data, error, status } = await loginUser(formInputs, dispatch);
 
     if (status === 200) {
-      login(LOGIN_TOKEN_KEY, data.token);
+      login(LOGIN_TOKEN_KEY, data.accessToken, formInputs.username);
 
       dispatch({
         type: "SHOW_TOAST",
         payload: {
           message: "You have been logged in",
           isOpen: true,
-          variant: "",
+          variant: "success",
         },
       });
 
@@ -112,7 +135,7 @@ const SignupPage = () => {
       dispatch({
         type: "SHOW_TOAST",
         payload: {
-          message: String(message),
+          message: String(error),
           isOpen: true,
           variant: "error",
         },
@@ -120,11 +143,20 @@ const SignupPage = () => {
     }
   };
 
+  const ShowModal = (show) => {
+    setShowModal(show);
+  };
+
   return (
     <Box
       className="bg-white flex h-[100vh] items-center justify-center relative w-[100vw]"
       component="div"
     >
+      <TermsAndConditionsModal
+        open={showModal}
+        onClose={() => ShowModal(false)}
+        onAccept={() => RegisterAndLoginUser(true)}
+      />
       {/* Logo */}
       <Box className="flex items-center">
         <Link to="/">

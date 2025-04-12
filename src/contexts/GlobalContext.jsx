@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-import { createContext, useReducer } from "react";
 import globalReducer from "../reducers/globalReducer";
 
 export const GlobalContext = createContext();
@@ -11,6 +9,7 @@ export const initialState = {
     isOpen: false,
     message: undefined,
   },
+  jobDetails: {},
   loading: { message: "", isOpen: false },
   showToast: { message: "", isOpen: false },
 };

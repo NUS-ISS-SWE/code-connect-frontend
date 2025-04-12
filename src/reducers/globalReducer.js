@@ -8,7 +8,10 @@ const globalReducer = (state, action) => {
     case "LOADING":
       return { ...state, loading: action.payload };
 
-    case "SHOW_TOAST":
+    case "JOB_DETAILS":
+      return { ...state, jobDetails: action.payload };
+ 
+      case "SHOW_TOAST":
       return { ...state, showToast: action.payload };
 
     case "RESET":

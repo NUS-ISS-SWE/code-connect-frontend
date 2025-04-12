@@ -1,126 +1,50 @@
+import { GetAPI, PostAPI } from "./GeneralAPI";
 import { apiWrapper } from "../utils/apiUtils";
+import { fetchToken, LOGIN_TOKEN_KEY } from "../utils/authUtils";
 
-const getProfileById = async ({ id }, dispatch) => {
+const PATHNAME = "profiles";
+
+const createProfile = async (formData, dispatch) => {
+  return await PostAPI(formData, `/${PATHNAME}`, dispatch);
+};
+
+const UploadProfilePicture = async (file, id, dispatch) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
   try {
-    const url = `/profiles/${id}`;
-
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        //Authorization: `Basic ${credentials}`, // Attach Basic Auth
-        //"Content-Type": "application/json",
-      },
+    const response = await apiWrapper({
+      body: formData,
+      dispatch,
+      endpoint: `/${PATHNAME}/${id}/profilePicture`, // API endpoint for image upload
+      headers: {},
+      method: "POST",
     });
 
-    if (!response.ok) {
-      throw new Error("Failed to get profile");
-    }
-
-    return { data: response, error: "", status: response.status };
+    return {
+      data: response?.data?.profilePicture,
+      error: "",
+      status: response.status,
+    };
   } catch (error) {
-    console.error("Error:", error);
-
-    dispatch({
-      type: "SHOW_TOAST",
-      payload: {
-        message: error,
-        isOpen: true,
-        variant: "error",
-      },
-    });
-
-    return { data: null, error: error.message, status: 500 };
+    console.error("Error uploading profile picture:", error);
+    return null;
   }
 };
-const createProfile = async (
-  {
-    fullName,
-    jobTitle,
-    currentCompany,
-    location,
-    email,
-    phone,
-    aboutMe,
-    programmingLanguages,
-    education,
-    experience,
-  },
-  dispatch
-) => {
-  const formData = JSON.stringify({
-    fullName,
-    jobTitle,
-    currentCompany,
-    location,
-    email,
-    phone,
-    aboutMe,
-    programmingLanguages,
-    education,
-    experience,
-  });
 
+const DeleteResume = async ({ id }, dispatch) => {
   const response = await apiWrapper({
-    body: formData,
     dispatch,
-    endpoint: "/profiles", // Update specific profile by ID
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "POST", // Use PUT instead of POST for updates
-  });
-  console.log("returning", response);
-
-  return response;
-};
-
-const updateProfile = async (
-  {
-    id,
-    fullName,
-    jobTitle,
-    currentCompany,
-    location,
-    email,
-    phone,
-    aboutMe,
-    programmingLanguages,
-    education,
-    experience,
-  },
-  dispatch
-) => {
-  const formData = JSON.stringify({
-    fullName,
-    jobTitle,
-    currentCompany,
-    location,
-    email,
-    phone,
-    aboutMe,
-    programmingLanguages,
-    education,
-    experience,
-  });
-
-  const url = `/profiles/${id}`;
-
-  const response = await apiWrapper({
-    body: formData,
-    dispatch,
-    endpoint: url, // Update specific profile by ID
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "PUT", // Use PUT instead of POST for updates
+    endpoint: `/${PATHNAME}/${id}/deleteResume`,
+    method: "DELETE",
   });
 
   return response;
 };
 
-const retrieveResume = async ({ id }, dispatch) => {
+const RetrieveResume = async ({ id, fileName }, dispatch) => {
   try {
-    const response = await fetch(`/profiles/${id}/resume`, {
+    const response = await fetch(`/${PATHNAME}/${id}/resume`, {
       method: "GET",
     });
 
@@ -129,7 +53,9 @@ const retrieveResume = async ({ id }, dispatch) => {
     }
 
     const blob = await response.blob();
-    const file = new File([blob], "Resume.pdf", { type: "application/pdf" });
+    const file = new File([blob], fileName || "Resume.pdf", {
+      type: "application/pdf",
+    });
     const fileUrl = URL.createObjectURL(file);
 
     return { data: { file, fileUrl }, error: "", status: response.status };
@@ -149,13 +75,18 @@ const retrieveResume = async ({ id }, dispatch) => {
   }
 };
 
-const uploadResume = async ({ id, formData }, dispatch) => {
-  const url = `/profiles/${id}/uploadResume`;
+const retrieveUserProfile = async (id, dispatch) => {
+  return await GetAPI(`/${PATHNAME}/${id}`, dispatch);
+};
 
+const UploadResumeAPI = async ({ id, formData }, dispatch) => {
   const response = await apiWrapper({
     body: formData,
     dispatch,
-    endpoint: url,
+    endpoint: `/${PATHNAME}/${id}/uploadResume`,
+    headers: {
+      Authorization: `Bearer ${fetchToken(LOGIN_TOKEN_KEY).token}`,
+    },
     method: "POST",
   });
 
@@ -163,9 +94,10 @@ const uploadResume = async ({ id, formData }, dispatch) => {
 };
 
 export {
-  getProfileById,
-  updateProfile,
   createProfile,
-  retrieveResume,
-  uploadResume,
+  DeleteResume,
+  RetrieveResume,
+  retrieveUserProfile,
+  UploadResumeAPI,
+  UploadProfilePicture,
 };
