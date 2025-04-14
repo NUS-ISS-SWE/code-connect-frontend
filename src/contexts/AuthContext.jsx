@@ -1,3 +1,7 @@
+import { retrieveEmployeeProfile } from "../api/EmployeeProfilesApi";
+import { retrieveEmployerProfile } from "../api/EmployerProfilesApi";
+import { loginUser } from "../api/UserApi";
+import { ROLES } from "../constants/roles";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import {
   fetchToken,
@@ -26,16 +30,56 @@ export const AuthProvider = ({ children }) => {
       // const isValid = await verifyToken(token);
       // isValid ? login(LOGIN_TOKEN_KEY, token) : logout();
 
-      login(LOGIN_TOKEN_KEY, storageData?.token, storageData?.username);
+      fetchProfile(storageData, dispatch);
     }
   };
 
-  const login = (key, token, username) => {
-    setUser((prevState) => ({ ...prevState, token }));
-    setIsAuthenticated(true);
+  const fetchProfile = async (storageData) => {
+    if (storageData.role === ROLES.get("employer").value) {
+      const { data, status } = await retrieveEmployerProfile(dispatch);
 
-    storeToken(key, token);
-    storeToken(LOGIN_TOKEN_KEY, JSON.stringify({ token, username }));
+      if (status === 200) {
+        setUser(data);
+      }
+    } else if (storageData.role === ROLES.get("employee").value) {
+      const { data, status } = await retrieveEmployeeProfile(dispatch);
+
+      if (status === 200) {
+        setUser(data);
+      }
+    } else {
+      setUser(storageData);
+    }
+  };
+
+  const login = async (formInputs) => {
+    const response = await loginUser(formInputs, dispatch);
+
+    if (response.status === 200) {
+      const { accessToken, role } = response.data;
+
+      const storageData = {
+        token: accessToken,
+        role,
+        username: formInputs?.username,
+      };
+      storeToken(LOGIN_TOKEN_KEY, JSON.stringify(storageData));
+
+      await fetchProfile(storageData);
+
+      setIsAuthenticated(true);
+
+      dispatch({
+        type: "SHOW_TOAST",
+        payload: {
+          message: "You have been logged in",
+          isOpen: true,
+          variant: "success",
+        },
+      });
+
+      return response;
+    }
   };
 
   const logout = () => {

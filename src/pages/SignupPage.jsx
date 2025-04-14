@@ -8,21 +8,20 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { loginUser, registerUser } from "../api/UserApi";
-import TermsAndConditionsModal from "../components/modals/TermsAndConditionsModal.jsx";
+import { registerUser } from "../api/UserApi";
 import logo from "../assets/logo/logo.png";
+import TermsAndConditionsModal from "../components/modals/TermsAndConditionsModal.jsx";
 import Icon from "../constants/Icon.jsx";
 import { ROLES } from "../constants/roles.js";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import paths from "../routes/paths.js";
-import { LOGIN_TOKEN_KEY } from "../utils/authUtils.js";
-import { useState } from "react";
 
 const SignupPage = () => {
-  const { login, user } = useAuthContext();
+  const { user } = useAuthContext();
   const { state, dispatch } = useGlobalContext();
 
   const navigate = useNavigate();
@@ -110,36 +109,9 @@ const SignupPage = () => {
   const RegisterAndLoginUser = async () => {
     const { data, error, status } = await registerUser(formInputs, dispatch);
 
-    if (!error) {
-      handleLoginUser();
-    }
-  };
-
-  const handleLoginUser = async () => {
-    const { data, error, status } = await loginUser(formInputs, dispatch);
-
     if (status === 200) {
-      login(LOGIN_TOKEN_KEY, data.accessToken, formInputs.username);
-
-      dispatch({
-        type: "SHOW_TOAST",
-        payload: {
-          message: "You have been logged in",
-          isOpen: true,
-          variant: "success",
-        },
-      });
-
-      navigate(paths.get("HOME").PATH);
-    } else {
-      dispatch({
-        type: "SHOW_TOAST",
-        payload: {
-          message: String(error),
-          isOpen: true,
-          variant: "error",
-        },
-      });
+      //TODO: Navigate to Complete Profile Page
+      // navigate(paths.get("COMPLETE_PROFILE").PATH);
     }
   };
 

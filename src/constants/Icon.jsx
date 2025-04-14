@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { FaHome } from "react-icons/fa";
+import { FaUserTie } from "react-icons/fa6";
 import { IoIosArrowDropleftCircle } from "react-icons/io";
 import { MdEmail, MdPeopleAlt, MdSettings } from "react-icons/md";
 import {
@@ -15,6 +16,7 @@ import {
   RiEyeLine,
   RiEyeOffLine,
   RiFile3Fill,
+  RiGlobalLine,
   RiLockLine,
   RiLogoutBoxLine,
   RiMenuLine,
@@ -42,9 +44,12 @@ const ICONS_MAP = {
   Close: RiCloseFill,
   Dot: RxDotFilled,
   Email: MdEmail,
+  Employee: FaUserTie,
+  Employer: RiBriefcase4Fill,
   Eye: RiEyeLine,
   EyeOff: RiEyeOffLine,
   File: RiFile3Fill,
+  Globe: RiGlobalLine ,
   Home: FaHome,
   Lock: RiLockLine,
   Logout: RiLogoutBoxLine,

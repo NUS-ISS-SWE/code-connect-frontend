@@ -1,4 +1,4 @@
-import { apiWrapper, baseUrl } from "../utils/apiUtils";
+import { apiWrapper } from "../utils/apiUtils";
 
 const loginUser = async ({ username, password, role }, dispatch) => {
   const requestBody = JSON.stringify({ username, password, role });
@@ -6,7 +6,7 @@ const loginUser = async ({ username, password, role }, dispatch) => {
   const response = await apiWrapper({
     body: requestBody,
     dispatch,
-    endpoint: `${baseUrl}/api/v1/login`,
+    endpoint: `/api/v1/login`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -22,7 +22,7 @@ const registerUser = async ({ username, password, role }, dispatch) => {
   const response = await apiWrapper({
     body: requestBody,
     dispatch,
-    endpoint: `${baseUrl}/api/v1/register`,
+    endpoint: `/api/v1/register`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -45,7 +45,7 @@ const updatePassword = async (
   const response = await apiWrapper({
     body: requestBody,
     dispatch,
-    endpoint: `${baseUrl}/api/v1/update-password`,
+    endpoint: `/api/v1/update-password`,
     method: "POST",
   });
 

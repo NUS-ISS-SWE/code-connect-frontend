@@ -1,5 +1,5 @@
+import AppRoutes from "./routes/AppRoutes.jsx";
 import Loader from "./components/common/Loader.jsx";
-import Router from "./router.jsx";
 import Toast from "./components/common/Toast.jsx";
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
     <>
       <Loader />
 
-      <Router />
+      <AppRoutes />
 
       <Toast />
     </>

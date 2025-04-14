@@ -19,7 +19,7 @@ const CompleteProfilePage = () => {
   const navigate = useNavigate();
 
   const detailsMap =
-    user?.role === ROLES.get("jobSeeker").value
+    user?.role === ROLES.get("employee").value
       ? EMPLOYEE_DETAILS
       : EMPLOYER_DETAILS;
 
@@ -57,7 +57,7 @@ const CompleteProfilePage = () => {
           </Typography>
         </Stack>
 
-        {user?.role === ROLES.get("jobSeeker").value ? (
+        {user?.role === ROLES.get("employee").value ? (
           <EmployeeForm
             fields={fields}
             formData={formData}

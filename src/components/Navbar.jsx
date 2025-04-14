@@ -8,11 +8,13 @@ import {
   MenuItem,
   Stack,
   Toolbar,
+  Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
 import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon";
+import { ROLES } from "../constants/roles";
 import { useAuthContext } from "../hooks/useAuthContext";
 import paths from "../routes/paths";
 import { NAV_OPTIONS, PROFILE_MENU_OPTIONS } from "../utils/navOptionsUtils";
@@ -128,8 +130,57 @@ const Navbar = () => {
                 <Stack
                   className={`absolute bg-white gap-2 mt-1 px-2 py-2 right-0 shadow top-12 w-[200px]`}
                 >
-                  {/* TODO: Show user name and email */}
-                  {/* <Divider /> */}
+                  {user.role === ROLES.get("employer").value ? (
+                    <Box className="!cursor-default flex items-center justify-start gap-x-2 px-3 py-2">
+                      <Box className="bg-white border flex !h-10 items-center justify-center rounded-full text-primary !w-10 ">
+                        <Icon name={"Employer"} size={"1em"} />
+                      </Box>
+
+                      <Stack className="items-start justify-start space-y-0">
+                        <Typography className="text-gray-900 !text-sm !font-bold">
+                          {user.companyName}
+                        </Typography>
+
+                        <Typography className="text-gray-900 !text-sm !font-medium">
+                          {user.username}
+                        </Typography>
+                      </Stack>
+                    </Box>
+                  ) : user.role === ROLES.get("employee").value ? (
+                    <Box className="!cursor-default flex items-center justify-start gap-x-2 px-3 py-2">
+                      <Box className="bg-white border flex !h-10 items-center justify-center rounded-full text-primary !w-10 ">
+                        <Icon name={"Employee"} size={"1em"} />
+                      </Box>
+
+                      <Stack className="items-start justify-start space-y-0">
+                        <Typography className="text-gray-900 !text-sm !font-bold">
+                          {user.username}
+                        </Typography>
+
+                        <Typography className="text-gray-900 !text-sm !font-medium">
+                          {user.email}
+                        </Typography>
+                      </Stack>
+                    </Box>
+                  ) : (
+                    <Box className="!cursor-default flex items-center justify-start gap-x-2 px-3 py-2">
+                      <Box className="bg-white border flex !h-10 items-center justify-center rounded-full text-primary !w-10 ">
+                        <Icon name={"Globe"} size={"1em"} />
+                      </Box>
+
+                      <Stack className="items-start justify-start space-y-0">
+                        <Typography className="text-gray-900 !text-sm !font-bold">
+                          Administrator
+                        </Typography>
+
+                        <Typography className="text-gray-900 !text-sm !font-medium">
+                          {user.username}
+                        </Typography>
+                      </Stack>
+                    </Box>
+                  )}
+
+                  <Divider />
 
                   {PROFILE_MENU_OPTIONS.map((option, index) => (
                     <Box
