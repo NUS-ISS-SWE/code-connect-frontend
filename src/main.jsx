@@ -12,12 +12,12 @@ import "./styles/index.css";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <GlobalProvider>
-      <AuthProvider>
-        <Router>
+    <Router>
+      <GlobalProvider>
+        <AuthProvider>
           <App />
-        </Router>
-      </AuthProvider>
-    </GlobalProvider>
+        </AuthProvider>
+      </GlobalProvider>
+    </Router>
   </StrictMode>
 );

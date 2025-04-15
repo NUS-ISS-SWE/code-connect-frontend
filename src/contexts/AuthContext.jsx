@@ -1,8 +1,11 @@
+import { useNavigate } from "react-router-dom";
+
 import { retrieveEmployeeProfile } from "../api/EmployeeProfilesApi";
 import { retrieveEmployerProfile } from "../api/EmployerProfilesApi";
 import { loginUser } from "../api/UserApi";
 import { ROLES } from "../constants/roles";
 import { useGlobalContext } from "../hooks/useGlobalContext";
+import paths from "../routes/paths";
 import {
   fetchToken,
   LOGIN_TOKEN_KEY,
@@ -14,6 +17,8 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const { state, dispatch } = useGlobalContext();
+
+  const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -30,11 +35,11 @@ export const AuthProvider = ({ children }) => {
       // const isValid = await verifyToken(token);
       // isValid ? login(LOGIN_TOKEN_KEY, token) : logout();
 
-      fetchProfile(storageData, dispatch);
+      fetchUserProfile(storageData, dispatch);
     }
   };
 
-  const fetchProfile = async (storageData) => {
+  const fetchUserProfile = async (storageData) => {
     if (storageData.role === ROLES.get("employer").value) {
       const { data, status } = await retrieveEmployerProfile(dispatch);
 
@@ -50,6 +55,8 @@ export const AuthProvider = ({ children }) => {
     } else {
       setUser(storageData);
     }
+
+    setIsAuthenticated(true);
   };
 
   const login = async (formInputs) => {
@@ -65,9 +72,7 @@ export const AuthProvider = ({ children }) => {
       };
       storeToken(LOGIN_TOKEN_KEY, JSON.stringify(storageData));
 
-      await fetchProfile(storageData);
-
-      setIsAuthenticated(true);
+      await fetchUserProfile(storageData);
 
       dispatch({
         type: "SHOW_TOAST",
@@ -83,6 +88,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    navigate(paths.get("HOME").PATH);
     setIsAuthenticated(false);
     removeToken(LOGIN_TOKEN_KEY);
 
@@ -99,11 +105,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const authState = {
+    fetchUserProfile,
     isAuthenticated,
     login,
     logout,
-    user,
     setUser,
+    user,
   };
 
   return (

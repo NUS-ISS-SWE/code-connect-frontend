@@ -182,7 +182,7 @@ const Navbar = () => {
 
                   <Divider />
 
-                  {PROFILE_MENU_OPTIONS.map((option, index) => (
+                  {PROFILE_MENU_OPTIONS(user.id).map((option, index) => (
                     <Box
                       className="!capitalize !duration-500 !ease-in-out flex !font-medium gap-x-2 items-center !justify-start px-3 py-2 rounded-sm !text-gray-700 !text-start !text-sm !transition-all hover:bg-gray-100 !no-underline"
                       component={Link}

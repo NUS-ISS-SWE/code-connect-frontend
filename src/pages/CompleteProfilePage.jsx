@@ -37,11 +37,11 @@ const CompleteProfilePage = () => {
   const handleOnSubmit = () => {
     console.log("formData", formData);
     // TODO: Integrate with API to create / update company profile
-    navigate(paths.get("PROFILE").PATH);
+    navigate(`${paths.get("PROFILE").PATH}/${user.id}`);
   };
 
   const handleOnSkip = () => {
-    navigate(paths.get("PROFILE").PATH);
+    navigate(`${paths.get("PROFILE").PATH}/${user.id}`);
   };
 
   return (

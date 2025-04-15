@@ -1,74 +1,59 @@
-import { Divider, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Divider, Stack, Tab, Tabs, Typography } from "@mui/material";
 
 import EmployeeForm from "../components/profilePageComponents/EmployeeForm";
+import EmployerForm from "../components/profilePageComponents/EmployerForm";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import ProfilePictureUpload from "../components/profilePageComponents/ProfilePictureUpload";
 import ViewProfile from "../components/profilePageComponents/ViewProfile";
 
-import { RetrieveResume, retrieveUserProfile } from "../api/ProfileApi";
+import { RetrieveResume } from "../api/ProfileApi";
+import { EMPLOYEE_DETAILS } from "../constants/employeeDetails";
+import { EMPLOYER_DETAILS } from "../constants/employerDetails";
+import { ROLES } from "../constants/roles";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 
 const ProfilePage = () => {
-  const { state, dispatch } = useGlobalContext();
+  const {
+    state: { loading },
+    dispatch,
+  } = useGlobalContext();
 
   const { setUser, user } = useAuthContext();
-  const { id } = useParams(); // Get profile ID from URL
+  const { id } = useParams();
 
+  const detailsMap =
+    user?.role === ROLES.get("employee").value
+      ? EMPLOYEE_DETAILS
+      : EMPLOYER_DETAILS;
+
+  const fields = Array.from(detailsMap).map(([key, value]) => key);
+
+  const [formData, setFormData] = useState(
+    Object.fromEntries(
+      fields.map((key) => [
+        detailsMap.get(key).key,
+        detailsMap.get(key).type === "number" ? 0 : "",
+      ])
+    )
+  );
   const [resume, setResume] = useState(null);
-  const [formData, setFormData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [tabIndex, setTabIndex] = useState(0);
-
-  useEffect(() => {
-    if (!id) {
-      // If no ID is provided, show an empty form for creating a profile
-      setFormData({
-        aboutMe: "",
-        certifications: "",
-        currentCompany: "",
-        education: "",
-        email: "",
-        experience: "",
-        fullName: "",
-        jobTitle: "",
-        location: "",
-        phone: "",
-        programmingLanguages: "",
-        skillSet: "",
-      });
-      setLoading(false);
-      return;
-    }
-
-    //TODO: fetch user profile should happen on login
-    fetchProfile();
-  }, [id]); // Runs when the ID changes
 
   useEffect(() => {
     if (!user) return;
 
-    // fetch resume if user has resume-related data
-    if (user.resumeData?.resumeContent) {
-      fetchResume();
-    } else {
-      setResume(null);
-    }
+    setFormData(user);
   }, [user]);
 
-  const fetchProfile = async () => {
-    const { data, status } = await retrieveUserProfile(id, dispatch);
+  // useEffect(() => {
+  //   if (user.id === Number(id)) return;
 
-    if (status === 200) {
-      setFormData(data);
-      setUser({ ...user, ...data });
-    }
-  };
+  //   !!!TODO Fetch other user profile
+  // }, [id]);
 
   const fetchResume = async () => {
-    dispatch({ type: "LOADING", payload: { isOpen: true } });
-
     const { data } = await RetrieveResume(
       {
         id,
@@ -80,60 +65,79 @@ const ProfilePage = () => {
     if (data) {
       setResume(data);
     }
-
-    dispatch({ type: "LOADING", payload: { isOpen: false } });
   };
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
   };
 
-  // {loading ? (
-  //   <CircularProgress size={20} className="!text-white" />
-  // ) : (
-  //   "Sign up"
-  // )}
+  const handleOnSubmit = () => {
+    console.log("formData", formData);
+  };
 
   return (
     <Stack className="bg-whiteflex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
 
       <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[95vw] lg:w-[70vw]">
-        <Typography className="!font-medium flex-1 text-left !text-2xl">
-          {id ? "Profile" : "Create Profile"}
-        </Typography>
+        <Stack className="space-y-4 w-full">
+          <Stack className="space-y-2 w-full">
+            <Box className="flex items-center justify-start w-full">
+              <Typography className="!font-medium flex-1 text-left !text-2xl">
+                Profile
+              </Typography>
+            </Box>
 
-        <Divider flexItem />
+            <Divider flexItem />
+          </Stack>
 
-        {/* Tabs for View / Edit */}
-        {id && (
-          <Tabs value={tabIndex} onChange={handleTabChange}>
-            <Tab label="View" />
-            <Tab label="Edit" />
-          </Tabs>
-        )}
+          {/* Tabs for View / Edit */}
+          <Box className="border-b border-gray-300">
+            <Tabs value={tabIndex} onChange={handleTabChange}>
+              <Tab label="View" />
+              <Tab label="Edit" />
+            </Tabs>
+          </Box>
 
-        {/* Profile Section */}
-        <Stack className="flex items-start justify-start py-4 space-y-4 w-full">
-          {/* Profile Picture */}
-          <ProfilePictureUpload
-            formData={formData}
-            setFormData={setFormData}
-            showSelectButton={tabIndex === 1 && id}
-          />
+          {/* Profile Section */}
           {id && tabIndex === 0 ? (
             <ViewProfile formData={formData} resume={resume} />
+          ) : user?.role === ROLES.get("employee").value ? (
+            <Stack className="flex items-start justify-start py-4 space-y-4 w-full">
+              {/* Employee Picture */}
+              <ProfilePictureUpload
+                formData={formData}
+                setFormData={setFormData}
+                showSelectButton={tabIndex === 1 && id}
+              />
+
+              <EmployeeForm
+                fields={fields}
+                formData={formData}
+                onSubmit={handleOnSubmit}
+                setFormData={setFormData}
+              />
+            </Stack>
           ) : (
-            <EmployeeForm
-              formData={formData}
-              id={id}
-              setFormData={setFormData}
-              setLoading={setLoading}
-              dispatch={dispatch}
-            />
+            <Stack className="flex items-start justify-start py-4 space-y-4 w-full">
+              {/* Employer Picture */}
+              <ProfilePictureUpload
+                formData={formData}
+                setFormData={setFormData}
+                showSelectButton={tabIndex === 1 && id}
+              />
+
+              <EmployerForm
+                fields={fields}
+                formData={formData}
+                onSubmit={handleOnSubmit}
+                setFormData={setFormData}
+              />
+            </Stack>
           )}
         </Stack>
       </Stack>
+
       <Footer />
     </Stack>
   );

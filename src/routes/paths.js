@@ -153,10 +153,10 @@ const paths = new Map([
     },
   ],
   [
-    "GETPROFILE",
+    "PROFILE_VIEW",
     {
-      ID: "_getprofile",
-      LABEL: "GetProfile",
+      ID: "_profile_view",
+      LABEL: "Profile",
       PATH: "/profile/:id",
       IS_PROTECTED: false,
     },

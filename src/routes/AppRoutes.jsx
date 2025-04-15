@@ -56,9 +56,8 @@ const AppRoutes = () => {
         <Route element={<ProtectedRoute />}>
           <Route path={paths.get("ACCOUNT").PATH} element={<AccountPage />} />
 
-          <Route path={paths.get("PROFILE").PATH} element={<ProfilePage />} />
           <Route
-            path={paths.get("GETPROFILE").PATH}
+            path={paths.get("PROFILE_VIEW").PATH}
             element={<ProfilePage />}
           />
 

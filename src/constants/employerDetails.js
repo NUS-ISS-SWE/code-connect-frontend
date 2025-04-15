@@ -22,7 +22,7 @@ const EMPLOYER_DETAILS = new Map([
   [
     "companyIndustry",
     {
-      key: "companyIndustry",
+      key: "industry",
       label: "Company Industry",
       placeholder: "Enter your company industry",
       required: true,

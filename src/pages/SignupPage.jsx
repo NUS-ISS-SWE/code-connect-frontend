@@ -45,7 +45,7 @@ const SignupPage = () => {
 
   useEffect(() => {
     if (user) {
-      navigate(paths.get("PROFILE").PATH);
+      navigate(`${paths.get("PROFILE").PATH}/${user.id}`);
     }
   }, []);
 
@@ -131,7 +131,7 @@ const SignupPage = () => {
       />
       {/* Logo */}
       <Box className="flex items-center">
-        <Link to="/">
+        <Link to={paths.get("HOME").PATH}>
           <img
             src={logo}
             alt="code connect logo"
