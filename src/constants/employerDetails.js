@@ -53,7 +53,7 @@ const EMPLOYER_DETAILS = new Map([
     "companyName",
     {
       key: "companyName",
-      label: "Company Name*",
+      label: "Company Name",
       placeholder: "Enter your company name",
       required: true,
       type: "text",

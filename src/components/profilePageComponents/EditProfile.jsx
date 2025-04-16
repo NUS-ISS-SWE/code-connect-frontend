@@ -30,6 +30,7 @@ const EditProfile = ({ roleDetails }) => {
 
   const handleOnSubmit = () => {
     console.log("formData", formData);
+    // TODO: Integrate with API to update user profile
   };
 
   return user?.role === ROLES.get("employee").value ? (

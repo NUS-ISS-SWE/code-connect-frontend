@@ -21,6 +21,7 @@ const ProfilePage = () => {
   const { user } = useAuthContext();
   const { id } = useParams();
 
+  const [image, setImage] = useState(null);
   const [resume, setResume] = useState(null);
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -28,6 +29,18 @@ const ProfilePage = () => {
     user?.role === ROLES.get("employee").value
       ? EMPLOYEE_DETAILS
       : EMPLOYER_DETAILS;
+
+  useEffect(() => {
+    if (user?.role === ROLES.get("employee").value) {
+      fetchResume();
+    }
+
+    fetchImage();
+  }, [user]);
+
+  const fetchImage = async () => {
+    //TODO: Integrate with API to fetch profile picture
+  };
 
   const fetchResume = async () => {
     const { data } = await RetrieveResume(
@@ -63,7 +76,7 @@ const ProfilePage = () => {
 
           {/* Profile Section */}
           {id && tabIndex === 0 ? (
-            <ViewProfile resume={resume} />
+            <ViewProfile image={image} resume={resume} roleDetails={roleDetails} />
           ) : (
             <EditProfile roleDetails={roleDetails} />
           )}

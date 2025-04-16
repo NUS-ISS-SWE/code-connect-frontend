@@ -131,49 +131,49 @@ const Navbar = () => {
                   className={`absolute bg-white gap-2 mt-1 px-2 py-2 right-0 shadow top-12 w-[200px]`}
                 >
                   {user.role === ROLES.get("employer").value ? (
-                    <Box className="!cursor-default flex items-center justify-start gap-x-2 px-3 py-2">
-                      <Box className="bg-white border flex !h-10 items-center justify-center rounded-full text-primary !w-10 ">
+                    <Box className="!cursor-default flex items-center justify-start gap-x-2 px-3 py-2 w-full">
+                      <Box className="bg-white border flex !h-10 items-center justify-center rounded-full text-primary !min-w-10">
                         <Icon name={"Employer"} size={"1em"} />
                       </Box>
 
-                      <Stack className="items-start justify-start space-y-0">
-                        <Typography className="text-gray-900 !text-sm !font-bold">
+                      <Stack className="items-start justify-start space-y-0 w-full">
+                        <Typography className="!font-bold text-gray-900 text-start !text-sm !truncate !w-[90%]">
                           {user.companyName}
                         </Typography>
 
-                        <Typography className="text-gray-900 !text-sm !font-medium">
+                        <Typography className="!font-medium text-gray-900 text-start !text-sm !truncate !w-[90%]">
                           {user.username}
                         </Typography>
                       </Stack>
                     </Box>
                   ) : user.role === ROLES.get("employee").value ? (
-                    <Box className="!cursor-default flex items-center justify-start gap-x-2 px-3 py-2">
-                      <Box className="bg-white border flex !h-10 items-center justify-center rounded-full text-primary !w-10 ">
+                    <Box className="!cursor-default flex items-center justify-start gap-x-2 px-3 py-2 w-full">
+                      <Box className="bg-white border flex !h-10 items-center justify-center rounded-full text-primary !min-w-10">
                         <Icon name={"Employee"} size={"1em"} />
                       </Box>
 
-                      <Stack className="items-start justify-start space-y-0">
-                        <Typography className="text-gray-900 !text-sm !font-bold">
+                      <Stack className="items-start justify-start space-y-0 w-full">
+                        <Typography className="!font-bold text-gray-900 text-start !text-sm !truncate !w-[90%]">
                           {user.username}
                         </Typography>
 
-                        <Typography className="text-gray-900 !text-sm !font-medium">
+                        <Typography className="!font-medium text-gray-900 text-start !text-sm !truncate !w-[90%]">
                           {user.email}
                         </Typography>
                       </Stack>
                     </Box>
                   ) : (
-                    <Box className="!cursor-default flex items-center justify-start gap-x-2 px-3 py-2">
-                      <Box className="bg-white border flex !h-10 items-center justify-center rounded-full text-primary !w-10 ">
+                    <Box className="!cursor-default flex items-center justify-start gap-x-2 px-3 py-2 w-full">
+                      <Box className="bg-white border flex !h-10 items-center justify-center rounded-full text-primary !min-w-10">
                         <Icon name={"Globe"} size={"1em"} />
                       </Box>
 
-                      <Stack className="items-start justify-start space-y-0">
-                        <Typography className="text-gray-900 !text-sm !font-bold">
+                      <Stack className="items-start justify-start space-y-0 w-full">
+                        <Typography className="!font-bold text-gray-900 text-start !text-sm !truncate !w-[90%]">
                           Administrator
                         </Typography>
 
-                        <Typography className="text-gray-900 !text-sm !font-medium">
+                        <Typography className="!font-medium text-gray-900 text-start !text-sm !truncate !w-[90%]">
                           {user.username}
                         </Typography>
                       </Stack>

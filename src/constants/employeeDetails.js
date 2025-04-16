@@ -43,7 +43,7 @@ const EMPLOYEE_DETAILS = new Map([
     "email",
     {
       key: "email",
-      label: "Email*",
+      label: "Email",
       placeholder: "Enter your email",
       required: true,
       type: "email",
@@ -63,7 +63,7 @@ const EMPLOYEE_DETAILS = new Map([
     "fullName",
     {
       key: "fullName",
-      label: "Full Name*",
+      label: "Full Name",
       placeholder: "Enter your full name",
       required: true,
       type: "text",
