@@ -126,6 +126,7 @@ const EmployerForm = ({ fields, formData, onSkip, onSubmit, setFormData }) => {
             value={formData?.[EMPLOYER_DETAILS.get("companyLocation").key]}
           />
 
+          {/* Company Industry */}
           <TextField
             error={!!errors[EMPLOYER_DETAILS.get("companyIndustry").key]}
             fullWidth

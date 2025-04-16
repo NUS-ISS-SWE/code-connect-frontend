@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 
 import {
   DeleteResume,
@@ -119,15 +112,7 @@ const UploadResume = () => {
   };
 
   return (
-    <Stack className="flex justify-start pt-4 space-y-4 w-[100%]">
-      <Stack className="space-y-1">
-        <Typography className={`!capitalize !font-medium !text-lg`}>
-          Upload Resume
-        </Typography>
-
-        <Divider />
-      </Stack>
-
+    <Stack className="flex flex-1 items-start justify-start py-4 space-y-10 w-full">
       {resume ? (
         <Stack className="flex justify-start space-y-1 w-[100%]">
           <Box className="flex items-center justify-start relative space-x-2 !text-sm text-gray-500 w-[100%]">

@@ -2,7 +2,7 @@
 import  { useState } from "react";
 import { Avatar, Button, Stack, Typography } from "@mui/material";
 
-const ProfilePictureUpload = ({ formData, setFormData, showSelectButton }) => {
+const ProfilePictureUpload = ({ formData, setFormData, showSelectButton = true }) => {
     const [preview, setPreview] = useState("");
 
     const handleFileChange = (event) => {
@@ -22,10 +22,10 @@ const ProfilePictureUpload = ({ formData, setFormData, showSelectButton }) => {
       
 
   return (
-    <Stack spacing={2} alignItems="center">
+    <Stack className="items-center py-2 space-y-4">
       {/* Avatar Preview */}
       <label htmlFor="file-upload">
-        <Avatar className="w-[100px] h-[100px] cursor-pointer"
+        <Avatar className="border border-gray-300 cursor-pointer !h-[100px] !w-[100px]"
           alt="Profile Picture"
           src={
             preview // Show preview first (if user selects a new image)
@@ -36,9 +36,6 @@ const ProfilePictureUpload = ({ formData, setFormData, showSelectButton }) => {
           }
           />
       </label>
-      <Typography variant="h6">
-      {formData?.fullName || "New User"}
-    </Typography>
 
       {/* Hidden File Input */}
       <input

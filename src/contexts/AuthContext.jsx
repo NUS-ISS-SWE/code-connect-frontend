@@ -45,18 +45,23 @@ export const AuthProvider = ({ children }) => {
 
       if (status === 200) {
         setUser(data);
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
       }
     } else if (storageData.role === ROLES.get("employee").value) {
       const { data, status } = await retrieveEmployeeProfile(dispatch);
 
       if (status === 200) {
         setUser(data);
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
       }
     } else {
       setUser(storageData);
+      setIsAuthenticated(true);
     }
-
-    setIsAuthenticated(true);
   };
 
   const login = async (formInputs) => {

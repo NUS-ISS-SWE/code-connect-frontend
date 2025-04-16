@@ -1,12 +1,8 @@
 /* eslint-disable react/prop-types */
 import { Stack, TextField, Button, Chip, Box } from "@mui/material";
 import { createRef } from "react";
+import { useParams } from "react-router-dom";
 
-import UploadResume from "./UploadResume";
-
-import { UpdateAPI } from "../../api/GeneralAPI";
-import { createProfile, UploadProfilePicture } from "../../api/ProfileApi";
-import paths from "../../routes/paths";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 
 const EmployeeForm = ({ fields, formData, onSkip, onSubmit, setFormData }) => {
@@ -15,10 +11,7 @@ const EmployeeForm = ({ fields, formData, onSkip, onSubmit, setFormData }) => {
     dispatch,
   } = useGlobalContext();
 
-  const navigate = useNavigate();
   const { id } = useParams();
-
-  const uri = "profiles";
 
   const [errors, setErrors] = useState({});
 
@@ -109,8 +102,6 @@ const EmployeeForm = ({ fields, formData, onSkip, onSubmit, setFormData }) => {
   const handleCertificationsChange = handleInputChange("certifications");
 
   const createUpdateProfile = async () => {
-    var isCreate = id ? false : true;
-
     var isValid = validate();
 
     if (isValid) {
@@ -144,11 +135,6 @@ const EmployeeForm = ({ fields, formData, onSkip, onSubmit, setFormData }) => {
       //     variant: "success",
       //   },
       // });
-
-      // if (isCreate) {
-      //   // Redirect to the new profile page
-      //   navigate(`${paths.get("PROFILE").PATH}/${data.id}`);
-      // }
 
       // Pass callback function to parent to handle form submission
       onSubmit();
@@ -350,11 +336,16 @@ const EmployeeForm = ({ fields, formData, onSkip, onSubmit, setFormData }) => {
             ))}
         </Stack>
       </Stack>
-      {/* Upload Resume */}
-      {id && <UploadResume />}
-      <Button className="btn btn-primary" onClick={createUpdateProfile}>
-        {id ? "Save Changes" : "Create Profile"}
-      </Button>
+
+      <Box className="flex items-center justify-end space-x-2 w-full">
+        <Button
+          className="btn btn-primary"
+          disabled={loading.isOpen}
+          onClick={createUpdateProfile}
+        >
+          {id ? "Save" : "Create Profile"}
+        </Button>
+      </Box>
     </Stack>
   );
 };
