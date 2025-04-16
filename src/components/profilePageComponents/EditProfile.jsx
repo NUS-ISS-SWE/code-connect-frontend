@@ -6,11 +6,15 @@ import EmployerForm from "./EmployerForm";
 import ProfilePictureUpload from "./ProfilePictureUpload";
 import UploadResume from "./UploadResume";
 
+import { updateEmployeeProfile } from "../../api/EmployeeProfilesApi";
+import { updateEmployerProfile } from "../../api/EmployerProfilesApi";
 import { ROLES } from "../../constants/roles";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { useGlobalContext } from "../../hooks/useGlobalContext";
 
 const EditProfile = ({ roleDetails }) => {
-  const { user } = useAuthContext();
+  const { setUser, user } = useAuthContext();
+  const { state, dispatch } = useGlobalContext();
 
   const fields = Array.from(roleDetails).map(([key, value]) => key);
   const [formData, setFormData] = useState(
@@ -28,9 +32,24 @@ const EditProfile = ({ roleDetails }) => {
     setFormData(user);
   }, [user]);
 
-  const handleOnSubmit = () => {
-    console.log("formData", formData);
-    // TODO: Integrate with API to update user profile
+  const handleOnSubmit = async () => {
+    const { data, status } =
+      user.role === ROLES.get("employer").value
+        ? await updateEmployerProfile(formData, dispatch)
+        : await updateEmployeeProfile(formData, dispatch);
+
+    if (status === 200) {
+      setUser(data);
+
+      dispatch({
+        type: "SHOW_TOAST",
+        payload: {
+          message: `Profile updated successfully`,
+          isOpen: true,
+          variant: "success",
+        },
+      });
+    }
   };
 
   return user?.role === ROLES.get("employee").value ? (
@@ -91,7 +110,7 @@ const EditProfile = ({ roleDetails }) => {
 
         <Divider flexItem />
 
-        <ProfilePictureUpload formData={formData} setFormData={setFormData} />
+        <ProfilePictureUpload />
       </Stack>
 
       {/* Employer Details */}

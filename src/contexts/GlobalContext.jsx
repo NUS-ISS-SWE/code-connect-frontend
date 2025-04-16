@@ -11,6 +11,8 @@ export const initialState = {
   },
   jobDetails: {},
   loading: { message: "", isOpen: false },
+  profileImage: "",
+  profileResume: "",
   showToast: { message: "", isOpen: false },
 };
 

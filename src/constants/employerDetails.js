@@ -1,5 +1,15 @@
 const EMPLOYER_DETAILS = new Map([
   [
+    "companyName",
+    {
+      key: "companyName",
+      label: "Company Name",
+      placeholder: "Enter your company name",
+      required: true,
+      type: "text",
+    },
+  ],
+  [
     "companyDescription",
     {
       key: "companyDescription",
@@ -20,22 +30,22 @@ const EMPLOYER_DETAILS = new Map([
   //   },
   // ],
   [
-    "companyIndustry",
-    {
-      key: "industry",
-      label: "Company Industry",
-      placeholder: "Enter your company industry",
-      required: true,
-      type: "text",
-    },
-  ],
-  [
     "companyLocation",
     {
       key: "companyLocation",
       label: "Company Location",
       placeholder: "Enter your company location",
       required: false,
+      type: "text",
+    },
+  ],
+  [
+    "companyIndustry",
+    {
+      key: "industry",
+      label: "Company Industry",
+      placeholder: "Enter your company industry",
+      required: true,
       type: "text",
     },
   ],
@@ -49,16 +59,6 @@ const EMPLOYER_DETAILS = new Map([
   //     type: "file",
   //   },
   // ],
-  [
-    "companyName",
-    {
-      key: "companyName",
-      label: "Company Name",
-      placeholder: "Enter your company name",
-      required: true,
-      type: "text",
-    },
-  ],
   // [
   //   "companyPhone",
   //   {

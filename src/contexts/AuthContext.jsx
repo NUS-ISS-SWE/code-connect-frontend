@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
       // const isValid = await verifyToken(token);
       // isValid ? login(LOGIN_TOKEN_KEY, token) : logout();
 
-      fetchUserProfile(storageData, dispatch);
+      await fetchUserProfile(storageData, dispatch);
     }
   };
 
@@ -106,6 +106,10 @@ export const AuthProvider = ({ children }) => {
         isOpen: true,
         variant: "success",
       },
+    });
+
+    dispatch({
+      type: "RESET",
     });
   };
 
