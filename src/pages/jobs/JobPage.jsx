@@ -3,15 +3,15 @@
 import { Stack, Tabs, Tab } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import EditJob from "../components/jobPageComponents/EditJob";
-import ViewJob from "../components/jobPageComponents/ViewJob";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
-import paths from "../routes/paths";
+import EditJob from "../../components/jobPageComponents/EditJob";
+import ViewJob from "../../components/jobPageComponents/ViewJob";
+import Footer from "../../components/Footer";
+import Navbar from "../../components/Navbar";
+import paths from "../../routes/paths";
 
-import { retrieveJob } from "../api/JobPostingsApi";
-import { useAuthContext } from "../hooks/useAuthContext";
-import { useGlobalContext } from "../hooks/useGlobalContext";
+import { retrieveJob } from "../../api/JobPostingsApi";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import { useGlobalContext } from "../../hooks/useGlobalContext";
 
 const JobPage = () => {
   const { state, dispatch } = useGlobalContext();

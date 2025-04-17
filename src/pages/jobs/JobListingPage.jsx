@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/jsx-key */
 import {
   Box,
   Button,
@@ -18,11 +17,11 @@ import JobCard from "../components/jobPageComponents/JobCard";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
-import { retrieveJobListings } from "../api/JobPostingsApi.js";
-import Icon from "../constants/Icon.jsx";
-import useContent from "../hooks/useContent.js";
-import { useGlobalContext } from "../hooks/useGlobalContext.js";
-import useKeyPress from "../hooks/useKeyPress.js";
+import { retrieveJobListings } from "../../api/JobPostingsApi.js";
+import Icon from "../../constants/Icon.jsx";
+import useContent from "../../hooks/useContent.js";
+import { useGlobalContext } from "../../hooks/useGlobalContext.js";
+import useKeyPress from "../../hooks/useKeyPress.js";
 import {
   JOB_TYPES_FILTER_OPTIONS,
   LOCATION_FILTER_OPTIONS,

@@ -1,4 +1,4 @@
-import { GetAPI, PostAPI } from "./GeneralAPI";
+import { GetAPI, PostAPI, DeleteAPI } from "./GeneralAPI";
 
 import {
   prepareFormDataForCreateAndEditJob,
@@ -30,4 +30,8 @@ const retrieveJobListings = async (dispatch) => {
   return await GetAPI(`/${PATHNAME}`, dispatch);
 };
 
-export { createJob, retrieveJob, retrieveJobListings };
+const deleteJobListing = async (id, dispatch) => {
+  return await DeleteAPI(`/${PATHNAME}/${id}`, dispatch);
+};
+
+export { createJob, retrieveJob, retrieveJobListings, deleteJobListing };
