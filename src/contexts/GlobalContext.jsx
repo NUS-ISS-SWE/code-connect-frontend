@@ -13,6 +13,7 @@ export const initialState = {
   loading: { message: "", isOpen: false },
   profileImage: "",
   profileResume: "",
+  registerDraft: null,
   showToast: { message: "", isOpen: false },
 };
 

@@ -16,11 +16,9 @@ const loginUser = async ({ username, password, role }, dispatch) => {
   return response;
 };
 
-const registerUser = async ({ username, password, role }, dispatch) => {
-  const requestBody = JSON.stringify({ username, password, role });
-
+const registerUser = async (formData, dispatch) => {
   const response = await apiWrapper({
-    body: requestBody,
+    body: JSON.stringify(formData),
     dispatch,
     endpoint: `/api/v1/register`,
     headers: {

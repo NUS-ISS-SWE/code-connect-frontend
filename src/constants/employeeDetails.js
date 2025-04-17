@@ -1,65 +1,5 @@
 const EMPLOYEE_DETAILS = new Map([
   [
-    "aboutMe",
-    {
-      key: "aboutMe",
-      label: "About Me",
-      placeholder: "Tell us about yourself",
-      required: false,
-      type: "textarea",
-    },
-  ],
-  [
-    "certifications",
-    {
-      key: "certifications",
-      label: "Certifications",
-      placeholder: "List your certifications",
-      required: false,
-      type: "text",
-    },
-  ],
-  [
-    "currentCompany",
-    {
-      key: "currentCompany",
-      label: "Current Employer",
-      placeholder: "Enter your current employer",
-      required: false,
-      type: "text",
-    },
-  ],
-  [
-    "education",
-    {
-      key: "education",
-      label: "Education",
-      placeholder: "Enter your education details",
-      required: false,
-      type: "text",
-    },
-  ],
-  [
-    "email",
-    {
-      key: "email",
-      label: "Email",
-      placeholder: "Enter your email",
-      required: true,
-      type: "email",
-    },
-  ],
-  [
-    "experience",
-    {
-      key: "experience",
-      label: "Experience",
-      placeholder: "Enter your experience details",
-      required: false,
-      type: "text",
-    },
-  ],
-  [
     "fullName",
     {
       key: "fullName",
@@ -80,6 +20,26 @@ const EMPLOYEE_DETAILS = new Map([
     },
   ],
   [
+    "currentCompany",
+    {
+      key: "currentCompany",
+      label: "Current Employer",
+      placeholder: "Enter your current employer",
+      required: false,
+      type: "text",
+    },
+  ],
+  [
+    "experience",
+    {
+      key: "experience",
+      label: "Experience",
+      placeholder: "Enter your experience details",
+      required: false,
+      type: "text",
+    },
+  ],
+  [
     "location",
     {
       key: "location",
@@ -90,6 +50,16 @@ const EMPLOYEE_DETAILS = new Map([
     },
   ],
   [
+    "email",
+    {
+      key: "email",
+      label: "Email",
+      placeholder: "Enter your email",
+      required: true,
+      type: "email",
+    },
+  ],
+  [
     "phone",
     {
       key: "phone",
@@ -97,6 +67,16 @@ const EMPLOYEE_DETAILS = new Map([
       placeholder: "Enter your phone number",
       required: false,
       type: "text",
+    },
+  ],
+  [
+    "aboutMe",
+    {
+      key: "aboutMe",
+      label: "About Me",
+      placeholder: "Tell us about yourself",
+      required: false,
+      type: "textarea",
     },
   ],
   [
@@ -115,6 +95,26 @@ const EMPLOYEE_DETAILS = new Map([
       key: "skillSet",
       label: "Skill Set",
       placeholder: "List your skills",
+      required: false,
+      type: "text",
+    },
+  ],
+  [
+    "education",
+    {
+      key: "education",
+      label: "Education",
+      placeholder: "Enter your education details",
+      required: false,
+      type: "text",
+    },
+  ],
+  [
+    "certifications",
+    {
+      key: "certifications",
+      label: "Certifications",
+      placeholder: "List your certifications",
       required: false,
       type: "text",
     },

@@ -2,7 +2,7 @@
 import { FaHome } from "react-icons/fa";
 import { FaUserTie } from "react-icons/fa6";
 import { IoIosArrowDropleftCircle } from "react-icons/io";
-import { MdEmail, MdPeopleAlt, MdSettings } from "react-icons/md";
+import { MdOutlineMail, MdPeopleAlt, MdSettings } from "react-icons/md";
 import {
   RiAddFill,
   RiAiGenerate2,
@@ -43,13 +43,13 @@ const ICONS_MAP = {
   Cog: MdSettings,
   Close: RiCloseFill,
   Dot: RxDotFilled,
-  Email: MdEmail,
+  Email: MdOutlineMail,
   Employee: FaUserTie,
   Employer: RiBriefcase4Fill,
   Eye: RiEyeLine,
   EyeOff: RiEyeOffLine,
   File: RiFile3Fill,
-  Globe: RiGlobalLine ,
+  Globe: RiGlobalLine,
   Home: FaHome,
   Lock: RiLockLine,
   Logout: RiLogoutBoxLine,

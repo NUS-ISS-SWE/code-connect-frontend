@@ -1,23 +1,28 @@
-import { Divider, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import EmployeeForm from "../components/profilePageComponents/EmployeeForm";
 import EmployerForm from "../components/profilePageComponents/EmployerForm";
 import Footer from "../components/Footer";
 
+import { registerUser } from "../api/UserApi";
 import { EMPLOYEE_DETAILS } from "../constants/employeeDetails";
 import { EMPLOYER_DETAILS } from "../constants/employerDetails";
 import { ROLES } from "../constants/roles";
 import { useAuthContext } from "../hooks/useAuthContext";
 import useContent from "../hooks/useContent";
+import { useGlobalContext } from "../hooks/useGlobalContext";
 import paths from "../routes/paths";
 
 const CompleteProfilePage = () => {
   const { user } = useAuthContext();
+  const {
+    state: { registerDraft },
+    dispatch,
+  } = useGlobalContext();
 
   const content = useContent();
   const navigate = useNavigate();
-
   const detailsMap =
     user?.role === ROLES.get("employee").value
       ? EMPLOYEE_DETAILS
@@ -34,10 +39,22 @@ const CompleteProfilePage = () => {
     )
   );
 
-  const handleOnSubmit = () => {
-    console.log("formData", formData);
-    // TODO: Integrate with API to create / update company profile
-    navigate(`${paths.get("PROFILE").PATH}/${user.id}`);
+  const handleOnSubmit = async () => {
+    const { username, password, role, email } = registerDraft;
+
+    const responseBody = {
+      username,
+      password,
+      role,
+      email,
+      ...formData,
+    };
+
+    const { data, status } = await registerUser(responseBody, dispatch);
+
+    if (status === 200) {
+      navigate(`${paths.get("ACCOUNT_REGISTER_SUCCESS").PATH}`);
+    }
   };
 
   const handleOnSkip = () => {

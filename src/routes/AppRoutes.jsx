@@ -7,6 +7,9 @@ import ProtectedRoute from "./ProtectedRoute.jsx";
 import PublicRoute from "./PublicRoute.jsx";
 
 const AccountPage = lazy(() => import("../pages/AccountPage.jsx"));
+const AccountRegisterSuccessPage = lazy(() =>
+  import("../pages/AccountRegisterSuccessPage.jsx")
+);
 const AccountVerifiedPage = lazy(() =>
   import("../pages/AccountVerifiedPage.jsx")
 );
@@ -39,6 +42,10 @@ const AppRoutes = () => {
         {/* Public Routes */}
         <Route element={<PublicRoute />}>
           <Route
+            path={paths.get("ACCOUNT_REGISTER_SUCCESS").PATH}
+            element={<AccountRegisterSuccessPage />}
+          />
+          <Route
             path={paths.get("ACCOUNT_VERIFIED").PATH}
             element={<AccountVerifiedPage />}
           />
@@ -49,7 +56,10 @@ const AppRoutes = () => {
           <Route path={paths.get("LOGIN").PATH} element={<LoginPage />} />
           <Route path={paths.get("SIGNUP").PATH} element={<SignupPage />} />
 
-          <Route path="/complete-profile" element={<CompleteProfilePage />} />
+          <Route
+            path={paths.get("COMPLETE_PROFILE").PATH}
+            element={<CompleteProfilePage />}
+          />
         </Route>
 
         {/* Protected Routes */}

@@ -10,6 +10,13 @@ const useContent = () => {
       subheader:
         "Your account has been successfully verified. You can now log in and start exploring the platform.",
     },
+    accountRegisterSuccess: {
+      action: "Go to Home",
+      image: images.wellDoneImage,
+      header: "Thank you for registering!",
+      subheader:
+        "Your account is pending approval by an administrator. You will receive an email once your account is activated.",
+    },
     completeProfile: {
       action: "",
       image: images.completeProfileImage,
