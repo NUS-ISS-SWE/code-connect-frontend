@@ -8,7 +8,7 @@ import Icon from "../../constants/Icon.jsx";
 import { renderIntervalDuration } from "../../utils/stringUtils.js";
 import { Link } from "react-router-dom";
 
-const JobCard = ({ item, index, alreadyApplied, showStatusBox, hideApplyButton = false, onDelete}) => {
+const JobCard = ({ item, index, alreadyApplied, hideApplyButton = false, onDelete}) => {
 
   const getPostedAndAppliedDates = (item, alreadyApplied) => {
     const postedString = `Posted ${renderIntervalDuration(
@@ -55,7 +55,7 @@ const JobCard = ({ item, index, alreadyApplied, showStatusBox, hideApplyButton =
             width: "48px",
           }}
         />
-        { showStatusBox && <Box
+        { alreadyApplied && <Box
           className={`absolute top-2 right-2 text-xs font-semibold px-2 py-1 rounded ${getStatusColor(
             item.status
           )}`}

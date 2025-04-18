@@ -13,8 +13,10 @@ import JobCards from "../../components/jobPageComponents/JobCards.jsx";
 import { extractSalaryRange } from "../../utils/stringUtils.js";
 
 const JobApplicationsPage = () => {
-  const {dispatch } = useGlobalContext();
+  const { state, dispatch } = useGlobalContext();
   const [searchParams] = useSearchParams();
+  const { loading } = state;
+
   const [filteredJobs, setFilteredJobs] = useState([]);
   const initialSearch =
   decodeURIComponent(searchParams.get("search")) === "null"
@@ -45,7 +47,15 @@ const initialSalaryMax =
     // Fetch search results from API
     const { data } = await GetAPI("jobpostings", dispatch);
 
-    // TODO: Integrate with API to get applied jobs
+    
+          // Throttle API call to show loading spinner for 1.5 seconds
+          dispatch({ type: "LOADING", payload: { isOpen: true } });
+          setTimeout(() => {
+            // Store returned API data in filteredJobs state
+            setFilteredJobs(data);
+            dispatch({ type: "LOADING", payload: { isOpen: false } });
+          }, 900);
+
 
     // // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
     // const filteredJobs = filterJobs(jobsData, searchTerm, searchFilters);
@@ -85,7 +95,7 @@ const initialSalaryMax =
                   {`${filteredJobs?.length} jobs applied, average salary: $${getAverageJobSalary(filteredJobs)}`}
                 </Typography>
       <Divider/>
-      <JobCards filteredJobs={filteredJobs} alreadyApplied={true} showStatusBox={true} />
+      <JobCards filteredJobs={filteredJobs} alreadyApplied={true} showStatusBox={true} isLoading={loading.isOpen} />
         </Stack>
       <Footer />
     </Stack>
