@@ -16,7 +16,7 @@ import JobCards from "../../components/jobPageComponents/JobCards.jsx";
 import Footer from "../../components/Footer.jsx";
 import Navbar from "../../components/Navbar.jsx";
 
-import { retrieveJobListings } from "../../api/JobPostingsApi.js";
+import { retrieveJobs } from "../../api/JobPostingsApi.js";
 import Icon from "../../constants/Icon.jsx";
 import useContent from "../../hooks/useContent.js";
 import { useGlobalContext } from "../../hooks/useGlobalContext.js";
@@ -134,7 +134,7 @@ const JobListingPage = () => {
 
   const fetchSearchResults = async (searchTerm, searchFilters) => {
     // Fetch search results from API
-    const { data, status } = await retrieveJobListings(dispatch);
+    const { data, status } = await retrieveJobs(dispatch);
 
     if (status === 200) {
       // Filter jobs based on search term and search filters. Filtered data to be returned via API call later

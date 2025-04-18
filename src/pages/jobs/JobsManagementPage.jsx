@@ -14,7 +14,7 @@ import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 import paths from "../../routes/paths";
-import { deleteJobListing } from "../../api/JobPostingsApi.js";
+import { deleteJob } from "../../api/JobPostingsApi.js";
 
 const JobsManagementPage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -22,7 +22,7 @@ const JobsManagementPage = () => {
   const [filteredJobs, setFilteredJobs] = useState([]);
 
   const handleDeleteJob = async (jobId) => {
-    const { status } = await deleteJobListing(jobId, dispatch);
+    const { status } = await deleteJob(jobId, dispatch);
     if (status === 204) {
       setFilteredJobs((prev) => prev.filter((job) => job.id !== jobId));
       dispatch({

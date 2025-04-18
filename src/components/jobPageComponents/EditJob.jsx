@@ -21,7 +21,7 @@ import {
   JOB_TYPES_FILTER_OPTIONS,
   LOCATION_FILTER_OPTIONS,
 } from "../../utils/filterOptionsUtils";
-import { deleteJobListing } from "../../api/JobPostingsApi";
+import { deleteJob } from "../../api/JobPostingsApi";
 
 const EditJob = ({ formData, fieldRefs, setFormData }) => {
   const { state, dispatch } = useGlobalContext();
@@ -36,8 +36,8 @@ const EditJob = ({ formData, fieldRefs, setFormData }) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
   };
 
-  const deleteJob = async () => {
-    const { status } = await deleteJobListing(jobId, dispatch);
+  const deleteJobListing = async () => {
+    const { status } = await deleteJob(jobId, dispatch);
     if (status === 204) {
       navigate(paths.get("JOBS_MANAGEMENT").PATH);
 
@@ -262,7 +262,7 @@ const EditJob = ({ formData, fieldRefs, setFormData }) => {
             <Button
               className="btn btn-secondary !text-error"
               disabled={loading.isOpen}
-              onClick={deleteJob}
+              onClick={deleteJobListing}
             >
               Delete
             </Button>
