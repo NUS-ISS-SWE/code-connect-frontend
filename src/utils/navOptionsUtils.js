@@ -5,11 +5,11 @@ const NAV_OPTIONS = [
   { title: paths.get("JOBS").LABEL, path: paths.get("JOBS").PATH },
 ];
 
-const PROFILE_MENU_OPTIONS = [
+const PROFILE_MENU_OPTIONS = (id) => [
   {
     icon: "UserLine",
     title: paths.get("PROFILE").LABEL,
-    path: paths.get("PROFILE").PATH,
+    path: `${paths.get("PROFILE").PATH}/${id}`,
   },
   {
     icon: "Table",

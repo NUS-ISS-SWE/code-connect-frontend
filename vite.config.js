@@ -2,7 +2,6 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import AutoImport from "unplugin-auto-import/vite";
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -35,25 +34,11 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      // // Proxy API requests to User Authentication
-      // "/api": {
-      //   target: "http://localhost:8081",
-      //   changeOrigin: true,
-      //   secure: false,
-      // },
-
-      // Proxy API requests to Profile Management
-      "/profiles": {
+      "/api": {
         target: "http://localhost:8080",
         changeOrigin: true,
         secure: false,
       },
-      // Proxy API requests to Profile Management
-            "/jobpostings": {
-              target: "http://localhost:8083",
-              changeOrigin: true,
-              secure: false,
-            },
     },
   },
 });

@@ -1,10 +1,10 @@
 const LOGIN_TOKEN_KEY = "cc-token";
 
 const fetchToken = (key) => {
-  if (localStorage.getItem(key) !== null) {
-    const { token, username } = JSON.parse(localStorage.getItem(key));
+  if (sessionStorage.getItem(key) !== null) {
+    const { token, role, username } = JSON.parse(sessionStorage.getItem(key));
 
-    return { token, username };
+    return { token, role, username };
   } else {
     return {};
   }
@@ -12,12 +12,12 @@ const fetchToken = (key) => {
 
 const storeToken = (key, token) => {
   if (token) {
-    localStorage.setItem(key, token);
+    sessionStorage.setItem(key, token);
   }
 };
 
 const removeToken = (key) => {
-  localStorage.removeItem(key);
+  sessionStorage.removeItem(key);
 };
 
 export { LOGIN_TOKEN_KEY, fetchToken, storeToken, removeToken };

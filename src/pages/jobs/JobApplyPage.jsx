@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { intervalToDuration } from "date-fns";
+import { createRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Footer from "../../components/Footer";
@@ -48,16 +49,9 @@ const JobApplyPage = () => {
   );
   const [errors, setErrors] = useState({});
 
-  const fieldRefs = {
-    firstName: useRef(null),
-    lastName: useRef(null),
-    email: useRef(null),
-    phone: useRef(null),
-    resume: useRef(null),
-    education: useRef(null),
-    certifications: useRef(null),
-    coverLetter: useRef(null),
-  };
+  const fieldRefs = Object.fromEntries(
+    JOB_APPLY_FIELDS.map((key) => [key, createRef()])
+  );
 
   const fetchJob = async () => {
     const { data, status } = await retrieveJob(jobId, dispatch);
@@ -112,6 +106,15 @@ const JobApplyPage = () => {
       // if (status === 200) {
       navigate(`${paths.get("APPLY_JOB_SUCCESS").PATH}`);
       // }
+    } else {
+      // Scroll to the first error field
+      const errorFieldRef = fieldRefs[firstErrorField];
+      if (errorFieldRef.current) {
+        errorFieldRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
     }
   };
 
@@ -203,7 +206,7 @@ const JobApplyPage = () => {
               fullWidth
               label="First Name*"
               name="firstName"
-              error={errors.firstName}
+              error={!!errors.firstName}
               helperText={errors.firstName}
               inputRef={fieldRefs.firstName}
               value={formData?.firstName}
@@ -215,7 +218,7 @@ const JobApplyPage = () => {
               fullWidth
               label="Last Name*"
               name="lastName"
-              error={errors.lastName}
+              error={!!errors.lastName}
               helperText={errors.lastName}
               inputRef={fieldRefs.lastName}
               value={formData?.lastName}
@@ -229,7 +232,7 @@ const JobApplyPage = () => {
               fullWidth
               label="Email*"
               name="email"
-              error={errors.email}
+              error={!!errors.email}
               helperText={errors.email}
               inputRef={fieldRefs.email}
               value={formData?.email}
@@ -241,7 +244,7 @@ const JobApplyPage = () => {
               fullWidth
               label="Phone Number*"
               name="phone"
-              error={errors.phone}
+              error={!!errors.phone}
               helperText={errors.phone}
               inputRef={fieldRefs.phone}
               value={formData?.phone}
@@ -254,7 +257,7 @@ const JobApplyPage = () => {
             fullWidth
             label="Highest Education"
             name="education"
-            error={errors.education}
+            error={!!errors.education}
             helperText={errors.education}
             inputRef={fieldRefs.education}
             value={formData?.education}
@@ -266,7 +269,7 @@ const JobApplyPage = () => {
             fullWidth
             label="Certifications"
             name="certifications"
-            error={errors.certifications}
+            error={!!errors.certifications}
             helperText={errors.certifications}
             inputRef={fieldRefs.certifications}
             value={formData?.certifications}
@@ -298,7 +301,7 @@ const JobApplyPage = () => {
                     : "border-gray-300 hover:border-gray-900"
                 } !border-solid  cursor-pointer !duration-500 !ease-in-out !font-normal !flex !gap-2 items-center !justify-start px-4 py-7 !rounded-md !shadow-none !text-sm !text-gray-900 !tracking-normal !transition-all w-[100%] `}
                 disabled={loading.isOpen}
-                component="label"
+                ref={fieldRefs.resume}
               >
                 <Stack className="flex flex-col items-center justify-start space-y-4 w-full">
                   <Stack className="flex flex-col items-center justify-start space-y-0 w-full">

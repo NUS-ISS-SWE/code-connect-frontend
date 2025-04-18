@@ -1,4 +1,11 @@
+import { useNavigate } from "react-router-dom";
+
+import { retrieveEmployeeProfile } from "../api/EmployeeProfilesApi";
+import { retrieveEmployerProfile } from "../api/EmployerProfilesApi";
+import { loginUser } from "../api/UserApi";
+import { ROLES } from "../constants/roles";
 import { useGlobalContext } from "../hooks/useGlobalContext";
+import paths from "../routes/paths";
 import {
   fetchToken,
   LOGIN_TOKEN_KEY,
@@ -10,6 +17,8 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const { state, dispatch } = useGlobalContext();
+
+  const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -26,19 +35,65 @@ export const AuthProvider = ({ children }) => {
       // const isValid = await verifyToken(token);
       // isValid ? login(LOGIN_TOKEN_KEY, token) : logout();
 
-      login(LOGIN_TOKEN_KEY, storageData?.token, storageData?.username);
+      await fetchUserProfile(storageData, dispatch);
     }
   };
 
-  const login = (key, token, username) => {
-    setUser((prevState) => ({ ...prevState, token }));
-    setIsAuthenticated(true);
+  const fetchUserProfile = async (storageData) => {
+    if (storageData.role === ROLES.get("employer").value) {
+      const { data, status } = await retrieveEmployerProfile(dispatch);
 
-    storeToken(key, token);
-    storeToken(LOGIN_TOKEN_KEY, JSON.stringify({ token, username }));
+      if (status === 200) {
+        setUser(data);
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    } else if (storageData.role === ROLES.get("employee").value) {
+      const { data, status } = await retrieveEmployeeProfile(dispatch);
+
+      if (status === 200) {
+        setUser(data);
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    } else {
+      setUser(storageData);
+      setIsAuthenticated(true);
+    }
+  };
+
+  const login = async (formInputs) => {
+    const response = await loginUser(formInputs, dispatch);
+
+    if (response.status === 200) {
+      const { accessToken, role } = response.data;
+
+      const storageData = {
+        token: accessToken,
+        role,
+        username: formInputs?.username,
+      };
+      storeToken(LOGIN_TOKEN_KEY, JSON.stringify(storageData));
+
+      await fetchUserProfile(storageData);
+
+      dispatch({
+        type: "SHOW_TOAST",
+        payload: {
+          message: "You have been logged in",
+          isOpen: true,
+          variant: "success",
+        },
+      });
+
+      return response;
+    }
   };
 
   const logout = () => {
+    navigate(paths.get("HOME").PATH);
     setIsAuthenticated(false);
     removeToken(LOGIN_TOKEN_KEY);
 
@@ -52,14 +107,19 @@ export const AuthProvider = ({ children }) => {
         variant: "success",
       },
     });
+
+    dispatch({
+      type: "RESET",
+    });
   };
 
   const authState = {
+    fetchUserProfile,
     isAuthenticated,
     login,
     logout,
-    user,
     setUser,
+    user,
   };
 
   return (
