@@ -17,7 +17,7 @@ import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
 
 import { retrieveJob } from "../../api/JobPostingsApi";
-import dummyThumbnail from "../../assets/dummy/index.js";
+import dummy from "../../assets/dummy/index.js";
 import Icon from "../../constants/Icon";
 
 import { useAuthContext } from "../../hooks/useAuthContext";
@@ -153,7 +153,7 @@ const JobApplyPage = () => {
             <Box className="bg-white !border !border-gray-300 !border-solid h-4 min-w-4 overflow-hidden w-4 !rounded-2xl">
               <img
                 alt={jobDetails?.companyName}
-                src={jobDetails?.companyLogo ?? dummyThumbnail}
+                src={jobDetails?.companyLogo ?? dummy.jobListings[0].thumbnail}
                 style={{
                   objectFit: "contain",
                 }}
