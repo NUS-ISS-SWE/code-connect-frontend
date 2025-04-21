@@ -165,7 +165,7 @@ const JobListingPage = () => {
 
       const jobLocation =
         searchFilters.jobLocation === "" ||
-        job.jobLocation.includes(searchFilters.location);
+        job.jobLocation?.includes(searchFilters.location);
 
       const minFilter = searchFilters.salaryMin
         ? parseInt(searchFilters.salaryMin, 10)

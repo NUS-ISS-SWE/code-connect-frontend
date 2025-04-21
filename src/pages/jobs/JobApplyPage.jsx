@@ -24,6 +24,8 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 import paths from "../../routes/paths";
 import { renderIntervalDuration } from "../../utils/stringUtils";
+import { RetrieveResume } from "../../api/ProfileApi";
+import { createJobApplication } from "../../api/JobApplicationsApi.js";
 
 const JOB_APPLY_FIELDS = [
   "firstName",
@@ -44,9 +46,47 @@ const JobApplyPage = () => {
   let navigate = useNavigate();
   const { jobId } = useParams();
 
-  const [formData, setFormData] = useState(
-    Object.fromEntries(JOB_APPLY_FIELDS.map((key) => [key, user[key] ?? ""]))
-  );
+  const fullName = user?.fullName ?? "";
+const [firstName, ...rest] = fullName.trim().split(" ");
+const lastName = rest.join(" ");
+
+  const [formData, setFormData] = useState({
+    firstName,
+    lastName,
+    email: user?.email ?? "",
+    phone: user?.phone ?? "",
+    resume: "",
+    education: user?.education ?? "",
+    certifications: user?.certification ?? "",
+    coverLetter: "",});
+
+    useEffect(() => {
+        fetchResume();
+      //fetchImage();
+    }, [user]);
+
+      const fetchResume = async () => {
+        const { data } = await RetrieveResume(
+          {
+            id: user?.id,
+            fileName: user.resumeData?.resumeFileName, // pass uploaded resume file name from user data
+          },
+          dispatch
+        );
+        if (data) {
+          dispatch({
+            type: "PROFILE_RESUME",
+            payload: data,
+          });
+          setFormData({
+            ...formData,
+            resume: {
+              file: data.file,
+              fileUrl: data.fileUrl,
+            }});
+        }
+      };
+    
   const [errors, setErrors] = useState({});
 
   const fieldRefs = Object.fromEntries(
@@ -101,11 +141,11 @@ const JobApplyPage = () => {
 
     if (!firstErrorField) {
       // TODO: Integrate with API to submit application
-
-      // const { data, status } = await submitApplication(formData, dispatch);
-      // if (status === 200) {
+      formData["status"] = "Applied";
+      const { status } = await createJobApplication(jobId, formData, dispatch);
+      if (status === 200) {
       navigate(`${paths.get("APPLY_JOB_SUCCESS").PATH}`);
-      // }
+      }
     } else {
       // Scroll to the first error field
       const errorFieldRef = fieldRefs[firstErrorField];
@@ -150,7 +190,7 @@ const JobApplyPage = () => {
         <Stack className="px-0 py-2 space-y-1">
           <Box className="flex items-center justify-start space-x-1">
             {/* !!!TODO: Add company logo */}
-            <Box className="bg-white !border !border-gray-300 !border-solid h-4 min-w-4 overflow-hidden w-4 !rounded-2xl">
+            <Box className="bg-white !border !border-gray-300 !border-solid h-4 min-w-4 overflow-hidden w-4 !rounded-2xl">  
               <img
                 alt={jobDetails?.companyName}
                 src={jobDetails?.companyLogo ?? dummy.jobListings[0].thumbnail}
