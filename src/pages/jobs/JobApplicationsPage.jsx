@@ -12,7 +12,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 
 import JobCards from "../../components/jobPageComponents/JobCards.jsx";
 import { extractSalaryRange } from "../../utils/stringUtils.js";
-import { retrieveJobApplications } from "../../api/JobApplicationsApi.js";
+import { retrieveJobApplicationsByUser } from "../../api/JobApplicationsApi.js";
 const JobApplicationsPage = () => {
   const { state, dispatch } = useGlobalContext();
   const [searchParams] = useSearchParams();
@@ -48,19 +48,19 @@ const initialSalaryMax =
 
   const fetchSearchResults = async () => {
     // Fetch search results from API
-    const { data } = await retrieveJobApplications(dispatch);
+    const data = await retrieveJobApplicationsByUser(user.email, dispatch);    
     // Throttle API call to show loading spinner for 1.5 seconds
     dispatch({ type: "LOADING", payload: { isOpen: true } });
     setTimeout(() => {
       // Store returned API data in filteredJobs state
-
-      // TODO: Filter for user ID instead of email
       setFilteredJobs(
         data
-          .filter((item) => item.applicantEmail === user.email)
-          .map((item) => ({
+          .map((item) => (
+            {
             ...item.jobPosting,
-            appliedDate: item.applicationDate
+            appliedDate: item.applicationDate,
+            status : item.status,
+            alreadyApplied: true
           }))
       );
       dispatch({ type: "LOADING", payload: { isOpen: false } });
@@ -101,7 +101,7 @@ const initialSalaryMax =
                   {`${filteredJobs?.length} jobs applied, average salary: $${getAverageJobSalary(filteredJobs)}`}
                 </Typography>
       <Divider/>
-      <JobCards filteredJobs={filteredJobs} alreadyApplied={true} showStatusBox={true} isLoading={loading.isOpen} />
+      <JobCards filteredJobs={filteredJobs} showStatusBox={true} isLoading={loading.isOpen} />
         </Stack>
       <Footer />
     </Stack>

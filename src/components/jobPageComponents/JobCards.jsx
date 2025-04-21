@@ -2,7 +2,7 @@
 import { Box, Stack, Typography, Skeleton } from "@mui/material";
 import JobCard from "./JobCard";
 
-const JobCards = ({ filteredJobs, alreadyApplied = false, hideApplyButton = false, onDelete, isLoading }) => {
+const JobCards = ({ filteredJobs, hideApplyButton = false, onDelete, isLoading }) => {
   return (
     isLoading ? (          
       // Skeleton Loading
@@ -27,7 +27,7 @@ const JobCards = ({ filteredJobs, alreadyApplied = false, hideApplyButton = fals
             key={index}
             item={item}
             index={index}
-            alreadyApplied={alreadyApplied}
+            alreadyApplied={item.alreadyApplied}
             hideApplyButton={hideApplyButton}
             onDelete={onDelete}
           />

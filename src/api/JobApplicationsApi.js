@@ -3,8 +3,8 @@ import { prepareFormDataForCreateAndEditJobApplication } from "../utils/apiUtils
 const PATHNAME = "jobapplications";
 
 const createJobApplication = async (jobId, formData, dispatch) => {
-  console.log(formData)
-  const processedFormData = prepareFormDataForCreateAndEditJobApplication(formData);
+  const processedFormData =
+    prepareFormDataForCreateAndEditJobApplication(formData);
   const { data, ...rest } = await PostAPI(
     processedFormData,
     `/${PATHNAME}/${jobId}`,
@@ -22,8 +22,20 @@ const retrieveJobApplications = async (dispatch) => {
   return await GetAPI(`/${PATHNAME}`, dispatch);
 };
 
+// TODO: Filter for user ID instead of email
+const retrieveJobApplicationsByUser = async (userEmail, dispatch) => {
+  const { data } = await retrieveJobApplications(dispatch);
+  return data.filter((item) => item.applicantEmail === userEmail);
+};
+
 const deleteJobApplication = async (id, dispatch) => {
   return await DeleteAPI(`/${PATHNAME}/${id}`, dispatch);
 };
 
-export { createJobApplication, retrieveJobApplication, retrieveJobApplications, deleteJobApplication };
+export {
+  createJobApplication,
+  retrieveJobApplication,
+  retrieveJobApplications,
+  deleteJobApplication,
+  retrieveJobApplicationsByUser,
+};
