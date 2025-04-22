@@ -6,7 +6,7 @@ import Navbar from "../components/Navbar";
 
 import Icon from "../constants/Icon";
 import useContent from "../hooks/useContent";
-import useGenerateJobs from "../assets/dummy/remove/useGenerateJobs";
+//import useGenerateJobs from "../assets/dummy/remove/useGenerateJobs";
 
 const HomePage = () => {
   const content = useContent();

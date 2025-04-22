@@ -8,7 +8,7 @@ import Icon from "../../constants/Icon.jsx";
 import { renderIntervalDuration } from "../../utils/stringUtils.js";
 import { Link } from "react-router-dom";
 
-const JobCard = ({ item, index, alreadyApplied, showStatusBox, hideApplyButton = false, onDelete}) => {
+const JobCard = ({ item, index, alreadyApplied, hideApplyButton = false, onDelete}) => {
 
   const getPostedAndAppliedDates = (item, alreadyApplied) => {
     const postedString = `Posted ${renderIntervalDuration(
@@ -55,7 +55,7 @@ const JobCard = ({ item, index, alreadyApplied, showStatusBox, hideApplyButton =
             width: "48px",
           }}
         />
-        { showStatusBox && <Box
+        { alreadyApplied && <Box
           className={`absolute top-2 right-2 text-xs font-semibold px-2 py-1 rounded ${getStatusColor(
             item.status
           )}`}
@@ -123,9 +123,7 @@ const JobCard = ({ item, index, alreadyApplied, showStatusBox, hideApplyButton =
         className="btn btn-primary"
         // disabled={loading.isOpen}
         component={Link}
-        
-        // TODO: change link to view job application page
-        //to={alreadyApplied ? paths.get("APPLY_JOB").PATH : paths.get("APPLY_JOB").PATH}
+        to={alreadyApplied ? paths.get("VIEW_JOB_APPLICATION").PATH.replace(":jobId", item.id).replace(":applicationId", item.applicationId) : paths.get("APPLY_JOB").PATH.replace(":jobId", item.id)}
         variant="contained"
       >
         {alreadyApplied ? "View Application" : "Apply Job"}
