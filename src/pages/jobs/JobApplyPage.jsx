@@ -83,13 +83,13 @@ const JobApplyPage = () => {
         type: "PROFILE_RESUME",
         payload: data,
       });
-      setFormData({
-        ...formData,
+      setFormData((prev) => ({
+        ...prev,
         resume: {
           file: data.file,
           fileUrl: data.fileUrl,
         },
-      });
+      }));
     }
   };
 
@@ -100,15 +100,16 @@ const JobApplyPage = () => {
     );
 
     if (status === 200) {
-      var names = data.applicantName.split(" ");
-      // TODO: Populate more data as it becomes available in API
-      setFormData({
-        ...formData,
-        firstName: names[0],
-        lastName: names[1],
+      const [firstName, ...rest] = data.applicantName.trim().split(" ");
+      const lastName = rest.join(" ");
+      
+      setFormData((prev) => ({
+        ...prev,
+        firstName,
+        lastName,
         email: data.applicantEmail,
         phone: data.phone,
-      });
+      }));
     }
   }
 
