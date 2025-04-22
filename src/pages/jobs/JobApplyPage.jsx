@@ -28,6 +28,7 @@ import { RetrieveResume } from "../../api/ProfileApi";
 import {
   createJobApplication,
   retrieveJobApplication,
+  deleteJobApplication
 } from "../../api/JobApplicationsApi.js";
 
 const JOB_APPLY_FIELDS = [
@@ -99,20 +100,26 @@ const JobApplyPage = () => {
     );
 
     if (status === 200) {
+      var names = data.applicantName.split(" ");
+      // TODO: Populate more data as it becomes available in API
       setFormData({
         ...formData,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
+        firstName: names[0],
+        lastName: names[1],
+        email: data.applicantEmail,
         phone: data.phone,
-        resume: {
-          file: data.resumeFileName,
-          fileUrl: data.resumeFileUrl,
-        },
-        education: data.education,
-        certifications: data.certifications,
-        coverLetter: data.coverLetter,
       });
+    }
+  }
+
+  const handleDeleteJobApplication = async () => {
+    const data = await deleteJobApplication(
+      applicationId,
+      dispatch
+    );
+
+    if (data.status === 204) {
+      navigate(`${paths.get("JOBAPPLICATIONS").PATH}`);
     }
   }
 
@@ -434,19 +441,37 @@ const JobApplyPage = () => {
           />
         </Stack>
 
-        <Button
-          className="btn btn-primary !px-6 self-end !w-full lg:!w-fit"
-          disabled={loading.isOpen}
-          onClick={handleSubmitApplication}
-        >
-          {loading.isOpen ? (
-            <CircularProgress size={20} className="!text-black" />
-          ) : (
-            "Submit"
-          )}
-        </Button>
-      </Stack>
+{
+  !applicationId && 
+  <Button
+  className="btn btn-primary !px-6 self-end !w-full lg:!w-fit"
+  disabled={loading.isOpen}
+  onClick={handleSubmitApplication}
+>
+  {loading.isOpen ? (
+    <CircularProgress size={20} className="!text-black" />
+  ) : (
+    "Submit"
+  )}
+</Button>
+}
+{
+  applicationId && 
+  <Button
+  className="btn btn-secondary !text-error"
+  disabled={loading.isOpen}
+  //TODO: Delete job application API
+  onClick={handleDeleteJobApplication}
+>
+  {loading.isOpen ? (
+    <CircularProgress size={20} className="!text-black" />
+  ) : (
+    "Delete Job Application"
+  )}
+</Button>
+}
 
+      </Stack>
       <Footer />
     </Stack>
   );
