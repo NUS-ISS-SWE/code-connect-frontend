@@ -77,6 +77,11 @@ const AppRoutes = () => {
           />
 
           <Route
+            path={paths.get("VIEW_JOB_APPLICATION").PATH}
+            element={<JobApplyPage />}
+          />
+
+          <Route
             path={paths.get("APPLY_JOB_SUCCESS").PATH}
             element={<JobApplySuccessPage />}
           />

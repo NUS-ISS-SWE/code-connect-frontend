@@ -117,6 +117,15 @@ const paths = new Map([
     },
   ],
   [
+    "VIEW_JOB_APPLICATION",
+    {
+      ID: "_view_job_application",
+      LABEL: "View Job Application",
+      PATH: "/job/:jobId/view-application/:applicationId",
+      IS_PROTECTED: true,
+    },
+  ],
+  [
     "APPLY_JOB_SUCCESS",
     {
       ID: "_apply_job_success",

@@ -60,7 +60,8 @@ const initialSalaryMax =
             ...item.jobPosting,
             appliedDate: item.applicationDate,
             status : item.status,
-            alreadyApplied: true
+            alreadyApplied: true,
+            applicationId: item.id
           }))
       );
       dispatch({ type: "LOADING", payload: { isOpen: false } });

@@ -123,9 +123,7 @@ const JobCard = ({ item, index, alreadyApplied, hideApplyButton = false, onDelet
         className="btn btn-primary"
         // disabled={loading.isOpen}
         component={Link}
-        
-        // TODO: change link to view job application page
-        //to={alreadyApplied ? paths.get("APPLY_JOB").PATH : paths.get("APPLY_JOB").PATH}
+        to={alreadyApplied ? paths.get("VIEW_JOB_APPLICATION").PATH.replace(":jobId", item.id).replace(":applicationId", item.applicationId) : paths.get("APPLY_JOB").PATH.replace(":jobId", item.id)}
         variant="contained"
       >
         {alreadyApplied ? "View Application" : "Apply Job"}

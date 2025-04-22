@@ -25,7 +25,10 @@ import { useGlobalContext } from "../../hooks/useGlobalContext";
 import paths from "../../routes/paths";
 import { renderIntervalDuration } from "../../utils/stringUtils";
 import { RetrieveResume } from "../../api/ProfileApi";
-import { createJobApplication } from "../../api/JobApplicationsApi.js";
+import {
+  createJobApplication,
+  retrieveJobApplication,
+} from "../../api/JobApplicationsApi.js";
 
 const JOB_APPLY_FIELDS = [
   "firstName",
@@ -44,11 +47,11 @@ const JobApplyPage = () => {
 
   const { user } = useAuthContext();
   let navigate = useNavigate();
-  const { jobId } = useParams();
+  const { jobId, applicationId } = useParams();
 
   const fullName = user?.fullName ?? "";
-const [firstName, ...rest] = fullName.trim().split(" ");
-const lastName = rest.join(" ");
+  const [firstName, ...rest] = fullName.trim().split(" ");
+  const lastName = rest.join(" ");
 
   const [formData, setFormData] = useState({
     firstName,
@@ -58,35 +61,61 @@ const lastName = rest.join(" ");
     resume: "",
     education: user?.education ?? "",
     certifications: user?.certification ?? "",
-    coverLetter: "",});
+    coverLetter: "",
+  });
 
-    useEffect(() => {
-        fetchResume();
-      //fetchImage();
-    }, [user]);
+  useEffect(() => {
+    fetchResume();
+    //fetchImage();
+  }, [user]);
 
-      const fetchResume = async () => {
-        const { data } = await RetrieveResume(
-          {
-            id: user?.id,
-            fileName: user.resumeData?.resumeFileName, // pass uploaded resume file name from user data
-          },
-          dispatch
-        );
-        if (data) {
-          dispatch({
-            type: "PROFILE_RESUME",
-            payload: data,
-          });
-          setFormData({
-            ...formData,
-            resume: {
-              file: data.file,
-              fileUrl: data.fileUrl,
-            }});
-        }
-      };
-    
+  const fetchResume = async () => {
+    const { data } = await RetrieveResume(
+      {
+        id: user?.id,
+        fileName: user.resumeData?.resumeFileName, // pass uploaded resume file name from user data
+      },
+      dispatch
+    );
+    if (data) {
+      dispatch({
+        type: "PROFILE_RESUME",
+        payload: data,
+      });
+      setFormData({
+        ...formData,
+        resume: {
+          file: data.file,
+          fileUrl: data.fileUrl,
+        },
+      });
+    }
+  };
+
+  const fetchJobApplication = async () => {
+    const { data, status } = await retrieveJobApplication(
+      applicationId,
+      dispatch
+    );
+
+    if (status === 200) {
+      setFormData({
+        ...formData,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        resume: {
+          file: data.resumeFileName,
+          fileUrl: data.resumeFileUrl,
+        },
+        education: data.education,
+        certifications: data.certifications,
+        coverLetter: data.coverLetter,
+      });
+    }
+  }
+
   const [errors, setErrors] = useState({});
 
   const fieldRefs = Object.fromEntries(
@@ -111,6 +140,12 @@ const lastName = rest.join(" ");
       fetchJob();
     }
   }, [jobDetails, jobId]);
+
+  useEffect(() => {
+    if (applicationId) {
+      fetchJobApplication();
+    }
+  }, [applicationId]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -140,11 +175,10 @@ const lastName = rest.join(" ");
     const firstErrorField = validate();
 
     if (!firstErrorField) {
-      // TODO: Integrate with API to submit application
       formData["status"] = "Applied";
       const { status } = await createJobApplication(jobId, formData, dispatch);
       if (status === 200) {
-      navigate(`${paths.get("APPLY_JOB_SUCCESS").PATH}`);
+        navigate(`${paths.get("APPLY_JOB_SUCCESS").PATH}`);
       }
     } else {
       // Scroll to the first error field
@@ -190,7 +224,7 @@ const lastName = rest.join(" ");
         <Stack className="px-0 py-2 space-y-1">
           <Box className="flex items-center justify-start space-x-1">
             {/* !!!TODO: Add company logo */}
-            <Box className="bg-white !border !border-gray-300 !border-solid h-4 min-w-4 overflow-hidden w-4 !rounded-2xl">  
+            <Box className="bg-white !border !border-gray-300 !border-solid h-4 min-w-4 overflow-hidden w-4 !rounded-2xl">
               <img
                 alt={jobDetails?.companyName}
                 src={jobDetails?.companyLogo ?? dummy.jobListings[0].thumbnail}

@@ -153,6 +153,7 @@ const JobListingPage = () => {
               (application) => application.jobPosting.id === job.id
             ),
             status: jobApplications.find((application) => application.jobPosting?.id === job.id)?.status,
+            applicationId: jobApplications.find((application) => application.jobPosting?.id === job.id)?.id,
           }))
         );
 
