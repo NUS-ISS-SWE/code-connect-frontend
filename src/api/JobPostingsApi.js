@@ -26,12 +26,12 @@ const retrieveJob = async (id, dispatch) => {
   return { data: processedData, ...rest };
 };
 
-const retrieveJobListings = async (dispatch) => {
+const retrieveJobs = async (dispatch) => {
   return await GetAPI(`/${PATHNAME}`, dispatch);
 };
 
-const deleteJobListing = async (id, dispatch) => {
+const deleteJob = async (id, dispatch) => {
   return await DeleteAPI(`/${PATHNAME}/${id}`, dispatch);
 };
 
-export { createJob, retrieveJob, retrieveJobListings, deleteJobListing };
+export { createJob, retrieveJob, retrieveJobs, deleteJob };

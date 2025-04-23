@@ -5,7 +5,6 @@ import {
   CircularProgress,
   IconButton,
   InputAdornment,
-  Skeleton,
   Stack,
   TextField,
   Typography,
@@ -16,8 +15,9 @@ import { useSearchParams } from "react-router-dom";
 import JobCards from "../../components/jobPageComponents/JobCards.jsx";
 import Footer from "../../components/Footer.jsx";
 import Navbar from "../../components/Navbar.jsx";
-
-import { retrieveJobListings } from "../../api/JobPostingsApi.js";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import { retrieveJobs } from "../../api/JobPostingsApi.js";
+import { retrieveJobApplicationsByUser } from "../../api/JobApplicationsApi.js";
 import Icon from "../../constants/Icon.jsx";
 import useContent from "../../hooks/useContent.js";
 import { useGlobalContext } from "../../hooks/useGlobalContext.js";
@@ -33,6 +33,7 @@ import { extractSalaryRange } from "../../utils/stringUtils.js";
 const JobListingPage = () => {
   const { state, dispatch } = useGlobalContext();
   const { loading } = state;
+    const { user } = useAuthContext();
 
   const content = useContent();
   const isEnterPressed = useKeyPress("Enter");
@@ -135,8 +136,8 @@ const JobListingPage = () => {
 
   const fetchSearchResults = async (searchTerm, searchFilters) => {
     // Fetch search results from API
-    const { data, status } = await retrieveJobListings(dispatch);
-
+    const { data, status } = await retrieveJobs(dispatch);
+    const jobApplications  = await retrieveJobApplicationsByUser(user.email, dispatch);
     if (status === 200) {
       // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
       const filteredJobs = filterJobs(data, searchTerm, searchFilters);
@@ -145,7 +146,17 @@ const JobListingPage = () => {
       dispatch({ type: "LOADING", payload: { isOpen: true } });
       setTimeout(() => {
         // Store returned API data in filteredJobs state
-        setFilteredJobs(filteredJobs);
+        setFilteredJobs(
+          filteredJobs.map((job) => ({
+            ...job,
+            alreadyApplied: jobApplications.some(
+              (application) => application.jobPosting.id === job.id
+            ),
+            status: jobApplications.find((application) => application.jobPosting?.id === job.id)?.status,
+            applicationId: jobApplications.find((application) => application.jobPosting?.id === job.id)?.id,
+          }))
+        );
+
         dispatch({ type: "LOADING", payload: { isOpen: false } });
       }, 900);
 
@@ -166,7 +177,7 @@ const JobListingPage = () => {
 
       const jobLocation =
         searchFilters.jobLocation === "" ||
-        job.jobLocation.includes(searchFilters.location);
+        job.jobLocation?.includes(searchFilters.location);
 
       const minFilter = searchFilters.salaryMin
         ? parseInt(searchFilters.salaryMin, 10)
@@ -327,37 +338,8 @@ const JobListingPage = () => {
           }`}
         </Typography>
 
-        {!loading.isOpen ? (
-          filteredJobs?.length > 0 ? (
-            filteredJobs?.map((item, index) => {
-              return <JobCards item={item} index={index} key={index} />;
-            })
-          ) : (
-            <Box className="bg-gray-100 !border !border-gray-300 !border-solid py-2 flex items-center justify-start min-h-[70px] p-3 rounded-md w-full">
-              <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-                No records found
-              </Typography>
-            </Box>
-          )
-        ) : (
-          // Skeleton Loading
-          <Stack className="justify-start !mt-[-20px] w-full" spacing={-3}>
-            {Array.from(Array(5).keys()).map((e, n) => (
-              <Stack key={n} spacing={-3} className="h-fit w-full">
-                <Skeleton
-                  animation="wave"
-                  className="!bg-gray-100 !border !border-gray-300 !border-solid min-h-[140px] rounded-md w-full"
-                />
-                <Skeleton
-                  animation="wave"
-                  className="!bg-gray-100 !border !border-gray-300 !border-solid min-h-[36px] rounded-md w-full"
-                />
-              </Stack>
-            ))}
-          </Stack>
-        )}
+        <JobCards filteredJobs={filteredJobs} isLoading={loading.isOpen} />
       </Stack>
-
       <Footer />
     </Stack>
   );

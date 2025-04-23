@@ -117,7 +117,6 @@ const ViewJob = ({jobDetails}) => {
           <Stack className="!flex-[1] px-3 py-2 space-y-5">
             <Stack className="space-y-2">
               <Box className="flex items-center justify-start space-x-2">
-                {/* !!!TODO: Add company logo */}
                 <Box className="bg-white !border !border-gray-300 !border-solid h-7 min-w-7 overflow-hidden w-7 !rounded-2xl">
                   <img
                     alt={jobDetails?.companyName}

@@ -17,13 +17,19 @@ import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
 
 import { retrieveJob } from "../../api/JobPostingsApi";
-import dummyThumbnail from "../../assets/dummy/index.js";
+import dummy from "../../assets/dummy/index.js";
 import Icon from "../../constants/Icon";
 
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 import paths from "../../routes/paths";
 import { renderIntervalDuration } from "../../utils/stringUtils";
+import { RetrieveResume } from "../../api/ProfileApi";
+import {
+  createJobApplication,
+  retrieveJobApplication,
+  deleteJobApplication
+} from "../../api/JobApplicationsApi.js";
 
 const JOB_APPLY_FIELDS = [
   "firstName",
@@ -42,11 +48,82 @@ const JobApplyPage = () => {
 
   const { user } = useAuthContext();
   let navigate = useNavigate();
-  const { jobId } = useParams();
+  const { jobId, applicationId } = useParams();
 
-  const [formData, setFormData] = useState(
-    Object.fromEntries(JOB_APPLY_FIELDS.map((key) => [key, user[key] ?? ""]))
-  );
+  const fullName = user?.fullName ?? "";
+  const [firstName, ...rest] = fullName.trim().split(" ");
+  const lastName = rest.join(" ");
+
+  const [formData, setFormData] = useState({
+    firstName,
+    lastName,
+    email: user?.email ?? "",
+    phone: user?.phone ?? "",
+    resume: "",
+    education: user?.education ?? "",
+    certifications: user?.certification ?? "",
+    coverLetter: "",
+  });
+
+  useEffect(() => {
+    fetchResume();
+    //fetchImage();
+  }, [user]);
+
+  const fetchResume = async () => {
+    const { data } = await RetrieveResume(
+      {
+        id: user?.id,
+        fileName: user.resumeData?.resumeFileName, // pass uploaded resume file name from user data
+      },
+      dispatch
+    );
+    if (data) {
+      dispatch({
+        type: "PROFILE_RESUME",
+        payload: data,
+      });
+      setFormData((prev) => ({
+        ...prev,
+        resume: {
+          file: data.file,
+          fileUrl: data.fileUrl,
+        },
+      }));
+    }
+  };
+
+  const fetchJobApplication = async () => {
+    const { data, status } = await retrieveJobApplication(
+      applicationId,
+      dispatch
+    );
+
+    if (status === 200) {
+      const [firstName, ...rest] = data.applicantName.trim().split(" ");
+      const lastName = rest.join(" ");
+      
+      setFormData((prev) => ({
+        ...prev,
+        firstName,
+        lastName,
+        email: data.applicantEmail,
+        phone: data.phone,
+      }));
+    }
+  }
+
+  const handleDeleteJobApplication = async () => {
+    const data = await deleteJobApplication(
+      applicationId,
+      dispatch
+    );
+
+    if (data.status === 204) {
+      navigate(`${paths.get("JOBAPPLICATIONS").PATH}`);
+    }
+  }
+
   const [errors, setErrors] = useState({});
 
   const fieldRefs = Object.fromEntries(
@@ -71,6 +148,12 @@ const JobApplyPage = () => {
       fetchJob();
     }
   }, [jobDetails, jobId]);
+
+  useEffect(() => {
+    if (applicationId) {
+      fetchJobApplication();
+    }
+  }, [applicationId]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -100,12 +183,11 @@ const JobApplyPage = () => {
     const firstErrorField = validate();
 
     if (!firstErrorField) {
-      // TODO: Integrate with API to submit application
-
-      // const { data, status } = await submitApplication(formData, dispatch);
-      // if (status === 200) {
-      navigate(`${paths.get("APPLY_JOB_SUCCESS").PATH}`);
-      // }
+      formData["status"] = "Applied";
+      const { status } = await createJobApplication(jobId, formData, dispatch);
+      if (status === 200) {
+        navigate(`${paths.get("APPLY_JOB_SUCCESS").PATH}`);
+      }
     } else {
       // Scroll to the first error field
       const errorFieldRef = fieldRefs[firstErrorField];
@@ -153,7 +235,7 @@ const JobApplyPage = () => {
             <Box className="bg-white !border !border-gray-300 !border-solid h-4 min-w-4 overflow-hidden w-4 !rounded-2xl">
               <img
                 alt={jobDetails?.companyName}
-                src={jobDetails?.companyLogo ?? dummyThumbnail}
+                src={jobDetails?.companyLogo ?? dummy.jobListings[0].thumbnail}
                 style={{
                   objectFit: "contain",
                 }}
@@ -360,19 +442,37 @@ const JobApplyPage = () => {
           />
         </Stack>
 
-        <Button
-          className="btn btn-primary !px-6 self-end !w-full lg:!w-fit"
-          disabled={loading.isOpen}
-          onClick={handleSubmitApplication}
-        >
-          {loading.isOpen ? (
-            <CircularProgress size={20} className="!text-black" />
-          ) : (
-            "Submit"
-          )}
-        </Button>
-      </Stack>
+{
+  !applicationId && 
+  <Button
+  className="btn btn-primary !px-6 self-end !w-full lg:!w-fit"
+  disabled={loading.isOpen}
+  onClick={handleSubmitApplication}
+>
+  {loading.isOpen ? (
+    <CircularProgress size={20} className="!text-black" />
+  ) : (
+    "Submit"
+  )}
+</Button>
+}
+{
+  applicationId && 
+  <Button
+  className="btn btn-secondary !text-error"
+  disabled={loading.isOpen}
+  //TODO: Delete job application API
+  onClick={handleDeleteJobApplication}
+>
+  {loading.isOpen ? (
+    <CircularProgress size={20} className="!text-black" />
+  ) : (
+    "Delete Job Application"
+  )}
+</Button>
+}
 
+      </Stack>
       <Footer />
     </Stack>
   );

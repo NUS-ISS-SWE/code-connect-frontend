@@ -94,9 +94,21 @@ const unpackRetrieveJobData = (data) => {
   return processedData;
 };
 
+const prepareFormDataForCreateAndEditJobApplication = (data) => {
+    const { ...processedData } = data;
+
+  processedData["applicationDate"] = data["applicationDate"] ?? new Date().toISOString();
+  processedData["applicantName"] = `${data["firstName"]} ${data["lastName"]}`;
+  processedData["applicantEmail"] = data["email"];
+
+  return processedData;
+};
+
+prepareFormDataForCreateAndEditJobApplication
 export {
   apiWrapper,
   baseUrl,
   prepareFormDataForCreateAndEditJob,
   unpackRetrieveJobData,
+  prepareFormDataForCreateAndEditJobApplication
 };
