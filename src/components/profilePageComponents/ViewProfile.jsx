@@ -47,9 +47,9 @@ const ViewProfile = ({ roleDetails }) => {
               component={Link}
               rel="noopener noreferrer"
               target="_blank"
-              to={profileResume.fileUrl}
+              to={profileResume.resumeUrl}
             >
-              {`${profileResume?.file?.name}`}
+              {profileResume?.resumeFileName}
             </Typography>
           </Box>
         </Stack>

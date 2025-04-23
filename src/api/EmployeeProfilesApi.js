@@ -2,21 +2,49 @@ import { apiWrapper } from "../utils/apiUtils";
 import { fetchToken, LOGIN_TOKEN_KEY } from "../utils/authUtils";
 import { GetAPI } from "./GeneralAPI";
 
-const PATHNAME = "/api/v1/employee-profiles";
+const PATHNAME = "/api/v1/employee";
+
+const deleteEmployeeResume = async (dispatch) => {
+  const response = await apiWrapper({
+    dispatch,
+    endpoint: `${PATHNAME}-resume`,
+    method: "DELETE",
+  });
+
+  return response;
+};
 
 const retrieveEmployeeProfile = async (dispatch) => {
-  return await GetAPI(`${PATHNAME}`, dispatch);
+  return await GetAPI(`${PATHNAME}-profiles`, dispatch);
 };
 
 const retrieveEmployeeProfilePicture = async (dispatch) => {
-  return await GetAPI(`${PATHNAME}-picture`, dispatch);
+  return await GetAPI(`${PATHNAME}-profiles-picture`, dispatch);
+};
+
+const retrieveEmployeeResume = async (dispatch) => {
+  const { data, ...rest } = await GetAPI(`${PATHNAME}-resume`, dispatch);
+
+  // Convert base64 encoded pdf to blob
+  const byteCharacters = atob(data.resumeContent);
+  const byteNumbers = new Array(byteCharacters.length)
+    .fill(0)
+    .map((_, i) => byteCharacters.charCodeAt(i));
+  const byteArray = new Uint8Array(byteNumbers);
+
+  const blob = new Blob([byteArray], { type: "application/pdf" });
+  const resumeUrl = URL.createObjectURL(blob);
+
+  const processedData = { resumeUrl, ...data };
+
+  return { data: processedData, ...rest };
 };
 
 const updateEmployeeProfile = async (formData, dispatch) => {
   const response = await apiWrapper({
     body: JSON.stringify(formData),
     dispatch,
-    endpoint: `${PATHNAME}`,
+    endpoint: `${PATHNAME}-profiles`,
     method: "PUT",
   });
 
@@ -30,7 +58,7 @@ const uploadEmployeeProfilePicture = async (file, dispatch) => {
   formData.append("file", file);
 
   try {
-    const response = await fetch(`${PATHNAME}-picture`, {
+    const response = await fetch(`${PATHNAME}-profiles-picture`, {
       body: formData,
       headers: {
         Authorization: `Bearer ${fetchToken(LOGIN_TOKEN_KEY).token}`,
@@ -65,9 +93,29 @@ const uploadEmployeeProfilePicture = async (file, dispatch) => {
   }
 };
 
+const uploadEmployeeResume = async (file, dispatch) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await apiWrapper({
+    body: formData,
+    dispatch,
+    endpoint: `${PATHNAME}-resume`,
+    headers: {
+      Authorization: `Bearer ${fetchToken(LOGIN_TOKEN_KEY).token}`,
+    },
+    method: "POST",
+  });
+
+  return response;
+};
+
 export {
+  deleteEmployeeResume,
   retrieveEmployeeProfile,
   retrieveEmployeeProfilePicture,
+  retrieveEmployeeResume,
   updateEmployeeProfile,
   uploadEmployeeProfilePicture,
+  uploadEmployeeResume,
 };

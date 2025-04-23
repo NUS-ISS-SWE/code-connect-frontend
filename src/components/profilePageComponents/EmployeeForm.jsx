@@ -3,6 +3,7 @@ import { Stack, TextField, Button, Chip, Box } from "@mui/material";
 import { createRef } from "react";
 import { useParams } from "react-router-dom";
 
+import { EMPLOYEE_DETAILS } from "../../constants/employeeDetails";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 
 const EmployeeForm = ({ fields, formData, onSkip, onSubmit, setFormData }) => {
@@ -38,13 +39,13 @@ const EmployeeForm = ({ fields, formData, onSkip, onSubmit, setFormData }) => {
     if (!formData.skillSet || formData.skillSet[0] == "")
       newErrors.skillSet = "Please enter your skillset!";
 
-    if (!formData.certifications || formData.certifications[0] == "")
-      newErrors.certifications = "Please enter your certifications!";
+    if (!formData.certification || formData.certification[0] == "")
+      newErrors.certification = "Please enter your certifications!";
 
     if (!formData.aboutMe) newErrors.aboutMe = "Please enter your about me!";
 
-    if (!formData.programmingLanguages)
-      newErrors.programmingLanguages =
+    if (!formData.programmingLanguage)
+      newErrors.programmingLanguage =
         "Please enter your programming languages!";
 
     if (!formData.education || formData.education[0] == "")
@@ -84,59 +85,10 @@ const EmployeeForm = ({ fields, formData, onSkip, onSubmit, setFormData }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleInputChange = (field) => (event) => {
-    const value = event.target.value;
-    setFormData((prevData) => ({
-      ...prevData,
-      [field]: splitValueAndMap(value), // Convert comma-separated input to array
-    }));
-  };
-
-  const splitValueAndMap = (value) => {
-    return value.split(",").map((item) => item.trim());
-  };
-
-  const handleEducationChange = handleInputChange("education");
-  const handleExperienceChange = handleInputChange("experience");
-  const handleSkillsetChange = handleInputChange("skillSet");
-  const handleCertificationsChange = handleInputChange("certifications");
-
   const createUpdateProfile = async () => {
     var isValid = validate();
 
     if (isValid) {
-      // if (formData.profilePicture instanceof File) {
-      //   // Upload only if it's a new file
-      //   const uploadedProfilePicture = await UploadProfilePicture(
-      //     formData.profilePicture,
-      //     id,
-      //     dispatch
-      //   );
-      //   formData.profilePicture = uploadedProfilePicture.data;
-      // }
-
-      // const { data, error } = isCreate
-      //   ? await createProfile(formData, dispatch)
-      //   : await UpdateAPI(formData, uri, dispatch);
-
-      // if (error) {
-      //   console.error(
-      //     `Error ${isCreate ? "creating" : "updating"} profile:`,
-      //     error
-      //   );
-      //   return;
-      // }
-
-      // dispatch({
-      //   type: "SHOW_TOAST",
-      //   payload: {
-      //     message: `Profile ${isCreate ? "created" : "updated"} successfully`,
-      //     isOpen: true,
-      //     variant: "success",
-      //   },
-      // });
-
-      // Pass callback function to parent to handle form submission
       onSubmit();
     }
   };
@@ -149,192 +101,165 @@ const EmployeeForm = ({ fields, formData, onSkip, onSubmit, setFormData }) => {
     // Edit Mode
     <Stack className="flex flex-1 items-start justify-start py-4 space-y-10 w-full">
       <Stack className="flex items-start justify-start space-y-6 w-full">
+        {/* Full Name */}
         <TextField
-          size="small"
+          error={!!errors[EMPLOYEE_DETAILS.get("fullName").key]}
           fullWidth
-          label="Full Name"
-          name="fullName"
-          error={!!errors.fullName}
-          helperText={errors.fullName}
-          inputRef={fieldRefs.fullName}
-          value={formData?.fullName}
+          helperText={errors[EMPLOYEE_DETAILS.get("fullName").key]}
+          inputRef={fieldRefs[EMPLOYEE_DETAILS.get("fullName").key]}
+          label={EMPLOYEE_DETAILS.get("fullName").label}
+          name={EMPLOYEE_DETAILS.get("fullName").key}
           onChange={handleChange}
-        />
-        <TextField
           size="small"
+          value={formData?.[EMPLOYEE_DETAILS.get("fullName").key]}
+        />
+
+        {/* Job Title */}
+        <TextField
+          error={!!errors[EMPLOYEE_DETAILS.get("jobTitle").key]}
           fullWidth
-          label="Job Title"
-          name="jobTitle"
-          error={!!errors.jobTitle}
-          helperText={errors.jobTitle}
-          inputRef={fieldRefs.jobTitle}
-          value={formData?.jobTitle}
+          helperText={errors[EMPLOYEE_DETAILS.get("jobTitle").key]}
+          inputRef={fieldRefs[EMPLOYEE_DETAILS.get("jobTitle").key]}
+          label={EMPLOYEE_DETAILS.get("jobTitle").label}
+          name={EMPLOYEE_DETAILS.get("jobTitle").key}
           onChange={handleChange}
-        />
-        <TextField
           size="small"
+          value={formData?.[EMPLOYEE_DETAILS.get("jobTitle").key]}
+        />
+
+        {/* Current Company */}
+        <TextField
+          error={!!errors[EMPLOYEE_DETAILS.get("currentCompany").key]}
           fullWidth
-          label="Current Company"
-          name="currentCompany"
-          error={!!errors.currentCompany}
-          helperText={errors.currentCompany}
-          inputRef={fieldRefs.currentCompany}
-          value={formData?.currentCompany}
+          helperText={errors[EMPLOYEE_DETAILS.get("currentCompany").key]}
+          inputRef={fieldRefs[EMPLOYEE_DETAILS.get("currentCompany").key]}
+          label={EMPLOYEE_DETAILS.get("currentCompany").label}
+          name={EMPLOYEE_DETAILS.get("currentCompany").key}
           onChange={handleChange}
-        />
-        <TextField
           size="small"
-          fullWidth
-          label="Work Experience"
-          name="experience"
-          error={!!errors.experience}
-          helperText={errors.experience}
-          inputRef={fieldRefs.experience}
-          value={
-            Array.isArray(formData?.experience)
-              ? formData.experience.join(", ")
-              : ""
-          }
-          onChange={handleExperienceChange}
+          value={formData?.[EMPLOYEE_DETAILS.get("currentCompany").key]}
         />
-        <Stack direction="row" spacing={1} flexWrap="wrap">
-          {(Array.isArray(formData?.experience) ? formData.experience : [])
-            .filter((item) => item != "")
-            .map((exp, index) => (
-              <Chip key={index} label={exp} />
-            ))}
-        </Stack>
+
+        {/* Experience */}
         <TextField
-          size="small"
+          error={!!errors[EMPLOYEE_DETAILS.get("experience").key]}
           fullWidth
-          label="Location"
-          name="location"
-          error={!!errors.location}
-          helperText={errors.location}
-          inputRef={fieldRefs.location}
-          value={formData?.location}
+          helperText={errors[EMPLOYEE_DETAILS.get("experience").key]}
+          inputRef={fieldRefs[EMPLOYEE_DETAILS.get("experience").key]}
+          label={EMPLOYEE_DETAILS.get("experience").label}
+          name={EMPLOYEE_DETAILS.get("experience").key}
           onChange={handleChange}
+          size="small"
+          value={formData?.[EMPLOYEE_DETAILS.get("experience").key]}
+        />
+
+        {/* Location */}
+        <TextField
+          error={!!errors[EMPLOYEE_DETAILS.get("location").key]}
+          fullWidth
+          helperText={errors[EMPLOYEE_DETAILS.get("location").key]}
+          inputRef={fieldRefs[EMPLOYEE_DETAILS.get("location").key]}
+          label={EMPLOYEE_DETAILS.get("location").label}
+          name={EMPLOYEE_DETAILS.get("location").key}
+          onChange={handleChange}
+          size="small"
+          value={formData?.[EMPLOYEE_DETAILS.get("location").key]}
         />
 
         <Box className="flex flex-col lg:flex-row items-start justify-start gap-6 lg:gap-2 w-full">
+          {/* Email */}
           <TextField
-            size="small"
+            error={!!errors[EMPLOYEE_DETAILS.get("email").key]}
             fullWidth
-            label="Email"
-            name="email"
-            error={!!errors.email}
-            helperText={errors.email}
-            inputRef={fieldRefs.email}
-            value={formData?.email}
+            helperText={errors[EMPLOYEE_DETAILS.get("email").key]}
+            inputRef={fieldRefs[EMPLOYEE_DETAILS.get("email").key]}
+            label={EMPLOYEE_DETAILS.get("email").label}
+            name={EMPLOYEE_DETAILS.get("email").key}
             onChange={handleChange}
+            size="small"
+            value={formData?.[EMPLOYEE_DETAILS.get("email").key]}
           />
+
+          {/* Phone */}
           <TextField
-            size="small"
+            error={!!errors[EMPLOYEE_DETAILS.get("phone").key]}
             fullWidth
-            label="Phone Number"
-            name="phone"
-            error={!!errors.phone}
-            helperText={errors.phone}
-            inputRef={fieldRefs.phone}
-            value={formData?.phone}
+            helperText={errors[EMPLOYEE_DETAILS.get("phone").key]}
+            inputRef={fieldRefs[EMPLOYEE_DETAILS.get("phone").key]}
+            label={EMPLOYEE_DETAILS.get("phone").label}
+            name={EMPLOYEE_DETAILS.get("phone").key}
             onChange={handleChange}
+            size="small"
+            value={formData?.[EMPLOYEE_DETAILS.get("phone").key]}
           />
         </Box>
 
+        {/* About Me */}
         <TextField
-          size="small"
+          error={!!errors[EMPLOYEE_DETAILS.get("aboutMe").key]}
           fullWidth
-          label="About Me"
-          name="aboutMe"
+          helperText={errors[EMPLOYEE_DETAILS.get("aboutMe").key]}
+          inputRef={fieldRefs[EMPLOYEE_DETAILS.get("aboutMe").key]}
+          label={EMPLOYEE_DETAILS.get("aboutMe").label}
           multiline
+          name={EMPLOYEE_DETAILS.get("aboutMe").key}
+          onChange={handleChange}
           rows={3}
-          error={!!errors.aboutMe}
-          helperText={errors.aboutMe}
-          inputRef={fieldRefs.aboutMe}
-          value={formData?.aboutMe}
-          onChange={handleChange}
-        />
-        <TextField
           size="small"
-          fullWidth
-          label="Programming Languages"
-          name="programmingLanguages"
-          error={!!errors.programmingLanguages}
-          helperText={errors.programmingLanguages}
-          inputRef={fieldRefs.programmingLanguages}
-          value={formData?.programmingLanguages}
-          onChange={handleChange}
+          value={formData?.[EMPLOYEE_DETAILS.get("aboutMe").key]}
         />
-        <TextField
-          size="small"
-          fullWidth
-          label="Skills"
-          name="skills"
-          error={!!errors.skillSet}
-          helperText={errors.skillSet}
-          inputRef={fieldRefs.skillSet}
-          value={
-            Array.isArray(formData?.skillSet)
-              ? formData.skillSet.join(", ")
-              : ""
-          }
-          onChange={handleSkillsetChange}
-        />
-        <Stack direction="row" spacing={1} flexWrap="wrap">
-          {(Array.isArray(formData?.skillSet) ? formData.skillSet : [])
-            .filter((item) => item != "")
-            .map((skill, index) => (
-              <Chip key={index} label={skill} />
-            ))}
-        </Stack>
 
+        {/* Programming Languages */}
         <TextField
-          size="small"
+          error={!!errors[EMPLOYEE_DETAILS.get("programmingLanguages").key]}
           fullWidth
-          label="Education"
-          name="education"
-          error={!!errors.education}
-          helperText={errors.education}
-          inputRef={fieldRefs.education}
-          value={
-            Array.isArray(formData?.education)
-              ? formData.education.join(", ")
-              : ""
-          }
-          onChange={handleEducationChange}
+          helperText={errors[EMPLOYEE_DETAILS.get("programmingLanguages").key]}
+          inputRef={fieldRefs[EMPLOYEE_DETAILS.get("programmingLanguages").key]}
+          label={EMPLOYEE_DETAILS.get("programmingLanguages").label}
+          name={EMPLOYEE_DETAILS.get("programmingLanguages").key}
+          onChange={handleChange}
+          size="small"
+          value={formData?.[EMPLOYEE_DETAILS.get("programmingLanguages").key]}
         />
-        <Stack direction="row" spacing={1} flexWrap="wrap">
-          {(Array.isArray(formData?.education) ? formData.education : [])
-            .filter((item) => item != "")
-            .map((edu, index) => (
-              <Chip key={index} label={edu} />
-            ))}
-        </Stack>
+
+        {/* Skill Set */}
         <TextField
-          size="small"
+          error={!!errors[EMPLOYEE_DETAILS.get("skillSet").key]}
           fullWidth
-          label="Certifications"
-          name="certifications"
-          error={!!errors.certifications}
-          helperText={errors.certifications}
-          inputRef={fieldRefs.certifications}
-          value={
-            Array.isArray(formData?.certifications)
-              ? formData.certifications.join(", ")
-              : ""
-          }
-          onChange={handleCertificationsChange}
+          helperText={errors[EMPLOYEE_DETAILS.get("skillSet").key]}
+          inputRef={fieldRefs[EMPLOYEE_DETAILS.get("skillSet").key]}
+          label={EMPLOYEE_DETAILS.get("skillSet").label}
+          name={EMPLOYEE_DETAILS.get("skillSet").key}
+          onChange={handleChange}
+          size="small"
+          value={formData?.[EMPLOYEE_DETAILS.get("skillSet").key]}
         />
-        <Stack direction="row" spacing={1} flexWrap="wrap">
-          {(Array.isArray(formData?.certifications)
-            ? formData.certifications
-            : []
-          )
-            .filter((item) => item != "")
-            .map((cert, index) => (
-              <Chip key={index} label={cert} />
-            ))}
-        </Stack>
+
+        {/* Education */}
+        <TextField
+          error={!!errors[EMPLOYEE_DETAILS.get("education").key]}
+          fullWidth
+          helperText={errors[EMPLOYEE_DETAILS.get("education").key]}
+          inputRef={fieldRefs[EMPLOYEE_DETAILS.get("education").key]}
+          label={EMPLOYEE_DETAILS.get("education").label}
+          name={EMPLOYEE_DETAILS.get("education").key}
+          onChange={handleChange}
+          size="small"
+          value={formData?.[EMPLOYEE_DETAILS.get("education").key]}
+        />
+
+        {/* Certifications */}
+        <TextField
+          error={!!errors[EMPLOYEE_DETAILS.get("certifications").key]}
+          fullWidth
+          helperText={errors[EMPLOYEE_DETAILS.get("certifications").key]}
+          inputRef={fieldRefs[EMPLOYEE_DETAILS.get("certifications").key]}
+          label={EMPLOYEE_DETAILS.get("certifications").label}
+          name={EMPLOYEE_DETAILS.get("certifications").key}
+          onChange={handleChange}
+          size="small"
+          value={formData?.[EMPLOYEE_DETAILS.get("certifications").key]}
+        />
       </Stack>
 
       <Box className="flex items-center justify-end space-x-2 w-full">

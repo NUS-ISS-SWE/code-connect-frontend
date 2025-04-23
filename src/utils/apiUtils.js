@@ -29,7 +29,13 @@ const apiWrapper = async ({
       throw response;
     }
 
-    const jsonData = response.status == 204 ?  response : await response.json();
+    let jsonData;
+    // Error boundary for non-json response
+    try {
+      jsonData = response.status == 204 ? response : await response.json();
+    } catch (err) {
+      console.log(err);
+    }
 
     return { data: jsonData, error: "", status: response.status };
   } catch (err) {

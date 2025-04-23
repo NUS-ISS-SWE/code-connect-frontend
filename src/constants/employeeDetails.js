@@ -23,7 +23,7 @@ const EMPLOYEE_DETAILS = new Map([
     "currentCompany",
     {
       key: "currentCompany",
-      label: "Current Employer",
+      label: "Current Company",
       placeholder: "Enter your current employer",
       required: false,
       type: "text",
@@ -82,7 +82,7 @@ const EMPLOYEE_DETAILS = new Map([
   [
     "programmingLanguages",
     {
-      key: "programmingLanguages",
+      key: "programmingLanguage",
       label: "Programming Languages",
       placeholder: "List your programming languages",
       required: false,
@@ -93,7 +93,7 @@ const EMPLOYEE_DETAILS = new Map([
     "skillSet",
     {
       key: "skillSet",
-      label: "Skill Set",
+      label: "Skills",
       placeholder: "List your skills",
       required: false,
       type: "text",
@@ -112,7 +112,7 @@ const EMPLOYEE_DETAILS = new Map([
   [
     "certifications",
     {
-      key: "certifications",
+      key: "certification",
       label: "Certifications",
       placeholder: "List your certifications",
       required: false,

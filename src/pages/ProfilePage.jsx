@@ -5,9 +5,11 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import ViewProfile from "../components/profilePageComponents/ViewProfile";
 
-import { retrieveEmployeeProfilePicture } from "../api/EmployeeProfilesApi";
+import {
+  retrieveEmployeeProfilePicture,
+  retrieveEmployeeResume,
+} from "../api/EmployeeProfilesApi";
 import { retrieveEmployerProfilePicture } from "../api/EmployerProfilesApi";
-import { RetrieveResume } from "../api/ProfileApi";
 import { EMPLOYEE_DETAILS } from "../constants/employeeDetails";
 import { EMPLOYER_DETAILS } from "../constants/employerDetails";
 import { ROLES } from "../constants/roles";
@@ -56,15 +58,9 @@ const ProfilePage = () => {
   };
 
   const fetchResume = async () => {
-    const { data } = await RetrieveResume(
-      {
-        id,
-        fileName: user.resumeData?.resumeFileName, // pass uploaded resume file name from user data
-      },
-      dispatch
-    );
+    const { data, status } = await retrieveEmployeeResume(dispatch);
 
-    if (data) {
+    if (status === 200) {
       dispatch({
         type: "PROFILE_RESUME",
         payload: data,
