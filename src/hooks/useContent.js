@@ -1,4 +1,5 @@
 import images from "../assets/images";
+import { ROLES } from "../constants/roles";
 import paths from "../routes/paths";
 
 const useContent = () => {
@@ -14,8 +15,12 @@ const useContent = () => {
       action: "Go to Home",
       image: images.wellDoneImage,
       header: "Thank you for registering!",
-      subheader:
-        "Your account is pending approval by an administrator. You will receive an email once your account is activated.",
+      subheader: {
+        [ROLES.get("employee").value]:
+          "Your account is pending approval by an administrator. You will receive an email once your account is activated.",
+        [ROLES.get("employer").value]:
+          "Your account is pending approval by an administrator. You will receive an email once your account is activated.",
+      },
     },
     completeProfile: {
       action: "",

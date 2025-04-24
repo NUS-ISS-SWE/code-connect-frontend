@@ -4,6 +4,16 @@ import { GetAPI } from "./GeneralAPI";
 
 const PATHNAME = "/api/v1/employee";
 
+const activateEmployeeAccount = async (token, dispatch) => {
+  const response = await apiWrapper({
+    dispatch,
+    endpoint: `api/v1/activate?token=${token}`,
+    method: "GET",
+  });
+
+  return response;
+};
+
 const deleteEmployeeResume = async (dispatch) => {
   const response = await apiWrapper({
     dispatch,
@@ -111,6 +121,7 @@ const uploadEmployeeResume = async (file, dispatch) => {
 };
 
 export {
+  activateEmployeeAccount,
   deleteEmployeeResume,
   retrieveEmployeeProfile,
   retrieveEmployeeProfilePicture,

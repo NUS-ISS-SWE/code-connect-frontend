@@ -42,8 +42,10 @@ const CompleteProfilePage = () => {
     if (!registerDraft) {
       navigate(`${paths.get("SIGNUP").PATH}`);
     } else {
+      const { email, ...rest } = formData;
       setFormData({
         email: registerDraft.email,
+        ...rest,
       });
     }
   }, []);
@@ -59,7 +61,7 @@ const CompleteProfilePage = () => {
       ...formData,
     };
 
-    const { data, status } = await registerUser(responseBody, dispatch);
+    const { status } = await registerUser(responseBody, dispatch);
 
     if (status === 200) {
       navigate(`${paths.get("ACCOUNT_REGISTER_SUCCESS").PATH}`);

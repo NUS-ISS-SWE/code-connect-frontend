@@ -104,7 +104,6 @@ const prepareFormDataForCreateAndEditJobApplication = (data) => {
   return processedData;
 };
 
-prepareFormDataForCreateAndEditJobApplication
 export {
   apiWrapper,
   baseUrl,
