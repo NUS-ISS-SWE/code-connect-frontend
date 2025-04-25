@@ -34,6 +34,7 @@ const JobsManagementPage = lazy(() =>
 const LoginPage = lazy(() => import("../pages/LoginPage.jsx"));
 const ProfilePage = lazy(() => import("../pages/ProfilePage.jsx"));
 const SignupPage = lazy(() => import("../pages/SignupPage.jsx"));
+const UserManagementPage = lazy(() => import("../pages/UserManagementPage.jsx"));
 
 const AppRoutes = () => {
   return (
@@ -98,6 +99,11 @@ const AppRoutes = () => {
 
           <Route path={paths.get("CREATEJOB").PATH} element={<JobPage />} />
           <Route path={paths.get("GETJOB").PATH} element={<JobPage />} />
+
+          <Route
+            path={paths.get("USER_MANAGEMENT").PATH}
+            element={<UserManagementPage />}
+          />
         </Route>
       </Routes>
     </Suspense>

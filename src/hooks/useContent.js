@@ -17,7 +17,7 @@ const useContent = () => {
       header: "Thank you for registering!",
       subheader: {
         [ROLES.get("employee").value]:
-          "Your account is pending approval by an administrator. You will receive an email once your account is activated.",
+          "A verification link has been sent to your email. Please check your inbox to complete the sign-up process.",
         [ROLES.get("employer").value]:
           "Your account is pending approval by an administrator. You will receive an email once your account is activated.",
       },
