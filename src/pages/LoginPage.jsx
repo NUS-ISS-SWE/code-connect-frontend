@@ -83,9 +83,7 @@ const LoginPage = () => {
     const firstErrorField = validate();
 
     if (!firstErrorField) {
-      const { status } = await login(formInputs);
-
-      if (status === 200) navigate(paths.get("HOME").PATH);
+      await login(formInputs);
     } else {
       if (fieldRefs[firstErrorField]) {
         fieldRefs[firstErrorField].current.scrollIntoView({

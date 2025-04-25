@@ -9,13 +9,12 @@ import { registerUser } from "../api/UserApi";
 import { EMPLOYEE_DETAILS } from "../constants/employeeDetails";
 import { EMPLOYER_DETAILS } from "../constants/employerDetails";
 import { ROLES } from "../constants/roles";
-import { useAuthContext } from "../hooks/useAuthContext";
 import useContent from "../hooks/useContent";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import paths from "../routes/paths";
+import { useEffect } from "react";
 
 const CompleteProfilePage = () => {
-  const { user } = useAuthContext();
   const {
     state: { registerDraft },
     dispatch,
@@ -24,7 +23,7 @@ const CompleteProfilePage = () => {
   const content = useContent();
   const navigate = useNavigate();
   const detailsMap =
-    user?.role === ROLES.get("employee").value
+    registerDraft?.role === ROLES.get("employee").value
       ? EMPLOYEE_DETAILS
       : EMPLOYER_DETAILS;
 
@@ -38,6 +37,16 @@ const CompleteProfilePage = () => {
       ])
     )
   );
+
+  useEffect(() => {
+    if (!registerDraft) {
+      navigate(`${paths.get("SIGNUP").PATH}`);
+    } else {
+      setFormData({
+        email: registerDraft.email,
+      });
+    }
+  }, []);
 
   const handleOnSubmit = async () => {
     const { username, password, role, email } = registerDraft;
@@ -57,9 +66,7 @@ const CompleteProfilePage = () => {
     }
   };
 
-  const handleOnSkip = () => {
-    navigate(`${paths.get("PROFILE").PATH}/${user.id}`);
-  };
+  const handleOnSkip = () => {};
 
   return (
     <Stack className="bg-white flex h-full items-center justify-end min-h-[100vh] w-full">
@@ -74,7 +81,7 @@ const CompleteProfilePage = () => {
           </Typography>
         </Stack>
 
-        {user?.role === ROLES.get("employee").value ? (
+        {registerDraft?.role === ROLES.get("employee").value ? (
           <EmployeeForm
             fields={fields}
             formData={formData}

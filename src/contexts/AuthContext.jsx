@@ -40,27 +40,26 @@ export const AuthProvider = ({ children }) => {
   };
 
   const fetchUserProfile = async (storageData) => {
-    if (storageData.role === ROLES.get("employer").value) {
-      const { data, status } = await retrieveEmployerProfile(dispatch);
-
-      if (status === 200) {
-        setUser(data);
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
-      }
-    } else if (storageData.role === ROLES.get("employee").value) {
-      const { data, status } = await retrieveEmployeeProfile(dispatch);
-
-      if (status === 200) {
-        setUser(data);
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
-      }
-    } else {
+    if (storageData.role === ROLES.get("admin").value) {
       setUser(storageData);
       setIsAuthenticated(true);
+    } else {
+      const response =
+        storageData.role === ROLES.get("employer").value
+          ? await retrieveEmployerProfile(dispatch)
+          : await retrieveEmployeeProfile(dispatch);
+
+      if (response.status === 200) {
+        setUser(response.data);
+        setIsAuthenticated(true);
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+
+        removeToken(LOGIN_TOKEN_KEY);
+      }
+
+      return response;
     }
   };
 
@@ -77,18 +76,20 @@ export const AuthProvider = ({ children }) => {
       };
       storeToken(LOGIN_TOKEN_KEY, JSON.stringify(storageData));
 
-      await fetchUserProfile(storageData);
+      const { status } = await fetchUserProfile(storageData);
 
-      dispatch({
-        type: "SHOW_TOAST",
-        payload: {
-          message: "You have been logged in",
-          isOpen: true,
-          variant: "success",
-        },
-      });
+      if (status === 200) {
+        dispatch({
+          type: "SHOW_TOAST",
+          payload: {
+            message: "You have been logged in",
+            isOpen: true,
+            variant: "success",
+          },
+        });
 
-      return response;
+        navigate(paths.get("HOME").PATH);
+      }
     }
   };
 
@@ -114,7 +115,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const authState = {
-    fetchUserProfile,
     isAuthenticated,
     login,
     logout,
