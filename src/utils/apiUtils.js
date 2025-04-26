@@ -2,7 +2,7 @@ import { fetchToken, removeToken, LOGIN_TOKEN_KEY } from "./authUtils.js";
 import { extractSalaryRange } from "./stringUtils.js";
 
 // Append VITE_API_BASE_URL only in production.
-const baseUrl = import.meta.env.PROD ? import.meta.env.VITE_API_BASE_URL : "";
+// const baseUrl = import.meta.env.PROD ? import.meta.env.VITE_API_BASE_URL : "";
 
 const apiWrapper = async ({
   altError,
@@ -16,7 +16,7 @@ const apiWrapper = async ({
   dispatch({ type: "LOADING", payload: { isOpen: true } });
 
   try {
-    const response = await fetch(`${baseUrl}${endpoint}`, {
+    const response = await fetch(`${endpoint}`, {
       method,
       headers: headers ?? {
         "Content-Type": "application/json",
