@@ -108,7 +108,7 @@ const prepareFormDataForCreateAndEditJobApplication = (data) => {
 
 export {
   apiWrapper,
-  baseUrl,
+  // baseUrl,
   prepareFormDataForCreateAndEditJob,
   unpackRetrieveJobData,
   prepareFormDataForCreateAndEditJobApplication,
