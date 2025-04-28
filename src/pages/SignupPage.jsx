@@ -2,33 +2,36 @@ import {
   Box,
   Button,
   CircularProgress,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
   IconButton,
   InputAdornment,
+  Radio,
+  RadioGroup,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { loginUser, registerUser } from "../api/UserApi";
-import TermsAndConditionsModal from "../components/modals/TermsAndConditionsModal.jsx";
 import logo from "../assets/logo/logo.png";
+import TermsAndConditionsModal from "../components/modals/TermsAndConditionsModal.jsx";
 import Icon from "../constants/Icon.jsx";
 import { ROLES } from "../constants/roles.js";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import paths from "../routes/paths.js";
-import { LOGIN_TOKEN_KEY } from "../utils/authUtils.js";
-import { useState } from "react";
 
 const SignupPage = () => {
-  const { login, user } = useAuthContext();
+  const { user } = useAuthContext();
   const { state, dispatch } = useGlobalContext();
 
   const navigate = useNavigate();
   const fieldRefs = {
     username: useRef(null),
-    // email: useRef(null),
+    email: useRef(null),
     password: useRef(null),
     confirmPassword: useRef(null),
   };
@@ -37,26 +40,27 @@ const SignupPage = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [formInputs, setFormInputs] = useState({
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
-    role: ROLES.get("user").value,
+    role: ROLES.get("employer").value,
   });
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (user) {
-      navigate(paths.get("PROFILE").PATH);
+      navigate(`${paths.get("PROFILE").PATH}/${user.id}`);
     }
   }, []);
 
-  const handleChangeInput = (key) => (evt) => {
+  const handleChangeInput = (evt) => {
     setErrors((prevState) => {
-      const { [key]: _, ...rest } = prevState;
+      const { [evt.target.name]: _, ...rest } = prevState;
       return rest;
     });
 
-    setFormInputs({ ...formInputs, [key]: evt.target.value });
+    setFormInputs({ ...formInputs, [evt.target.name]: evt.target.value });
   };
 
   const validate = () => {
@@ -65,9 +69,9 @@ const SignupPage = () => {
     if (!formInputs.username)
       newErrors.username = "Please enter your username!";
 
-    // if (!formInputs.email) newErrors.email = "Please enter email address!";
-    // else if (!/\S+@\S+\.\S+/.test(formInputs.email))
-    //   newErrors.email = "Invalid email format";
+    if (!formInputs.email) newErrors.email = "Please enter email address!";
+    else if (!/\S+@\S+\.\S+/.test(formInputs.email))
+      newErrors.email = "Invalid email format";
 
     if (!formInputs.password) {
       newErrors.password = "Password is required";
@@ -107,40 +111,13 @@ const SignupPage = () => {
     setLoading(false);
   };
 
-  const RegisterAndLoginUser = async () => {
-    const { data, error, status } = await registerUser(formInputs, dispatch);
+  const navigateToCompleteProfile = () => {
+    dispatch({
+      type: "REGISTER_DRAFT",
+      payload: formInputs,
+    });
 
-    if (!error) {
-      handleLoginUser();
-    }
-  };
-
-  const handleLoginUser = async () => {
-    const { data, error, status } = await loginUser(formInputs, dispatch);
-
-    if (status === 200) {
-      login(LOGIN_TOKEN_KEY, data.accessToken, formInputs.username);
-
-      dispatch({
-        type: "SHOW_TOAST",
-        payload: {
-          message: "You have been logged in",
-          isOpen: true,
-          variant: "success",
-        },
-      });
-
-      navigate(paths.get("HOME").PATH);
-    } else {
-      dispatch({
-        type: "SHOW_TOAST",
-        payload: {
-          message: String(error),
-          isOpen: true,
-          variant: "error",
-        },
-      });
-    }
+    navigate(paths.get("COMPLETE_PROFILE").PATH);
   };
 
   const ShowModal = (show) => {
@@ -155,11 +132,11 @@ const SignupPage = () => {
       <TermsAndConditionsModal
         open={showModal}
         onClose={() => ShowModal(false)}
-        onAccept={() => RegisterAndLoginUser(true)}
+        onAccept={() => navigateToCompleteProfile(true)}
       />
       {/* Logo */}
       <Box className="flex items-center">
-        <Link to="/">
+        <Link to={paths.get("HOME").PATH}>
           <img
             src={logo}
             alt="code connect logo"
@@ -198,7 +175,8 @@ const SignupPage = () => {
             helperText={errors.username}
             inputRef={fieldRefs.username}
             label="Username*"
-            onChange={handleChangeInput("username")}
+            name="username"
+            onChange={handleChangeInput}
             size="small"
             value={formInputs.username}
             variant="outlined"
@@ -211,7 +189,7 @@ const SignupPage = () => {
             }}
           />
 
-          {/* <TextField
+          <TextField
             className="mb-0"
             color="primary"
             disabled={loading}
@@ -220,11 +198,19 @@ const SignupPage = () => {
             helperText={errors.email}
             inputRef={fieldRefs.email}
             label="Email Address*"
-            onChange={handleChangeInput("email")}
+            name="email"
+            onChange={handleChangeInput}
             size="small"
             value={formInputs.email}
             variant="outlined"
-          /> */}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment className="!ml-0 !text-gray-400" position="end">
+                  <Icon name={"Email"} size={"1.3em"} />
+                </InputAdornment>
+              ),
+            }}
+          />
 
           <TextField
             className="mb-0"
@@ -235,7 +221,8 @@ const SignupPage = () => {
             helperText={errors.password}
             inputRef={fieldRefs.password}
             label="Password*"
-            onChange={handleChangeInput("password")}
+            name="password"
+            onChange={handleChangeInput}
             type={showPassword ? "text" : "password"}
             size="small"
             value={formInputs.password}
@@ -275,7 +262,8 @@ const SignupPage = () => {
             helperText={errors.confirmPassword}
             inputRef={fieldRefs.confirmPassword}
             label="Re-type Password*"
-            onChange={handleChangeInput("confirmPassword")}
+            name="confirmPassword"
+            onChange={handleChangeInput}
             type={showPassword ? "text" : "password"}
             size="small"
             value={formInputs.confirmPassword}
@@ -305,6 +293,35 @@ const SignupPage = () => {
               ),
             }}
           />
+
+          <FormControl>
+            <FormLabel
+              className="!font-normal !text-sm !text-gray-500"
+              id="role-radio-buttons-group"
+            >
+              I am an..
+            </FormLabel>
+
+            <RadioGroup
+              aria-labelledby="role-radio-buttons-group"
+              name="role"
+              onChange={handleChangeInput}
+              row
+              value={formInputs.role}
+            >
+              <FormControlLabel
+                value={ROLES.get("employer").value}
+                control={<Radio />}
+                label={ROLES.get("employer").label}
+              />
+
+              <FormControlLabel
+                value={ROLES.get("employee").value}
+                control={<Radio />}
+                label={ROLES.get("employee").label}
+              />
+            </RadioGroup>
+          </FormControl>
         </Stack>
 
         <Button

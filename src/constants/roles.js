@@ -21,10 +21,10 @@ const ROLES = new Map([
       },
     ],
     [
-      "jobSeeker",
+      "employee",
       {
-        label: "Job Seeker",
-        value: "JOB_SEEKER",
+        label: "Employee",
+        value: "EMPLOYEE",
       },
     ],
   ]);

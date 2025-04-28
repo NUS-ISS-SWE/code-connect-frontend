@@ -6,9 +6,11 @@ import Navbar from "../components/Navbar";
 
 import Icon from "../constants/Icon";
 import useContent from "../hooks/useContent";
+//import useGenerateJobs from "../assets/dummy/remove/useGenerateJobs";
 
 const HomePage = () => {
   const content = useContent();
+  // useGenerateJobs(); // !!!TO REMOVE: For creating dummy jobs
 
   return (
     <Stack className="bg-white flex flex-1 items-start justify-start min-h-[100vh] w-full">

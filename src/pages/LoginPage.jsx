@@ -8,9 +8,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-import { loginUser } from "../api/UserApi";
 import logo from "../assets/logo/logo.png";
 import Icon from "../constants/Icon.jsx";
 import { ROLES } from "../constants/roles";
@@ -18,11 +18,12 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import paths from "../routes/paths.js";
 
-import { LOGIN_TOKEN_KEY } from "../utils/authUtils.js";
-
 const LoginPage = () => {
   const { login, user } = useAuthContext();
-  const { state, dispatch } = useGlobalContext();
+  const {
+    state: { loading },
+    dispatch,
+  } = useGlobalContext();
 
   const navigate = useNavigate();
   const fieldRefs = {
@@ -32,7 +33,6 @@ const LoginPage = () => {
   };
 
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
   const [formInputs, setFormInputs] = useState({
     email: "",
     password: "",
@@ -42,7 +42,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (user) {
-      navigate(paths.get("PROFILE").PATH);
+      navigate(`${paths.get("PROFILE").PATH}/${user.id}`);
     }
   }, []);
 
@@ -78,37 +78,12 @@ const LoginPage = () => {
   };
 
   const handleClickLogin = async (e) => {
-    setLoading(true);
     e.preventDefault();
 
     const firstErrorField = validate();
 
     if (!firstErrorField) {
-      const { data, error, status } = await loginUser(formInputs, dispatch);
-
-      if (!error) {
-        login(LOGIN_TOKEN_KEY, data.accessToken, formInputs.username);
-
-        dispatch({
-          type: "SHOW_TOAST",
-          payload: {
-            message: "You have been logged in",
-            isOpen: true,
-            variant: "success",
-          },
-        });
-
-        navigate(paths.get("HOME").PATH);
-      } else {
-        dispatch({
-          type: "SHOW_TOAST",
-          payload: {
-            message: String(error),
-            isOpen: true,
-            variant: "error",
-          },
-        });
-      }
+      await login(formInputs);
     } else {
       if (fieldRefs[firstErrorField]) {
         fieldRefs[firstErrorField].current.scrollIntoView({
@@ -117,8 +92,6 @@ const LoginPage = () => {
         });
       }
     }
-
-    setLoading(false);
   };
 
   return (
@@ -128,7 +101,7 @@ const LoginPage = () => {
     >
       {/* Logo */}
       <Box className="flex items-center">
-        <Link to="/">
+        <Link to={paths.get("HOME").PATH}>
           <img
             src={logo}
             alt="code connect logo"
@@ -161,7 +134,7 @@ const LoginPage = () => {
           <TextField
             className="mb-0"
             color="primary"
-            disabled={loading}
+            disabled={loading.isOpen}
             error={!!errors.username}
             fullWidth
             helperText={errors.username}
@@ -183,7 +156,7 @@ const LoginPage = () => {
           {/* <TextField
             className="mb-0"
             color="primary"
-            disabled={loading}
+            disabled={loading.isOpen}
             error={!!errors.email}
             fullWidth
             helperText={errors.email}
@@ -198,7 +171,7 @@ const LoginPage = () => {
           <TextField
             className="mb-0"
             color="primary"
-            disabled={loading}
+            disabled={loading.isOpen}
             error={!!errors.password}
             fullWidth
             helperText={errors.password}
@@ -220,7 +193,7 @@ const LoginPage = () => {
                   <IconButton
                     aria-label="toggle password visibility"
                     className="!text-gray-400"
-                    disabled={loading}
+                    disabled={loading.isOpen}
                     edge="end"
                     onClick={() => setShowPassword((prev) => !prev)}
                   >
@@ -238,11 +211,11 @@ const LoginPage = () => {
 
         <Button
           className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !shadow-none !text-sm !text-white !tracking-normal !transition-all w-full hover:!bg-primary-100"
-          disabled={loading}
+          disabled={loading.isOpen}
           onClick={handleClickLogin}
           variant="contained"
         >
-          {loading ? (
+          {loading.isOpen ? (
             <CircularProgress size={20} className="!text-white" />
           ) : (
             "Login"

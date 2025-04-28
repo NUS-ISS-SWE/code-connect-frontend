@@ -18,6 +18,15 @@ const paths = new Map([
     },
   ],
   [
+    "ACCOUNT_REGISTER_SUCCESS",
+    {
+      ID: "_registration_success",
+      LABEL: "",
+      PATH: "/registration-success",
+      IS_PROTECTED: false,
+    },
+  ],
+  [
     "ACCOUNT_VERIFIED",
     {
       ID: "_verification_success",
@@ -42,6 +51,15 @@ const paths = new Map([
       LABEL: "Content",
       PATH: "content",
       IS_PROTECTED: true,
+    },
+  ],
+  [
+    "COMPLETE_PROFILE",
+    {
+      ID: "_complete_profile",
+      LABEL: "Complete Profile",
+      PATH: "/complete-profile",
+      IS_PROTECTED: false,
     },
   ],
   [
@@ -95,6 +113,15 @@ const paths = new Map([
       ID: "_apply_job",
       LABEL: "Apply Job",
       PATH: "/job/:jobId/apply",
+      IS_PROTECTED: true,
+    },
+  ],
+  [
+    "VIEW_JOB_APPLICATION",
+    {
+      ID: "_view_job_application",
+      LABEL: "View Job Application",
+      PATH: "/job/:jobId/view-application/:applicationId",
       IS_PROTECTED: true,
     },
   ],
@@ -153,10 +180,10 @@ const paths = new Map([
     },
   ],
   [
-    "GETPROFILE",
+    "PROFILE_VIEW",
     {
-      ID: "_getprofile",
-      LABEL: "GetProfile",
+      ID: "_profile_view",
+      LABEL: "Profile",
       PATH: "/profile/:id",
       IS_PROTECTED: false,
     },

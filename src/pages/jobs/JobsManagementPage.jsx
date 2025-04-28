@@ -14,7 +14,7 @@ import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 import paths from "../../routes/paths";
-import { deleteJobListing } from "../../api/JobPostingsApi.js";
+import { deleteJob } from "../../api/JobPostingsApi.js";
 
 const JobsManagementPage = () => {
   const { state, dispatch } = useGlobalContext();
@@ -22,7 +22,7 @@ const JobsManagementPage = () => {
   const [filteredJobs, setFilteredJobs] = useState([]);
 
   const handleDeleteJob = async (jobId) => {
-    const { status } = await deleteJobListing(jobId, dispatch);
+    const { status } = await deleteJob(jobId, dispatch);
     if (status === 204) {
       setFilteredJobs((prev) => prev.filter((job) => job.id !== jobId));
       dispatch({
@@ -46,10 +46,15 @@ const JobsManagementPage = () => {
   
         // // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
       // const filteredJobs = filterJobs(jobsData, searchTerm, searchFilters);
-  
-      // Store returned API data in filteredJobs state
-      setFilteredJobs(data);
-  
+            
+          // Throttle API call to show loading spinner for 1.5 seconds
+          dispatch({ type: "LOADING", payload: { isOpen: true } });
+          setTimeout(() => {
+            // Store returned API data in filteredJobs state
+            setFilteredJobs(data);
+            dispatch({ type: "LOADING", payload: { isOpen: false } });
+          }, 900);
+
       // Update URL params with searchFilters or searchTerm change
       //updateUrlParams(searchTerm, searchFilters);
     };
@@ -85,7 +90,7 @@ const JobsManagementPage = () => {
             <Typography className="!font-semibold !text-xs lg:!text-xs text-start !text-gray-900">
           {`${filteredJobs?.length} jobs`}
         </Typography>
-        <JobCards filteredJobs={filteredJobs} alreadyApplied={false} showStatusBox={false} hideApplyButton={true} onDelete={handleDeleteJob} />
+        <JobCards filteredJobs={filteredJobs} hideApplyButton={true} onDelete={handleDeleteJob} isLoading={loading.isOpen} />
           </Stack>
         </Stack>
       </Stack>
