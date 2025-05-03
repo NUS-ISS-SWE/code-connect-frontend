@@ -15,10 +15,13 @@ import { useSearchParams } from "react-router-dom";
 import JobCards from "../../components/jobPageComponents/JobCards.jsx";
 import Footer from "../../components/Footer.jsx";
 import Navbar from "../../components/Navbar.jsx";
-import { useAuthContext } from "../../hooks/useAuthContext";
+
+import useGenerateJobs from "../../assets/dummy/remove/useGenerateJobs.js";
 import { retrieveJobs } from "../../api/JobPostingsApi.js";
 import { retrieveJobApplicationsByUser } from "../../api/JobApplicationsApi.js";
 import Icon from "../../constants/Icon.jsx";
+import { ROLES } from "../../constants/roles.js";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import useContent from "../../hooks/useContent.js";
 import { useGlobalContext } from "../../hooks/useGlobalContext.js";
 import useKeyPress from "../../hooks/useKeyPress.js";
@@ -31,9 +34,13 @@ import {
 import { extractSalaryRange } from "../../utils/stringUtils.js";
 
 const JobListingPage = () => {
-  const { state, dispatch } = useGlobalContext();
-  const { loading } = state;
-    const { user } = useAuthContext();
+  const { user } = useAuthContext();
+  const {
+    state: { loading },
+    dispatch,
+  } = useGlobalContext();
+
+  const { generateJobs } = useGenerateJobs();
 
   const content = useContent();
   const isEnterPressed = useKeyPress("Enter");
@@ -137,7 +144,10 @@ const JobListingPage = () => {
   const fetchSearchResults = async (searchTerm, searchFilters) => {
     // Fetch search results from API
     const { data, status } = await retrieveJobs(dispatch);
-    const jobApplications  = await retrieveJobApplicationsByUser(user.email, dispatch);
+    const jobApplications = await retrieveJobApplicationsByUser(
+      user.email,
+      dispatch
+    );
     if (status === 200) {
       // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
       const filteredJobs = filterJobs(data, searchTerm, searchFilters);
@@ -152,8 +162,12 @@ const JobListingPage = () => {
             alreadyApplied: jobApplications.some(
               (application) => application.jobPosting.id === job.id
             ),
-            status: jobApplications.find((application) => application.jobPosting?.id === job.id)?.status,
-            applicationId: jobApplications.find((application) => application.jobPosting?.id === job.id)?.id,
+            status: jobApplications.find(
+              (application) => application.jobPosting?.id === job.id
+            )?.status,
+            applicationId: jobApplications.find(
+              (application) => application.jobPosting?.id === job.id
+            )?.id,
           }))
         );
 
@@ -326,6 +340,16 @@ const JobListingPage = () => {
               Reset all filters
             </Typography>
           </Box>
+
+          {/* !!!TO REMOVE: For creating dummy jobs */}
+          {user.role === ROLES.get("admin").value && (
+            <Button
+              className="!capitalize w-fit"
+              onClick={() => generateJobs()}
+            >
+              Generate
+            </Button>
+          )}
         </Stack>
       </Box>
 
