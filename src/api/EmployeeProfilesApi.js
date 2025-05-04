@@ -35,17 +35,21 @@ const retrieveEmployeeProfilePicture = async (dispatch) => {
 const retrieveEmployeeResume = async (dispatch) => {
   const { data, ...rest } = await GetAPI(`${PATHNAME}-resume`, dispatch);
 
-  // Convert base64 encoded pdf to blob
-  const byteCharacters = atob(data.resumeContent);
-  const byteNumbers = new Array(byteCharacters.length)
-    .fill(0)
-    .map((_, i) => byteCharacters.charCodeAt(i));
-  const byteArray = new Uint8Array(byteNumbers);
+  let processedData;
 
-  const blob = new Blob([byteArray], { type: "application/pdf" });
-  const resumeUrl = URL.createObjectURL(blob);
+  if (data) {
+    // Convert base64 encoded pdf to blob
+    const byteCharacters = atob(data.resumeContent);
+    const byteNumbers = new Array(byteCharacters.length)
+      .fill(0)
+      .map((_, i) => byteCharacters.charCodeAt(i));
+    const byteArray = new Uint8Array(byteNumbers);
 
-  const processedData = { resumeUrl, ...data };
+    const blob = new Blob([byteArray], { type: "application/pdf" });
+    const resumeUrl = URL.createObjectURL(blob);
+
+    processedData = { resumeUrl, ...data };
+  }
 
   return { data: processedData, ...rest };
 };

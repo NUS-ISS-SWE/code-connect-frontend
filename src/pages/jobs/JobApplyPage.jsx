@@ -11,25 +11,24 @@ import {
 } from "@mui/material";
 import { intervalToDuration } from "date-fns";
 import { createRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
 
+import { retrieveEmployeeResume } from "../../api/EmployeeProfilesApi.js";
+import {
+  createJobApplication,
+  retrieveJobApplication,
+  deleteJobApplication,
+} from "../../api/JobApplicationsApi.js";
 import { retrieveJob } from "../../api/JobPostingsApi";
 import dummy from "../../assets/dummy/index.js";
 import Icon from "../../constants/Icon";
-
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 import paths from "../../routes/paths";
 import { renderIntervalDuration } from "../../utils/stringUtils";
-import { RetrieveResume } from "../../api/ProfileApi";
-import {
-  createJobApplication,
-  retrieveJobApplication,
-  deleteJobApplication
-} from "../../api/JobApplicationsApi.js";
 
 const JOB_APPLY_FIELDS = [
   "firstName",
@@ -44,7 +43,7 @@ const JOB_APPLY_FIELDS = [
 
 const JobApplyPage = () => {
   const { state, dispatch } = useGlobalContext();
-  const { jobDetails, loading } = state;
+  const { jobDetails, loading, profileResume } = state;
 
   const { user } = useAuthContext();
   let navigate = useNavigate();
@@ -66,29 +65,26 @@ const JobApplyPage = () => {
   });
 
   useEffect(() => {
-    fetchResume();
-    //fetchImage();
-  }, [user]);
+    if (!user) return;
 
-  const fetchResume = async () => {
-    const { data } = await RetrieveResume(
-      {
-        id: user?.id,
-        fileName: user.resumeData?.resumeFileName, // pass uploaded resume file name from user data
-      },
-      dispatch
-    );
-    if (data) {
-      dispatch({
-        type: "PROFILE_RESUME",
-        payload: data,
-      });
+    if (profileResume) {
       setFormData((prev) => ({
         ...prev,
-        resume: {
-          file: data.file,
-          fileUrl: data.fileUrl,
-        },
+        resume: profileResume,
+      }));
+    } else {
+      fetchResume();
+    }
+    //fetchImage();
+  }, [profileResume, user]);
+
+  const fetchResume = async () => {
+    const { data } = await retrieveEmployeeResume(dispatch);
+
+    if (data) {
+      setFormData((prev) => ({
+        ...prev,
+        resume: data,
       }));
     }
   };
@@ -102,7 +98,7 @@ const JobApplyPage = () => {
     if (status === 200) {
       const [firstName, ...rest] = data.applicantName.trim().split(" ");
       const lastName = rest.join(" ");
-      
+
       setFormData((prev) => ({
         ...prev,
         firstName,
@@ -111,18 +107,15 @@ const JobApplyPage = () => {
         phone: data.phone,
       }));
     }
-  }
+  };
 
   const handleDeleteJobApplication = async () => {
-    const data = await deleteJobApplication(
-      applicationId,
-      dispatch
-    );
+    const data = await deleteJobApplication(applicationId, dispatch);
 
     if (data.status === 204) {
       navigate(`${paths.get("JOBAPPLICATIONS").PATH}`);
     }
-  }
+  };
 
   const [errors, setErrors] = useState({});
 
@@ -167,8 +160,8 @@ const JobApplyPage = () => {
       setFormData({
         ...formData,
         resume: {
-          file: file,
-          fileUrl: URL.createObjectURL(file),
+          resumeFileName: file.name,
+          resumeUrl: URL.createObjectURL(file),
         },
       });
     }
@@ -363,8 +356,14 @@ const JobApplyPage = () => {
               <Box className="bg-gray-100 border border-gray-300 flex items-center justify-start px-4 py-4 relative !rounded-md space-x-2 !text-sm text-gray-900 w-[100%]">
                 <Icon name="File" size={"1.1rem"} />
 
-                <Typography className={`flex-1 !text-sm text-gray-600`}>
-                  {`${formData.resume?.file?.name}`}
+                <Typography
+                  className={`cursor-pointer !text-sm text-primary hover:underline`}
+                  component={Link}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  to={formData.resume.resumeUrl}
+                >
+                  {`${formData.resume.resumeFileName}`}
                 </Typography>
                 <IconButton
                   className="h-fit !rounded-md"
@@ -442,36 +441,33 @@ const JobApplyPage = () => {
           />
         </Stack>
 
-{
-  !applicationId && 
-  <Button
-  className="btn btn-primary !px-6 self-end !w-full lg:!w-fit"
-  disabled={loading.isOpen}
-  onClick={handleSubmitApplication}
->
-  {loading.isOpen ? (
-    <CircularProgress size={20} className="!text-black" />
-  ) : (
-    "Submit"
-  )}
-</Button>
-}
-{
-  applicationId && 
-  <Button
-  className="btn btn-secondary !text-error"
-  disabled={loading.isOpen}
-  //TODO: Delete job application API
-  onClick={handleDeleteJobApplication}
->
-  {loading.isOpen ? (
-    <CircularProgress size={20} className="!text-black" />
-  ) : (
-    "Delete Job Application"
-  )}
-</Button>
-}
-
+        {!applicationId && (
+          <Button
+            className="btn btn-primary !px-6 self-end !w-full lg:!w-fit"
+            disabled={loading.isOpen}
+            onClick={handleSubmitApplication}
+          >
+            {loading.isOpen ? (
+              <CircularProgress size={20} className="!text-black" />
+            ) : (
+              "Submit"
+            )}
+          </Button>
+        )}
+        {applicationId && (
+          <Button
+            className="btn btn-secondary !text-error"
+            disabled={loading.isOpen}
+            //TODO: Delete job application API
+            onClick={handleDeleteJobApplication}
+          >
+            {loading.isOpen ? (
+              <CircularProgress size={20} className="!text-black" />
+            ) : (
+              "Delete Job Application"
+            )}
+          </Button>
+        )}
       </Stack>
       <Footer />
     </Stack>

@@ -139,7 +139,7 @@ const Navbar = () => {
                       </Box>
 
                       <Stack className="items-start justify-start space-y-0 w-full">
-                        <Typography className="!font-bold text-gray-900 text-start !text-sm !truncate !w-[90%]">
+                        <Typography className="!font-bold text-gray-900 text-start !text-sm !truncate !w-[80%]">
                           {user.companyName}
                         </Typography>
 

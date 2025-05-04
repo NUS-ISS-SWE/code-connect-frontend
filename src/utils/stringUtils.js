@@ -68,6 +68,8 @@ const renderIntervalDuration = (date, intervalToDuration) => {
 };
 
 const stringAvatar = (name) => {
+  if (!name) return;
+
   return {
     sx: {
       bgcolor: stringToColor(name),

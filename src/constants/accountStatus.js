@@ -9,7 +9,7 @@ const ACCOUNT_STATUS = new Map([
   [
     "pending",
     {
-      label: "Activate",
+      label: "Approve",
       value: "PENDING_REVIEW",
     },
   ],

@@ -144,17 +144,17 @@ const JobListingPage = () => {
   const fetchSearchResults = async (searchTerm, searchFilters) => {
     // Fetch search results from API
     const { data, status } = await retrieveJobs(dispatch);
-    const jobApplications = await retrieveJobApplicationsByUser(
-      user.email,
-      dispatch
-    );
+
     if (status === 200) {
       // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
       const filteredJobs = filterJobs(data, searchTerm, searchFilters);
 
-      // Throttle API call to show loading spinner for 1.5 seconds
-      dispatch({ type: "LOADING", payload: { isOpen: true } });
-      setTimeout(() => {
+      if (user) {
+        const jobApplications = await retrieveJobApplicationsByUser(
+          user.email,
+          dispatch
+        );
+
         // Store returned API data in filteredJobs state
         setFilteredJobs(
           filteredJobs.map((job) => ({
@@ -170,9 +170,9 @@ const JobListingPage = () => {
             )?.id,
           }))
         );
-
-        dispatch({ type: "LOADING", payload: { isOpen: false } });
-      }, 900);
+      } else {
+        setFilteredJobs(filteredJobs);
+      }
 
       // Update URL params with searchFilters or searchTerm change
       updateUrlParams(searchTerm, searchFilters);
@@ -342,7 +342,7 @@ const JobListingPage = () => {
           </Box>
 
           {/* !!!TO REMOVE: For creating dummy jobs */}
-          {user.role === ROLES.get("admin").value && (
+          {user && user.role === ROLES.get("admin").value && (
             <Button
               className="!capitalize w-fit"
               onClick={() => generateJobs()}
