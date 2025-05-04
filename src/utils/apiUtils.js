@@ -1,7 +1,8 @@
 import { fetchToken, removeToken, LOGIN_TOKEN_KEY } from "./authUtils.js";
 import { extractSalaryRange } from "./stringUtils.js";
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
+// Append VITE_API_BASE_URL only in production.
+// const baseUrl = import.meta.env.PROD ? import.meta.env.VITE_API_BASE_URL : "";
 
 const apiWrapper = async ({
   altError,
@@ -95,20 +96,20 @@ const unpackRetrieveJobData = (data) => {
 };
 
 const prepareFormDataForCreateAndEditJobApplication = (data) => {
-    const { ...processedData } = data;
+  const { ...processedData } = data;
 
-  processedData["applicationDate"] = data["applicationDate"] ?? new Date().toISOString();
+  processedData["applicationDate"] =
+    data["applicationDate"] ?? new Date().toISOString();
   processedData["applicantName"] = `${data["firstName"]} ${data["lastName"]}`;
   processedData["applicantEmail"] = data["email"];
 
   return processedData;
 };
 
-prepareFormDataForCreateAndEditJobApplication
 export {
   apiWrapper,
-  baseUrl,
+  // baseUrl,
   prepareFormDataForCreateAndEditJob,
   unpackRetrieveJobData,
-  prepareFormDataForCreateAndEditJobApplication
+  prepareFormDataForCreateAndEditJobApplication,
 };

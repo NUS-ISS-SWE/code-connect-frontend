@@ -2,7 +2,7 @@
 import { FaHome } from "react-icons/fa";
 import { FaUserTie } from "react-icons/fa6";
 import { IoIosArrowDropleftCircle } from "react-icons/io";
-import { MdOutlineMail, MdPeopleAlt, MdSettings } from "react-icons/md";
+import { MdOutlineMail, MdSettings } from "react-icons/md";
 import {
   RiAddFill,
   RiAiGenerate2,
@@ -17,6 +17,7 @@ import {
   RiEyeOffLine,
   RiFile3Fill,
   RiGlobalLine,
+  RiGroupLine,
   RiLockLine,
   RiLogoutBoxLine,
   RiMenuLine,
@@ -54,7 +55,6 @@ const ICONS_MAP = {
   Lock: RiLockLine,
   Logout: RiLogoutBoxLine,
   Menu: RiMenuLine,
-  People: MdPeopleAlt,
   Search: RiSearchLine,
   Settings: RiSettings3Line,
   ShakeHands: RiShakeHandsFill,
@@ -62,6 +62,7 @@ const ICONS_MAP = {
   Tools: RiToolsFill,
   User: RiUserFill,
   UserLine: RiUserLine,
+  Users: RiGroupLine,
 };
 
 const Icon = ({ name, size = 24, color = "inherit", ...props }) => {

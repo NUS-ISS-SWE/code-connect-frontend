@@ -22,10 +22,33 @@ const useGenerateJobs = () => {
   const { state, dispatch } = useGlobalContext();
   const hasRun = useRef(false);
 
-  useEffect(() => {
-    if (hasRun.current) return;
-    hasRun.current = true;
+  // useEffect(() => {
+  //   if (hasRun.current) return;
+  //   hasRun.current = true;
 
+  //   let promises = [];
+  //   for (const job of jobListings) {
+  //     const { companyName, location, jobTitle, jobType, ...rest } = job;
+
+  //     const [minSalary, maxSalary] = extractSalaryRange(job.salaryRange);
+
+  //     const formData = {
+  //       companyName,
+  //       jobLocation: location,
+  //       jobTitle,
+  //       jobType,
+  //       salaryRangeMin: minSalary,
+  //       salaryRangeMax: maxSalary,
+  //       ...DUMMY_VAUES,
+  //     };
+
+  //     promises.push(postJob(formData, dispatch));
+  //   }
+
+  //   postAllJobs(promises);
+  // }, []);
+
+  const generateJobs = () => {
     let promises = [];
     for (const job of jobListings) {
       const { companyName, location, jobTitle, jobType, ...rest } = job;
@@ -46,7 +69,7 @@ const useGenerateJobs = () => {
     }
 
     postAllJobs(promises);
-  }, []);
+  };
 
   const postAllJobs = async (promises) => {
     const results = await Promise.allSettled(promises);
@@ -68,7 +91,7 @@ const useGenerateJobs = () => {
     }
   };
 
-  return {};
+  return { generateJobs };
 };
 
 export default useGenerateJobs;

@@ -23,46 +23,64 @@ const EmployeeForm = ({ fields, formData, onSkip, onSubmit, setFormData }) => {
   const validate = () => {
     const newErrors = {};
 
-    if (!formData.fullName) newErrors.fullName = "Please enter your name!";
+    if (!formData[EMPLOYEE_DETAILS.get("fullName").key])
+      newErrors[EMPLOYEE_DETAILS.get("fullName").key] =
+        "Please enter your name!";
 
-    if (!formData.jobTitle) newErrors.jobTitle = "Please enter a job title!";
+    if (!formData[EMPLOYEE_DETAILS.get("jobTitle").key])
+      newErrors[EMPLOYEE_DETAILS.get("jobTitle").key] =
+        "Please enter a job title!";
 
-    if (!formData.currentCompany)
-      newErrors.currentCompany = "Please enter your company!";
+    if (!formData[EMPLOYEE_DETAILS.get("currentCompany").key])
+      newErrors[EMPLOYEE_DETAILS.get("currentCompany").key] =
+        "Please enter your company!";
 
-    if (!formData.location) newErrors.location = "Please enter your location!";
+    if (!formData[EMPLOYEE_DETAILS.get("location").key])
+      newErrors[EMPLOYEE_DETAILS.get("location").key] =
+        "Please enter your location!";
 
-    if (!formData.email) newErrors.email = "Please enter your email!";
+    if (!formData[EMPLOYEE_DETAILS.get("email").key])
+      newErrors[EMPLOYEE_DETAILS.get("email").key] = "Please enter your email!";
 
-    if (!formData.phone) newErrors.phone = "Please enter your phone number!";
+    if (!formData[EMPLOYEE_DETAILS.get("phone").key])
+      newErrors[EMPLOYEE_DETAILS.get("phone").key] =
+        "Please enter your phone number!";
 
-    if (!formData.skillSet || formData.skillSet[0] == "")
-      newErrors.skillSet = "Please enter your skillset!";
+    if (!formData[EMPLOYEE_DETAILS.get("skillSet").key])
+      newErrors[EMPLOYEE_DETAILS.get("skillSet").key] =
+        "Please enter your skillset!";
 
-    if (!formData.certification || formData.certification[0] == "")
-      newErrors.certification = "Please enter your certifications!";
+    if (!formData[EMPLOYEE_DETAILS.get("certifications").key])
+      newErrors[EMPLOYEE_DETAILS.get("certifications").key] =
+        "Please enter your certifications!";
 
-    if (!formData.aboutMe) newErrors.aboutMe = "Please enter your about me!";
+    if (!formData[EMPLOYEE_DETAILS.get("aboutMe").key])
+      newErrors[EMPLOYEE_DETAILS.get("aboutMe").key] =
+        "Please enter your about me!";
 
-    if (!formData.programmingLanguage)
-      newErrors.programmingLanguage =
+    if (!formData[EMPLOYEE_DETAILS.get("programmingLanguages").key])
+      newErrors[EMPLOYEE_DETAILS.get("programmingLanguages").key] =
         "Please enter your programming languages!";
 
-    if (!formData.education || formData.education[0] == "")
-      newErrors.education = "Please enter your education!";
+    if (!formData[EMPLOYEE_DETAILS.get("education").key])
+      newErrors[EMPLOYEE_DETAILS.get("education").key] =
+        "Please enter your education!";
 
-    if (!formData.experience || formData.experience[0] == "")
-      newErrors.experience = "Please enter your experience!";
+    if (!formData[EMPLOYEE_DETAILS.get("experience").key])
+      newErrors[EMPLOYEE_DETAILS.get("experience").key] =
+        "Please enter your experience!";
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(formData.email))
-      newErrors.email = "Please enter a valid email!";
+    if (!emailPattern.test(formData[EMPLOYEE_DETAILS.get("email").key]))
+      newErrors[EMPLOYEE_DETAILS.get("email").key] =
+        "Please enter a valid email!";
 
     const sgPhonePattern =
       /^(?:\+65\s?)?(?:6\d{7}|8\d{7}|9\d{7}|1800\d{6}|800\d{7})$/;
 
-    if (!sgPhonePattern.test(formData.phone))
-      newErrors.phone = "Please enter a valid Singapore phone number!";
+    if (!sgPhonePattern.test(formData[EMPLOYEE_DETAILS.get("phone").key]))
+      newErrors[EMPLOYEE_DETAILS.get("phone").key] =
+        "Please enter a valid Singapore phone number!";
 
     setErrors(newErrors);
 

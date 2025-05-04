@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
   const initializeAuth = async () => {
     const storageData = fetchToken(LOGIN_TOKEN_KEY);
 
-    if (storageData?.token) {
+    if (storageData && storageData.token) {
       // TODO: Verify if token is valid with backend or check expiration
       // const isValid = await verifyToken(token);
       // isValid ? login(LOGIN_TOKEN_KEY, token) : logout();
@@ -43,6 +43,8 @@ export const AuthProvider = ({ children }) => {
     if (storageData.role === ROLES.get("admin").value) {
       setUser(storageData);
       setIsAuthenticated(true);
+
+      return true;
     } else {
       const response =
         storageData.role === ROLES.get("employer").value
@@ -52,14 +54,16 @@ export const AuthProvider = ({ children }) => {
       if (response.status === 200) {
         setUser(response.data);
         setIsAuthenticated(true);
+
+        return true;
       } else {
         setUser(null);
         setIsAuthenticated(false);
 
         removeToken(LOGIN_TOKEN_KEY);
-      }
 
-      return response;
+        return false;
+      }
     }
   };
 
@@ -76,9 +80,9 @@ export const AuthProvider = ({ children }) => {
       };
       storeToken(LOGIN_TOKEN_KEY, JSON.stringify(storageData));
 
-      const { status } = await fetchUserProfile(storageData);
+      const isProfileFetched = await fetchUserProfile(storageData);
 
-      if (status === 200) {
+      if (isProfileFetched) {
         dispatch({
           type: "SHOW_TOAST",
           payload: {

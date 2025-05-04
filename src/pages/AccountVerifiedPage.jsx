@@ -1,29 +1,46 @@
 import { Typography, Box, Button, Stack } from "@mui/material";
 import { useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
+import { activateEmployeeAccount } from "../api/EmployeeProfilesApi";
 import useContent from "../hooks/useContent";
+import { useGlobalContext } from "../hooks/useGlobalContext";
 import paths from "../routes/paths";
 
 const AccountVerifiedPage = () => {
-  const content = useContent();
+  const { state, dispatch } = useGlobalContext();
 
+  const content = useContent();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    const verificationToken = searchParams.get("token");
+  const verificationToken = searchParams.get("token");
 
+  useEffect(() => {
     if (verificationToken) {
-      console.log("verificationToken", verificationToken);
-      // TODO: Call the API to activate the account using the token
-    } else {
-      // Handle the case where the parameters are not present
-      console.error("Verification token is missing or invalid.");
+      handleActivateAccount(verificationToken);
     }
-  }, []);
+  }, [verificationToken]);
+
+  const handleActivateAccount = async (token) => {
+    const { status } = await activateEmployeeAccount(token);
+
+    if (status === 200) {
+      navigate(`${paths.get("LOGIN").PATH}`);
+
+      dispatch({
+        type: "SHOW_TOAST",
+        payload: {
+          message: `Account activated successfully`,
+          isOpen: true,
+          variant: "success",
+        },
+      });
+    }
+  };
 
   return (
     <Stack className="bg-whiteflex flex-1 items-start justify-start min-h-[100vh] w-full">

@@ -67,9 +67,43 @@ const renderIntervalDuration = (date, intervalToDuration) => {
   return `${years} ${months} ${days}`;
 };
 
+const stringAvatar = (name) => {
+  if (!name) return;
+
+  return {
+    sx: {
+      bgcolor: stringToColor(name),
+    },
+    children: name[0][0].toUpperCase(),
+  };
+};
+
+const stringToColor = (string) => {
+  if (!string || typeof string !== "string") {
+    throw new Error("Input must be a string.");
+  }
+
+  // Convert character to ASCII code
+  const ascii = string.charCodeAt(0);
+
+  // Use the ASCII code to generate a color
+  // Hash it into RGB values
+  const r = (ascii * 123) % 256;
+  const g = (ascii * 321) % 256;
+  const b = (ascii * 213) % 256;
+
+  // Convert to hex string with padding
+  const hex = `#${[r, g, b]
+    .map((x) => x.toString(16).padStart(2, "0"))
+    .join("")}`;
+
+  return hex;
+};
+
 export {
   addLeadingZero,
   extractSalaryRange,
   removeSlashAndPrefix,
   renderIntervalDuration,
+  stringAvatar,
 };

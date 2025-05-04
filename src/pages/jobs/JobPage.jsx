@@ -10,6 +10,7 @@ import Navbar from "../../components/Navbar";
 import paths from "../../routes/paths";
 
 import { retrieveJob } from "../../api/JobPostingsApi";
+import { ROLES } from "../../constants/roles";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 
@@ -45,7 +46,11 @@ const JobPage = () => {
 
     if (status === 200) {
       setFormData(data);
-      setUser({ ...user, ...data });
+
+      if (user) {
+        setUser({ ...user, ...data });
+      }
+
       dispatch({
         type: "JOB_DETAILS",
         payload: data,
@@ -62,8 +67,7 @@ const JobPage = () => {
       <Stack className="bg-gray-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
         <Navbar />
         <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[95vw] lg:w-[70vw]">
-          {/* Tabs !!!TODO: Only Admin and listing owner can view tab */}
-          {user && jobId && (
+          {user && user.role !== ROLES.get("employee").value && jobId && (
             <Stack className="!border-b !border-gray-300 !border-solid w-[100%]">
               <Tabs value={tabIndex} onChange={handleTabChange}>
                 <Tab label="View" />

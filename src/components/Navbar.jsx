@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   ClickAwayListener,
@@ -18,6 +19,7 @@ import { ROLES } from "../constants/roles";
 import { useAuthContext } from "../hooks/useAuthContext";
 import paths from "../routes/paths";
 import { NAV_OPTIONS, PROFILE_MENU_OPTIONS } from "../utils/navOptionsUtils";
+import { stringAvatar } from "../utils/stringUtils";
 
 const Navbar = () => {
   const { logout, user } = useAuthContext();
@@ -120,15 +122,15 @@ const Navbar = () => {
         {user && (
           <ClickAwayListener onClickAway={() => setIsProfileMenuOpen(false)}>
             <IconButton
-              className="!bg-gray-100 !p-2 relative !text-gray-400"
+              className="!bg-gray-100 !p-0 relative !text-gray-400"
               onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
             >
-              <Icon name={"User"} size={"0.8em"} />
+              <Avatar {...stringAvatar(user.username)} />
 
               {/* Profile Menu */}
               {isProfileMenuOpen && (
                 <Stack
-                  className={`absolute bg-white gap-2 mt-1 px-2 py-2 right-0 shadow top-12 w-[200px]`}
+                  className={`absolute bg-white gap-2 mt-1 px-2 py-2 right-0 shadow-lg top-12 w-[200px]`}
                 >
                   {user.role === ROLES.get("employer").value ? (
                     <Box className="!cursor-default flex items-center justify-start gap-x-2 px-3 py-2 w-full">
@@ -137,7 +139,7 @@ const Navbar = () => {
                       </Box>
 
                       <Stack className="items-start justify-start space-y-0 w-full">
-                        <Typography className="!font-bold text-gray-900 text-start !text-sm !truncate !w-[90%]">
+                        <Typography className="!font-bold text-gray-900 text-start !text-sm !truncate !w-[80%]">
                           {user.companyName}
                         </Typography>
 
@@ -182,17 +184,19 @@ const Navbar = () => {
 
                   <Divider />
 
-                  {PROFILE_MENU_OPTIONS(user.id).map((option, index) => (
-                    <Box
-                      className="!capitalize !duration-500 !ease-in-out flex !font-medium gap-x-2 items-center !justify-start px-3 py-2 rounded-sm !text-gray-700 !text-start !text-sm !transition-all hover:bg-gray-100 !no-underline"
-                      component={Link}
-                      key={index}
-                      to={option.path}
-                    >
-                      <Icon name={option.icon} size={"1.2em"} />
-                      {option.title}
-                    </Box>
-                  ))}
+                  {PROFILE_MENU_OPTIONS(user.id)
+                    .filter((f) => f.roles.includes(user.role))
+                    .map((option, index) => (
+                      <Box
+                        className="!capitalize !duration-500 !ease-in-out flex !font-medium gap-x-2 items-center !justify-start px-3 py-2 rounded-sm !text-gray-700 !text-start !text-sm !transition-all hover:bg-gray-100 !no-underline"
+                        component={Link}
+                        key={index}
+                        to={option.path}
+                      >
+                        <Icon name={option.icon} size={"1.2em"} />
+                        {option.title}
+                      </Box>
+                    ))}
 
                   <Divider />
 
