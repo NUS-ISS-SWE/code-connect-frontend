@@ -34,10 +34,10 @@ const LoginPage = () => {
 
   const [errors, setErrors] = useState({});
   const [formInputs, setFormInputs] = useState({
-    email: "",
+    // email: "",
     username: "",
     password: "",
-    role: ROLES.get("user").value,
+    // role: ROLES.get("user").value,
   });
   const [showPassword, setShowPassword] = useState(false);
 

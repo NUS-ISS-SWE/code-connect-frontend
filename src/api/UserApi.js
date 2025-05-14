@@ -1,7 +1,7 @@
 import { apiWrapper } from "../utils/apiUtils";
 
-const loginUser = async ({ username, password, role }, dispatch) => {
-  const requestBody = JSON.stringify({ username, password, role });
+const loginUser = async ({ username, password }, dispatch) => {
+  const requestBody = JSON.stringify({ username, password });
 
   const response = await apiWrapper({
     body: requestBody,
