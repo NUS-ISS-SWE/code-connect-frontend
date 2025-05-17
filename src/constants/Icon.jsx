@@ -1,11 +1,13 @@
 /* eslint-disable react/prop-types */
 import { FaHome } from "react-icons/fa";
+import { FaUserTie } from "react-icons/fa6";
 import { IoIosArrowDropleftCircle } from "react-icons/io";
-import { MdEmail, MdPeopleAlt, MdSettings } from "react-icons/md";
+import { MdOutlineMail, MdSettings } from "react-icons/md";
 import {
   RiAddFill,
   RiAiGenerate2,
   RiAiGenerateText,
+  RiArchive2Line,
   RiArrowDownSFill,
   RiArrowRightSFill,
   RiBarChartFill,
@@ -14,6 +16,8 @@ import {
   RiEyeLine,
   RiEyeOffLine,
   RiFile3Fill,
+  RiGlobalLine,
+  RiGroupLine,
   RiLockLine,
   RiLogoutBoxLine,
   RiMenuLine,
@@ -31,6 +35,7 @@ const ICONS_MAP = {
   Add: RiAddFill,
   AiGenerate: RiAiGenerate2,
   AiGenerateText: RiAiGenerateText,
+  Archive: RiArchive2Line,
   ArrowDown: RiArrowDownSFill,
   ArrowLeftCircle: IoIosArrowDropleftCircle,
   ArrowRight: RiArrowRightSFill,
@@ -39,15 +44,17 @@ const ICONS_MAP = {
   Cog: MdSettings,
   Close: RiCloseFill,
   Dot: RxDotFilled,
-  Email: MdEmail,
+  Email: MdOutlineMail,
+  Employee: FaUserTie,
+  Employer: RiBriefcase4Fill,
   Eye: RiEyeLine,
   EyeOff: RiEyeOffLine,
   File: RiFile3Fill,
+  Globe: RiGlobalLine,
   Home: FaHome,
   Lock: RiLockLine,
   Logout: RiLogoutBoxLine,
   Menu: RiMenuLine,
-  People: MdPeopleAlt,
   Search: RiSearchLine,
   Settings: RiSettings3Line,
   ShakeHands: RiShakeHandsFill,
@@ -55,6 +62,7 @@ const ICONS_MAP = {
   Tools: RiToolsFill,
   User: RiUserFill,
   UserLine: RiUserLine,
+  Users: RiGroupLine,
 };
 
 const Icon = ({ name, size = 24, color = "inherit", ...props }) => {

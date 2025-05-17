@@ -1,68 +1,37 @@
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 
 import {
-  DeleteResume,
-  RetrieveResume,
-  UploadResumeAPI,
-} from "../../api/ProfileApi";
+  deleteEmployeeResume,
+  retrieveEmployeeResume,
+  uploadEmployeeResume,
+} from "../../api/EmployeeProfilesApi";
 import Icon from "../../constants/Icon";
-import { useAuthContext } from "../../hooks/useAuthContext";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 
 const UploadResume = () => {
-  const { state, dispatch } = useGlobalContext();
-  const { loading } = state;
-
-  const { setUser, user } = useAuthContext();
-  const { id } = useParams();
-
-  const [resume, setResume] = useState(null);
-
-  useEffect(() => {
-    if (!user) return;
-
-    // fetch resume if user has resume-related data
-    if (user.resumeData?.resumeContent) {
-      fetchResume();
-    } else {
-      setResume(null);
-    }
-  }, [user]);
+  const {
+    state: { loading, profileResume },
+    dispatch,
+  } = useGlobalContext();
 
   const fetchResume = async () => {
-    dispatch({ type: "LOADING", payload: { isOpen: true } });
+    const { data, status } = await retrieveEmployeeResume(dispatch);
 
-    const { data } = await RetrieveResume(
-      { id, fileName: user.resumeData?.resumeFileName },
-      dispatch
-    );
-
-    if (data) {
-      setResume(data);
+    if (status === 200) {
+      dispatch({
+        type: "PROFILE_RESUME",
+        payload: data,
+      });
     }
-
-    dispatch({ type: "LOADING", payload: { isOpen: false } });
   };
 
   const handleRemoveResume = async () => {
-    dispatch({ type: "LOADING", payload: { isOpen: true } });
+    const { status } = await deleteEmployeeResume(dispatch);
 
-    const { data } = await DeleteResume({ id }, dispatch);
-
-    if (data) {
-      setResume(null);
-
-      // Update user profile state
-      setUser({
-        ...user,
-        resumeData: { resumeContent: null, resumeFileName: null },
+    if (status === 204) {
+      dispatch({
+        type: "PROFILE_RESUME",
+        payload: "",
       });
 
       dispatch({
@@ -70,38 +39,20 @@ const UploadResume = () => {
         payload: {
           message: "Resume deleted.",
           isOpen: true,
+          variant: "success",
         },
       });
     }
-
-    dispatch({ type: "LOADING", payload: { isOpen: false } });
   };
 
   const handleAddResume = async (event) => {
-    dispatch({ type: "LOADING", payload: { isOpen: true } });
-
     const file = event.target.files[0];
 
     if (file) {
-      const formData = new FormData();
-      formData.append("file", file || "");
+      const { status } = await uploadEmployeeResume(file, dispatch);
 
-      const { data, error } = await UploadResumeAPI({ id, formData }, dispatch);
-
-      if (data) {
-        setResume({
-          file: file,
-          fileUrl: URL.createObjectURL(file),
-        });
-
-        // Update user profile state
-        setUser({
-          ...user,
-          resumeData: {
-            resumeContent: "Resume uploaded",
-            resumeFileName: file.name,
-          },
-        });
+      if (status === 200) {
+        fetchResume();
 
         dispatch({
           type: "SHOW_TOAST",
@@ -113,21 +64,11 @@ const UploadResume = () => {
         });
       }
     }
-
-    dispatch({ type: "LOADING", payload: { isOpen: false } });
   };
 
   return (
-    <Stack className="flex justify-start pt-4 space-y-4 w-[100%]">
-      <Stack className="space-y-1">
-        <Typography className={`!capitalize !font-medium !text-lg`}>
-          Upload Resume
-        </Typography>
-
-        <Divider />
-      </Stack>
-
-      {resume ? (
+    <Stack className="flex flex-1 items-start justify-start py-4 space-y-10 w-full">
+      {profileResume ? (
         <Stack className="flex justify-start space-y-1 w-[100%]">
           <Box className="flex items-center justify-start relative space-x-2 !text-sm text-gray-500 w-[100%]">
             <Icon name="File" size={"1.1rem"} />
@@ -136,7 +77,7 @@ const UploadResume = () => {
               className={`!text-sm text-gray-700`}
               // className={`!text-sm text-accent hover:underline`}
             >
-              {`${resume?.file?.name}`}
+              {profileResume?.resumeFileName}
             </Typography>
             <IconButton
               className="h-fit !rounded-md"

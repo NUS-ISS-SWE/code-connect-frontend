@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply !border !border-gray-300 !border-solid !capitalize !duration-500 !ease-in-out !font-semibold !px-6 !py-2 !shadow-none !text-xs !tracking-normal !transition-all !truncate !w-fit;
+  }
+
+  .btn-primary {
+    @apply !bg-primary !text-white  hover:!bg-primary-900;
+  }
+
+  .btn-secondary {
+    @apply !bg-gray-100 !text-black  hover:!bg-gray-200;
+  }
+}
+
+/** R-Suite Select Picker */
+.rs-cdcnt-picker {
+  background-color: #f6f8fa;
+  border: solid 1px #e4e6ef;
+  border-radius: 4px;
+}
+
+.rs-cdcnt-picker > .rs-picker-toggle {
+  align-items: center;
+  display: flex;
+  justify-content: start !important;
+  overflow: hidden;
+}
+
+.rs-cdcnt-picker > .rs-picker-toggle-active {
+  box-shadow: none;
+}
+
+.rs-cdcnt-picker > .rs-picker-toggle > .rs-stack {
+  overflow: hidden;
+}
+
+.rs-cdcnt-picker > .rs-picker-toggle:hover {
+  background-color: transparent;
+}
+
+.rs-cdcnt-picker > .rs-picker-toggle:focus {
+  background-color: transparent;
+}

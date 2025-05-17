@@ -1,141 +1,106 @@
-import { Divider, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Divider, Stack, Tab, Tabs, Typography } from "@mui/material";
 
 import EditProfile from "../components/profilePageComponents/EditProfile";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import ProfilePictureUpload from "../components/profilePageComponents/ProfilePictureUpload";
 import ViewProfile from "../components/profilePageComponents/ViewProfile";
 
-import { RetrieveResume, retrieveUserProfile } from "../api/ProfileApi";
+import {
+  retrieveEmployeeProfilePicture,
+  retrieveEmployeeResume,
+} from "../api/EmployeeProfilesApi";
+import { retrieveEmployerProfilePicture } from "../api/EmployerProfilesApi";
+import { EMPLOYEE_DETAILS } from "../constants/employeeDetails";
+import { EMPLOYER_DETAILS } from "../constants/employerDetails";
+import { ROLES } from "../constants/roles";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { GetAPI } from "../api/GeneralAPI";
 
 const ProfilePage = () => {
-  const { state, dispatch } = useGlobalContext();
+  const { user } = useAuthContext();
+  const {
+    state: { loading },
+    dispatch,
+  } = useGlobalContext();
 
-  const { setUser, user } = useAuthContext();
-  const { id } = useParams(); // Get profile ID from URL
+  const { id } = useParams();
 
-  const [resume, setResume] = useState(null);
-  const [formData, setFormData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [tabIndex, setTabIndex] = useState(0);
 
-  useEffect(() => {
-    if (!id) {
-      // If no ID is provided, show an empty form for creating a profile
-      setFormData({
-        fullName: "",
-        jobTitle: "",
-        profilePicture: "",
-        currentCompany: "",
-        location: "",
-        email: "",
-        phone: "",
-        certifications: "",
-        skillSet: "",
-        aboutMe: "",
-        programmingLanguages: "",
-        education: "",
-        experience: "",
-      });
-      setLoading(false);
-      return;
-    }
-
-    //TODO: fetch user profile should happen on login
-    fetchProfile();
-  }, [id]); // Runs when the ID changes
+  const roleDetails =
+    user?.role === ROLES.get("employee").value
+      ? EMPLOYEE_DETAILS
+      : EMPLOYER_DETAILS;
 
   useEffect(() => {
-    if (!user) return;
-
-    // fetch resume if user has resume-related data
-    if (user.resumeData?.resumeContent) {
+    if (user?.role === ROLES.get("employee").value) {
       fetchResume();
-    } else {
-      setResume(null);
     }
+
+    fetchImage();
   }, [user]);
 
-  const fetchProfile = async () => {
-    const { data, status } = await retrieveUserProfile(id, dispatch);
+  const fetchImage = async () => {
+    if (!user) return;
+
+    const { data, status } =
+      user?.role === ROLES.get("employer").value
+        ? await retrieveEmployerProfilePicture(dispatch)
+        : await retrieveEmployeeProfilePicture(dispatch);
 
     if (status === 200) {
-      setFormData(data);
-      setUser({ ...user, ...data });
+      // Update global state with the new image
+      dispatch({
+        type: "PROFILE_IMAGE",
+        payload: `data:image/png;base64,${data.profilePicture}`,
+      });
     }
   };
 
   const fetchResume = async () => {
-    dispatch({ type: "LOADING", payload: { isOpen: true } });
+    const { data, status } = await retrieveEmployeeResume(dispatch);
 
-    const { data } = await RetrieveResume(
-      {
-        id,
-        fileName: user.resumeData?.resumeFileName, // pass uploaded resume file name from user data
-      },
-      dispatch
-    );
-
-    if (data) {
-      setResume(data);
+    if (status === 200) {
+      dispatch({
+        type: "PROFILE_RESUME",
+        payload: data,
+      });
     }
-
-    dispatch({ type: "LOADING", payload: { isOpen: false } });
   };
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
   };
 
-  // {loading ? (
-  //   <CircularProgress size={20} className="!text-white" />
-  // ) : (
-  //   "Sign up"
-  // )}
-
   return (
     <Stack className="bg-whiteflex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
 
-      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[70vw]">
-        <Typography className="!font-medium flex-1 text-left !text-2xl">
-          {id ? "Profile" : "Create Profile"}
+      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-3xl py-8 space-y-2 w-[95vw] lg:w-[70vw]">
+        <Typography className="!font-medium text-left !text-2xl">
+          Profile
         </Typography>
 
         <Divider flexItem />
 
-        {/* Tabs for View / Edit */}
-        {id && (
-          <Tabs value={tabIndex} onChange={handleTabChange}>
-            <Tab label="View" />
-            <Tab label="Edit" />
-          </Tabs>
-        )}
+        <Stack className="py-2 space-y-4 w-full">
+          {/* Tabs for View / Edit */}
+          <Box className="border-b border-gray-300">
+            <Tabs value={tabIndex} onChange={handleTabChange}>
+              <Tab label="View" />
+              <Tab label="Edit" />
+            </Tabs>
+          </Box>
 
-        {/* Profile Section */}
-        <Stack className="flex items-start justify-start py-4 space-y-4 w-full">
-          {/* Profile Picture */}
-          <ProfilePictureUpload
-            formData={formData}
-            setFormData={setFormData}
-            showSelectButton={tabIndex === 1 && id}
-          />
+          {/* Profile Section */}
           {id && tabIndex === 0 ? (
-            <ViewProfile formData={formData} resume={resume} />
+            <ViewProfile roleDetails={roleDetails} />
           ) : (
-            <EditProfile
-              formData={formData}
-              id={id}
-              setFormData={setFormData}
-              setLoading={setLoading}
-              dispatch={dispatch}
-            />
+            <EditProfile roleDetails={roleDetails} />
           )}
         </Stack>
       </Stack>
+
       <Footer />
     </Stack>
   );

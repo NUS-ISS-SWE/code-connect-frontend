@@ -1,17 +1,13 @@
-/* eslint-disable no-undef */
-/* eslint-disable react/jsx-no-undef */
+import AppRoutes from "./routes/AppRoutes.jsx";
 import Loader from "./components/common/Loader.jsx";
-import Router from "./router.jsx";
 import Toast from "./components/common/Toast.jsx";
-
-import "./App.css";
 
 function App() {
   return (
     <>
       <Loader />
 
-      <Router />
+      <AppRoutes />
 
       <Toast />
     </>

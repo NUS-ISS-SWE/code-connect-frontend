@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Box,
   Button,
@@ -9,33 +10,37 @@ import {
   Typography,
 } from "@mui/material";
 import { SelectPicker } from "rsuite";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
-import { GetAPI } from "../api/GeneralAPI";
+import JobCards from "../../components/jobPageComponents/JobCards.jsx";
+import Footer from "../../components/Footer.jsx";
+import Navbar from "../../components/Navbar.jsx";
 
-import JobCard from "../components/jobPageComponents/JobCard";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
-
-import { retrieveJobListings } from "../api/JobPostingsApi.js";
-import dummy from "../assets/dummy/index.js";
-import Icon from "../constants/Icon.jsx";
-import styles from "../constants/styles.jsx";
-import useContent from "../hooks/useContent.js";
-import { useGlobalContext } from "../hooks/useGlobalContext.js";
-import useKeyPress from "../hooks/useKeyPress.js";
-import paths from "../routes/paths.js";
+import useGenerateJobs from "../../assets/dummy/remove/useGenerateJobs.js";
+import { retrieveJobs } from "../../api/JobPostingsApi.js";
+import { retrieveJobApplicationsByUser } from "../../api/JobApplicationsApi.js";
+import Icon from "../../constants/Icon.jsx";
+import { ROLES } from "../../constants/roles.js";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import useContent from "../../hooks/useContent.js";
+import { useGlobalContext } from "../../hooks/useGlobalContext.js";
+import useKeyPress from "../../hooks/useKeyPress.js";
 import {
   JOB_TYPES_FILTER_OPTIONS,
   LOCATION_FILTER_OPTIONS,
   SALARY_MAX_FILTER_OPTIONS,
   SALARY_MIN_FILTER_OPTIONS,
-} from "../utils/optionUtils.js";
-import { renderIntervalDuration } from "../utils/stringUtils.js";
+} from "../../utils/filterOptionsUtils.js";
+import { extractSalaryRange } from "../../utils/stringUtils.js";
 
 const JobListingPage = () => {
-  const { state, dispatch } = useGlobalContext();
-  const { loading } = state;
+  const { user } = useAuthContext();
+  const {
+    state: { loading },
+    dispatch,
+  } = useGlobalContext();
+
+  const { generateJobs } = useGenerateJobs();
 
   const content = useContent();
   const isEnterPressed = useKeyPress("Enter");
@@ -81,11 +86,6 @@ const JobListingPage = () => {
     setSearchParams(params);
   };
 
-  // Call fetch search results API on intial render
-  useEffect(() => {
-    fetchSearchResults(searchTerm, searchFilters);
-  }, []);
-
   // Call fetch search results API on filter change
   useEffect(() => {
     fetchSearchResults(searchTerm, searchFilters);
@@ -96,7 +96,6 @@ const JobListingPage = () => {
     if (isEnterPressed) {
       handleTriggerSearch();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEnterPressed]);
 
   const handleChangeSearchInput = (evt) => {
@@ -144,14 +143,36 @@ const JobListingPage = () => {
 
   const fetchSearchResults = async (searchTerm, searchFilters) => {
     // Fetch search results from API
-    const { data, status } = await retrieveJobListings(dispatch);
+    const { data, status } = await retrieveJobs(dispatch);
 
     if (status === 200) {
       // Filter jobs based on search term and search filters. Filtered data to be returned via API call later
       const filteredJobs = filterJobs(data, searchTerm, searchFilters);
 
-      // Store returned API data in filteredJobs state
-      setFilteredJobs(filteredJobs);
+      if (user) {
+        const jobApplications = await retrieveJobApplicationsByUser(
+          user.email,
+          dispatch
+        );
+
+        // Store returned API data in filteredJobs state
+        setFilteredJobs(
+          filteredJobs.map((job) => ({
+            ...job,
+            alreadyApplied: jobApplications.some(
+              (application) => application.jobPosting.id === job.id
+            ),
+            status: jobApplications.find(
+              (application) => application.jobPosting?.id === job.id
+            )?.status,
+            applicationId: jobApplications.find(
+              (application) => application.jobPosting?.id === job.id
+            )?.id,
+          }))
+        );
+      } else {
+        setFilteredJobs(filteredJobs);
+      }
 
       // Update URL params with searchFilters or searchTerm change
       updateUrlParams(searchTerm, searchFilters);
@@ -169,8 +190,8 @@ const JobListingPage = () => {
         searchFilters.jobType === "" || job.jobType === searchFilters.jobType;
 
       const jobLocation =
-        searchFilters.location === "" ||
-        job.location.includes(searchFilters.location);
+        searchFilters.jobLocation === "" ||
+        job.jobLocation?.includes(searchFilters.location);
 
       const minFilter = searchFilters.salaryMin
         ? parseInt(searchFilters.salaryMin, 10)
@@ -191,19 +212,6 @@ const JobListingPage = () => {
     });
   };
 
-  const extractSalaryRange = (salaryRange) => {
-    if (!salaryRange) return [0, Infinity];
-
-    const salaryNumbers = salaryRange.replace(/[$,]/g, "").split("-");
-
-    if (!salaryNumbers || salaryNumbers.length < 2) return [0, Infinity];
-
-    const minSalary = parseInt(salaryNumbers[0], 10);
-    const maxSalary = parseInt(salaryNumbers[1], 10);
-
-    return [minSalary, maxSalary];
-  };
-
   return (
     <Stack className="bg-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
       <Navbar />
@@ -213,7 +221,7 @@ const JobListingPage = () => {
           backgroundImage: `url(${content.jobs.head.background})`,
         }}
       >
-        <Stack className="flex justify-start mx-auto max-w-7xl px-2 lg:px-0 space-y-3 w-full">
+        <Stack className="flex justify-start mx-auto max-w-7xl px-2 lg:px-0 space-y-3 w-[95vw] lg:w-[70vw]">
           <Typography className="!font-semibold !text-2xl lg:!text-3xl text-start !text-white">
             {content.jobs.head.header}
           </Typography>
@@ -259,7 +267,7 @@ const JobListingPage = () => {
             />
 
             <Button
-              className={`${styles.buttonStyles} !bg-primary !min-w-[78px] !text-white hover:!bg-primary-100`}
+              className="btn btn-primary !min-w-[78px]"
               disabled={loading.isOpen}
               onClick={handleTriggerSearch}
               variant="contained"
@@ -273,50 +281,54 @@ const JobListingPage = () => {
           </Box>
 
           {/* Filters */}
-          <Box className="flex justify-start space-x-2 w-full">
+          <Box className="flex flex-col lg:flex-row flex-wrap justify-start space-x-0 lg:space-x-2 space-y-2 lg:space-y-0 w-full">
             {/* Job Type */}
             <SelectPicker
+              classPrefix="cdcnt-picker lg:!w-[110px]"
               data={JOB_TYPES_FILTER_OPTIONS}
+              disabled={loading.isOpen}
               onChange={handleFilterChange("jobType")}
               placeholder="Job Type"
               searchable={false}
-              style={{ width: 110 }}
               value={searchFilters?.jobType}
             />
 
             {/* Location */}
             <SelectPicker
+              classPrefix="cdcnt-picker lg:!w-[110px]"
               data={LOCATION_FILTER_OPTIONS}
+              disabled={loading.isOpen}
               onChange={handleFilterChange("location")}
               placeholder="Location"
               searchable={false}
-              style={{ width: 110 }}
               value={searchFilters?.location}
             />
 
             {/* Salary Min Filter */}
             <SelectPicker
+              classPrefix="cdcnt-picker lg:!w-[180px]"
               data={SALARY_MIN_FILTER_OPTIONS}
+              disabled={loading.isOpen}
               disabledItemValues={SALARY_MIN_FILTER_OPTIONS.filter(
                 (f) => parseInt(f.value) >= parseInt(searchFilters?.salaryMax)
               ).map((e) => e.value)}
               onChange={handleFilterChange("salaryMin")}
               placeholder="Monthly Salary (Min)"
               searchable={false}
-              style={{ width: 200 }}
               value={searchFilters?.salaryMin}
             />
 
             {/* Salary Max Filter */}
             <SelectPicker
+              classPrefix="cdcnt-picker lg:!w-[180px]"
               data={SALARY_MAX_FILTER_OPTIONS}
+              disabled={loading.isOpen}
               disabledItemValues={SALARY_MAX_FILTER_OPTIONS.filter(
                 (f) => parseInt(f.value) <= parseInt(searchFilters?.salaryMin)
               ).map((e) => e.value)}
               onChange={handleFilterChange("salaryMax")}
               placeholder="Monthly Salary (Max)"
               searchable={false}
-              style={{ width: 200 }}
               value={searchFilters?.salaryMax}
             />
 
@@ -328,10 +340,20 @@ const JobListingPage = () => {
               Reset all filters
             </Typography>
           </Box>
+
+          {/* !!!TO REMOVE: For creating dummy jobs */}
+          {user && user.role === ROLES.get("admin").value && (
+            <Button
+              className="!capitalize w-fit"
+              onClick={() => generateJobs()}
+            >
+              Generate
+            </Button>
+          )}
         </Stack>
       </Box>
 
-      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-7xl px-1 lg:px-0 py-6 !space-y-2 w-full">
+      <Stack className="flex flex-1 items-start justify-start mx-auto max-w-7xl px-1 lg:px-0 py-6 space-y-2 w-[95vw] lg:w-[70vw]">
         <Typography className="!font-semibold !text-xs lg:!text-xs text-start !text-gray-900">
           {`${filteredJobs?.length} jobs - ${
             decodeURIComponent(searchParams.get("search")) === "null"
@@ -340,29 +362,8 @@ const JobListingPage = () => {
           }`}
         </Typography>
 
-        {filteredJobs?.length > 0 ? (
-          filteredJobs?.map((item, index) => {
-            return (
-              <JobCard item={item} index={index}/>
-            );
-          })
-        ) : (
-          <Box className="bg-gray-100 !border !border-gray-300 !border-solid py-2 flex items-center justify-start min-h-[70px] p-3 rounded-md w-full">
-            <Typography className="!font-regular !text-sm lg:!text-xs text-start !text-gray-500">
-              No records found
-            </Typography>
-          </Box>
-        )}
+        <JobCards filteredJobs={filteredJobs} isLoading={loading.isOpen} />
       </Stack>
-
-      {/* <Button
-        className="!bg-primary !capitalize !duration-500 !ease-in-out !font-semibold !pb-2 !pl-4 !pr-4 !pt-2 !text-sm !text-white !tracking-normal !transition-all w-full hover:!bg-primary-100 !shadow-none"
-        component={Link}
-        to={paths.get("CREATEJOB").PATH}
-        variant="contained"
-      >
-        {paths.get("CREATEJOB").LABEL}
-      </Button> */}
       <Footer />
     </Stack>
   );

@@ -1,4 +1,11 @@
+import { useNavigate } from "react-router-dom";
+
+import { retrieveEmployeeProfile } from "../api/EmployeeProfilesApi";
+import { retrieveEmployerProfile } from "../api/EmployerProfilesApi";
+import { loginUser } from "../api/UserApi";
+import { ROLES } from "../constants/roles";
 import { useGlobalContext } from "../hooks/useGlobalContext";
+import paths from "../routes/paths";
 import {
   fetchToken,
   LOGIN_TOKEN_KEY,
@@ -11,6 +18,8 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const { state, dispatch } = useGlobalContext();
 
+  const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -21,24 +30,75 @@ export const AuthProvider = ({ children }) => {
   const initializeAuth = async () => {
     const storageData = fetchToken(LOGIN_TOKEN_KEY);
 
-    if (storageData?.token) {
+    if (storageData && storageData.token) {
       // TODO: Verify if token is valid with backend or check expiration
       // const isValid = await verifyToken(token);
       // isValid ? login(LOGIN_TOKEN_KEY, token) : logout();
 
-      login(LOGIN_TOKEN_KEY, storageData?.token, storageData?.username);
+      await fetchUserProfile(storageData, dispatch);
     }
   };
 
-  const login = (key, token, username) => {
-    setUser((prevState) => ({ ...prevState, token }));
-    setIsAuthenticated(true);
+  const fetchUserProfile = async (storageData) => {
+    if (storageData.role === ROLES.get("admin").value) {
+      setUser(storageData);
+      setIsAuthenticated(true);
 
-    storeToken(key, token);
-    storeToken(LOGIN_TOKEN_KEY, JSON.stringify({ token, username }));
+      return true;
+    } else {
+      const response =
+        storageData.role === ROLES.get("employer").value
+          ? await retrieveEmployerProfile(dispatch)
+          : await retrieveEmployeeProfile(dispatch);
+
+      if (response.status === 200) {
+        setUser(response.data);
+        setIsAuthenticated(true);
+
+        return true;
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+
+        removeToken(LOGIN_TOKEN_KEY);
+
+        return false;
+      }
+    }
+  };
+
+  const login = async (formInputs) => {
+    const response = await loginUser(formInputs, dispatch);
+
+    if (response.status === 200) {
+      const { accessToken, role } = response.data;
+
+      const storageData = {
+        token: accessToken,
+        role,
+        username: formInputs?.username,
+      };
+      storeToken(LOGIN_TOKEN_KEY, JSON.stringify(storageData));
+
+      const isProfileFetched = await fetchUserProfile(storageData);
+
+      if (isProfileFetched) {
+        dispatch({
+          type: "SHOW_TOAST",
+          payload: {
+            message: "You have been logged in",
+            isOpen: true,
+            variant: "success",
+          },
+        });
+
+        navigate(paths.get("HOME").PATH);
+      }
+    }
   };
 
   const logout = () => {
+    navigate(paths.get("HOME").PATH);
     setIsAuthenticated(false);
     removeToken(LOGIN_TOKEN_KEY);
 
@@ -52,14 +112,18 @@ export const AuthProvider = ({ children }) => {
         variant: "success",
       },
     });
+
+    dispatch({
+      type: "RESET",
+    });
   };
 
   const authState = {
     isAuthenticated,
     login,
     logout,
-    user,
     setUser,
+    user,
   };
 
   return (

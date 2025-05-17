@@ -1,3 +1,4 @@
+# Stage 1: Build
 # Use Node.js as a builder
 FROM node:18 AS builder
 
@@ -14,12 +15,17 @@ RUN npm install --legacy-peer-deps
 COPY . .
 
 # Build the project
-RUN npm run build
+RUN npm run build -- --mode production
 
-# Install serve globally to serve the build folder
-RUN npm install -g serve
+# Stage 2: Serve with Nginx
+FROM nginx:alpine
+
+RUN rm -rf /etc/nginx/conf.d/default.conf
+
+COPY nginx.conf /etc/nginx/conf.d
+
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 3000
 
-# Start the server using "serve"
-CMD ["serve", "-s", "dist", "-l", "3000"]
+CMD ["nginx", "-g", "daemon off;"]

@@ -37,4 +37,18 @@ const UpdateAPI = async (formData, uri, dispatch) => {
   return response;
 };
 
-export { GetAPI, PostAPI, UpdateAPI };
+const DeleteAPI = async (uri, dispatch) => {
+  const response = await apiWrapper({
+    dispatch,
+    endpoint: uri,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "DELETE",
+    });
+
+  return response;
+}
+
+
+export { GetAPI, PostAPI, UpdateAPI, DeleteAPI };
