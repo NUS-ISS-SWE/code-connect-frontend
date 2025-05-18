@@ -35,6 +35,7 @@ const LoginPage = () => {
   const [errors, setErrors] = useState({});
   const [formInputs, setFormInputs] = useState({
     email: "",
+    username: "",
     password: "",
     role: ROLES.get("user").value,
   });

@@ -6,11 +6,9 @@ import Navbar from "../components/Navbar";
 
 import Icon from "../constants/Icon";
 import useContent from "../hooks/useContent";
-//import useGenerateJobs from "../assets/dummy/remove/useGenerateJobs";
 
 const HomePage = () => {
   const content = useContent();
-  // useGenerateJobs(); // !!!TO REMOVE: For creating dummy jobs
 
   return (
     <Stack className="bg-white flex flex-1 items-start justify-start min-h-[100vh] w-full">
@@ -63,7 +61,7 @@ const HomePage = () => {
         {/* Header */}
         <Stack className="flex flex-1 items-start justify-start px-6 space-y-8 w-full lg:w-[800px] ">
           <Stack className="flex items-center justify-center space-y-4">
-            <Typography className="!font-semibold !text-lg lg:!text-2xl text-center  !text-gray-800">
+            <Typography className="!font-semibold !text-lg lg:!text-2xl text-center !text-gray-800">
               {content.home.features.header}
             </Typography>
             <Typography className="!text-sm lg:!text-md text-center  !text-gray-600">
@@ -87,7 +85,7 @@ const HomePage = () => {
 
                 {/* Content */}
                 <Stack className="flex items-center justify-center space-y-2">
-                  <Typography className="!font-semibold !text-md lg:!text-md text-center  !text-gray-800">
+                  <Typography className="!font-semibold !text-md lg:!text-md text-center !text-gray-800">
                     {item.header}
                   </Typography>
 

@@ -197,6 +197,15 @@ const paths = new Map([
       IS_PROTECTED: false,
     },
   ],
+  [
+    "USER_MANAGEMENT",
+    {
+      ID: "_user_management",
+      LABEL: "Manage Users",
+      PATH: "/user-management",
+      IS_PROTECTED: true,
+    },
+  ],
 ]);
 
 export default paths;

@@ -5,9 +5,15 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
 import useContent from "../hooks/useContent";
+import { useGlobalContext } from "../hooks/useGlobalContext";
 import paths from "../routes/paths";
 
 const AccountRegisterSuccessPage = () => {
+  const {
+    state: { registerDraft },
+    dispatch,
+  } = useGlobalContext();
+
   const content = useContent();
 
   return (
@@ -27,7 +33,7 @@ const AccountRegisterSuccessPage = () => {
           </Typography>
 
           <Typography className="!font-medium !text-gray-500 !text-sm">
-            {content.accountRegisterSuccess.subheader}
+            {content.accountRegisterSuccess.subheader[registerDraft?.role]}
           </Typography>
         </Stack>
 

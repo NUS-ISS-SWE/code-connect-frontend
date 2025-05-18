@@ -46,39 +46,6 @@ const DeleteResume = async ({ id }, dispatch) => {
   return response;
 };
 
-const RetrieveResume = async ({ id, fileName }, dispatch) => {
-  try {
-    const response = await fetch(`/${PATHNAME}/${id}/resume`, {
-      method: "GET",
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const blob = await response.blob();
-    const file = new File([blob], fileName || "Resume.pdf", {
-      type: "application/pdf",
-    });
-    const fileUrl = URL.createObjectURL(file);
-
-    return { data: { file, fileUrl }, error: "", status: response.status };
-  } catch (error) {
-    console.error("Error:", error);
-
-    dispatch({
-      type: "SHOW_TOAST",
-      payload: {
-        message: String(error),
-        isOpen: true,
-        variant: "error",
-      },
-    });
-
-    return { data: null, error: error, status: {} };
-  }
-};
-
 const retrieveUserProfile = async (id, dispatch) => {
   return await GetAPI(`/${PATHNAME}/${id}`, dispatch);
 };
@@ -100,7 +67,6 @@ const UploadResumeAPI = async ({ id, formData }, dispatch) => {
 export {
   createProfile,
   DeleteResume,
-  RetrieveResume,
   retrieveUserProfile,
   updateProfile,
   UploadResumeAPI,
